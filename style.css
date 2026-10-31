@@ -297,3 +297,26 @@ details.why a{font-size:.84rem}
 .picker-note{margin:4px 0 10px}
 .picker-foot{margin-top:12px;justify-content:space-between}
 .need-block{margin-top:6px;display:inline-block}
+.q-list li small{display:block;color:var(--dim);font-size:.74rem}
+
+/* ===== 淺色模式（日出至日落自動，或手動） ===== */
+.sun-info{font-size:.8rem;color:var(--muted)}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --bg:#F3F5FA; --surface:#ffffff; --surface-2:#eef1f7; --line:rgba(16,24,48,.11);
+  --text:#111827; --muted:#56627c; --dim:#8a94ab; --accent:#2e6bdc; --warn:#b26a00; --need:#d0244a; --ok:#0f9d64;
+}
+/* 狀態列（動態島）區域固定深色，讓白色狀態列文字看得到 */
+:root[data-theme="light"] body::before{background:#07070F}
+:root[data-theme="light"] body::after{opacity:.5}
+:root[data-theme="light"] .searchbox input{background:#ffffff;color:#111827;border-color:rgba(46,107,220,.55);box-shadow:0 0 0 4px rgba(46,107,220,.08),0 8px 18px -12px rgba(16,24,48,.35)}
+:root[data-theme="light"] .searchbox input:focus{background:#ffffff;box-shadow:0 0 0 5px rgba(46,107,220,.2)}
+:root[data-theme="light"] .searchbox input::placeholder{color:#7b8499}
+:root[data-theme="light"] .searchbox button{color:#56627c}
+:root[data-theme="light"] .best{background:#ffffff;box-shadow:0 18px 40px -24px rgba(47,107,255,.45)}
+:root[data-theme="light"] .best-rate b,:root[data-theme="light"] .calc-out b{color:#12a150}
+:root[data-theme="light"] .sheet-in{background:#ffffff}
+:root[data-theme="light"] .tag.how{color:#8a6d00;border-color:#c9a400}
+:root[data-theme="light"] .rgroup,:root[data-theme="light"] .panel,:root[data-theme="light"] .today-line,:root[data-theme="light"] .ticket,:root[data-theme="light"] .lvbox,:root[data-theme="light"] .gnotes,:root[data-theme="light"] details.wcard[open]{box-shadow:0 6px 18px -14px rgba(16,24,48,.35)}
+:root[data-theme="light"] .pill{background:rgba(0,0,0,.22)}
+:root[data-theme="light"] .hitsum{border-color:#c9a400}
