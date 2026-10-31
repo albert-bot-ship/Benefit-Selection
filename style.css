@@ -336,3 +336,11 @@ details.why a{font-size:.84rem}
 .lvcard ul{margin:0;padding-left:18px;font-size:.86rem}
 .lvcard li{margin:4px 0}
 .lv-cur{position:absolute;right:14px;bottom:10px;font-size:.72rem;color:var(--accent)}
+
+/* ===== 即將結束提醒 ===== */
+.expiry{background:color-mix(in srgb,var(--warn) 12%,var(--surface));border:1px solid var(--warn);border-radius:14px;padding:12px 14px;margin:6px 0 12px}
+.expiry b{display:block;color:var(--warn);margin-bottom:6px}
+.ex-row{display:flex;align-items:center;gap:10px;padding:4px 0;font-size:.92rem}
+.ex-row .mini{width:32px;height:21px;flex:none}
+.ex-row .mini::after{left:4px;top:6px;width:7px;height:5px}
+.ex-d{margin-left:auto;color:var(--warn);font-size:.84rem;white-space:nowrap}
