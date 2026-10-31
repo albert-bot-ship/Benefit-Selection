@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
+<script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
 </head>
 <body>
@@ -76,6 +77,13 @@
   <div class="sheet-row"><span class="lbl">資格</span>
     <label class="toggle"><input type="checkbox" id="bday">本月是我生日</label>
     <label class="toggle"><input type="checkbox" id="kids">符合童樂匯資格</label></div>
+  <div class="sheet-row"><span class="lbl">外觀</span>
+    <div class="seg" id="themeSeg">
+      <button data-mode="auto" aria-pressed="true">自動</button>
+      <button data-mode="light" aria-pressed="false">淺色</button>
+      <button data-mode="dark" aria-pressed="false">深色</button>
+    </div>
+    <span class="sun-info" id="sunInfo"></span></div>
   <div class="sheet-row"><span class="lbl">今天切換的方案</span><button class="linkbtn" data-act="set-today" id="todayBtn">設定</button></div>
   <button class="sheet-done" id="closeSettings">完成</button>
 </div></div>
@@ -367,7 +375,7 @@ state.favs = load("cube-favs",[]);
 state.amt = "";
 function planById(id){ return PLANS.find(p=>p.id===id); }
 
-/* ===== 試算（官網注意事項第6條：依小數點第一位四捨五入至整數位） ===== */
+/* ===== 試算（官網注意事項第7條：依小數點第一位四捨五入至整數位） ===== */
 function calcHTML(rate){
   const a=parseFloat(String(state.amt).replace(/,/g,""));
   if(!(a>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
@@ -544,11 +552,17 @@ function bindQuick(){
 
 /* ===== 方案總覽 ===== */
 function renderPlans(){
-  const lvTable=`<div class="lvbox"><div class="lvwrap"><table class="lvtable"><thead><tr><th>等級</th><th>條件</th><th>玩數位・樂饗購・趣旅行</th></tr></thead><tbody>
-    <tr><td>L1</td><td>持有 CUBE 正卡</td><td>2%</td></tr>
-    <tr><td>L2</td><td>持有 CUBE 正卡，且以 CUBE App 繳納信用卡費或申請自動扣繳信用卡費（兩項皆限本人本行帳戶、信用卡費）</td><td>3%</td></tr>
-    <tr><td>L3</td><td>持有 CUBE 正卡，且為國泰世華財富管理貴賓</td><td>3.3%</td></tr></tbody></table></div>
-    <p class="hint">方案切換與回饋計算規則，請見頁面最下方「注意事項」（官網原文）。</p></div>`;
+  const LV=[
+    {lv:"Level 1",name:"CUBE卡友",head:"指定消費2%",when:"核卡即享",conds:["持有CUBE正卡"],rates:["玩數位2%","樂饗購2%","趣旅行2%","集精選2%"],extra:[]},
+    {lv:"Level 2",name:"繳費升級",head:"完成任務享3%回饋",when:"次月升級",conds:["持有CUBE正卡","以CUBE App繳納信用卡費或申請自動扣繳信用卡費(兩項皆限本人本行帳戶、信用卡費)"],rates:["玩數位3%","樂饗購3%","趣旅行3%","集精選2%"],extra:[]},
+    {lv:"Level 3",name:"貴賓享最優",head:"完成任務享最優3.3%回饋",when:"次月升級",conds:["持有CUBE正卡","成為本行財富管理貴賓"],rates:["玩數位3.3%","樂饗購3.3%","趣旅行3.3%","集精選2%"],extra:["一般消費滿額獨享權益套餐兌換資格"]}
+  ];
+  const lvTable=`<div class="lvgrid">${LV.map((x,i)=>`<div class="lvcard${i===state.lv?" on":""}">
+      <div class="lv-top"><span class="lv-name">${x.name}</span><span class="lv-badge">${x.lv}</span></div>
+      <div class="lv-head">${x.head}</div><div class="lv-when">${x.when}</div>
+      <ul>${x.conds.map(c=>`<li>${esc(c)}</li>`).join("")}<li>${x.rates.join("<br>")}</li><li>一般消費享0.3%</li>${x.extra.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>
+      ${i===state.lv?`<div class="lv-cur">目前選擇</div>`:""}</div>`).join("")}</div>
+    <p class="hint">資料來源：官網「CUBE信用卡」介紹頁權益分級。方案切換與回饋計算規則，請見頁面最下方「注意事項」（官網原文）。</p>`;
   const tq=terms(state.q); let hitPlans=0, hitItems=0;
   const html=PLANS.map(p=>{
     let pHits=0;
@@ -635,6 +649,60 @@ document.querySelectorAll("#lv button").forEach(b=>b.onclick=()=>{
 });
 $("#bday").onchange=e=>{state.bday=e.target.checked; render();};
 $("#kids").onchange=e=>{state.kids=e.target.checked; render();};
+
+/* ===== 外觀：自動（依 iPhone 定位計算日出日落）／淺色／深色 ===== */
+const TAICHUNG={lat:24.1477,lng:120.6736,src:"台中（未取得定位）"};
+function sunTimes(date,lat,lng){
+  const rad=Math.PI/180, dayMs=864e5, J1970=2440588, J2000=2451545, J0=0.0009, e=rad*23.4397;
+  const toDays=d=>d.valueOf()/dayMs-0.5+J1970-J2000;
+  const fromJ=j=>new Date((j+0.5-J1970)*dayMs);
+  const lw=rad*-lng, phi=rad*lat, d=toDays(date);
+  const n=Math.round(d-J0-lw/(2*Math.PI));
+  const approx=(Ht)=>J0+(Ht+lw)/(2*Math.PI)+n;
+  const ds=approx(0);
+  const M=rad*(357.5291+0.98560028*ds);
+  const C=rad*(1.9148*Math.sin(M)+0.02*Math.sin(2*M)+0.0003*Math.sin(3*M));
+  const Lon=M+C+rad*102.9372+Math.PI;
+  const dec=Math.asin(Math.sin(e)*Math.sin(Lon));
+  const transit=a=>J2000+a+0.0053*Math.sin(M)-0.0069*Math.sin(2*Lon);
+  const Jnoon=transit(ds);
+  const w=Math.acos((Math.sin(-0.833*rad)-Math.sin(phi)*Math.sin(dec))/(Math.cos(phi)*Math.cos(dec)));
+  const Jset=transit(approx(w)), Jrise=Jnoon-(Jset-Jnoon);
+  return {rise:fromJ(Jrise), set:fromJ(Jset)};
+}
+const hm=d=>String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+state.themeMode=load("cube-theme-mode","auto");
+state.loc=load("cube-loc",null);
+function currentLoc(){ return state.loc || TAICHUNG; }
+function requestLoc(force){
+  const fresh=state.loc && (Date.now()-state.loc.t < 7*864e5);
+  if((fresh && !force) || !navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    state.loc={lat:pos.coords.latitude,lng:pos.coords.longitude,src:"iPhone 定位",t:Date.now()};
+    save("cube-loc",state.loc); applyTheme();
+  },()=>{},{maximumAge:864e5,timeout:10000});
+}
+function applyTheme(){
+  let theme=state.themeMode;
+  const L=currentLoc(), st=sunTimes(new Date(),L.lat,L.lng), now=new Date();
+  if(theme==="auto") theme=(now>=st.rise && now<st.set)?"light":"dark";
+  document.documentElement.setAttribute("data-theme",theme);
+  save("cube-theme-last",theme);
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute("content", theme==="light"?"#F3F5FA":"#07070F");
+  document.querySelectorAll("#themeSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===state.themeMode));
+  const info=$("#sunInfo");
+  if(info) info.textContent=`今日日出 ${hm(st.rise)}／日落 ${hm(st.set)}（${L.src}）`;
+}
+document.querySelectorAll("#themeSeg button").forEach(b=>b.onclick=()=>{
+  state.themeMode=b.dataset.mode; save("cube-theme-mode",state.themeMode);
+  if(state.themeMode==="auto") requestLoc(false);
+  applyTheme();
+});
+if(state.themeMode==="auto") requestLoc(false);
+applyTheme();
+setInterval(applyTheme,60000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) applyTheme(); });
 
 renderCats(); render();
 </script>
