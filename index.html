@@ -54,7 +54,7 @@ header.top{padding:26px 0 6px;display:flex;align-items:center;gap:14px}
 header.top h1{margin:0;font-size:1.6rem;letter-spacing:.02em;line-height:1.2}
 header.top p{margin:2px 0 0;color:var(--muted);font-size:.86rem}
 
-.sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:12px 0;
+.sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:12px 18px;margin:0 -18px;
   background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
 .tabs button{flex:1;border:0;background:transparent;padding:9px 6px;border-radius:999px;cursor:pointer;color:var(--muted);font-weight:500;font-size:.95rem}
@@ -85,7 +85,7 @@ main{padding-top:10px}
 .sec{font-size:.8rem;letter-spacing:.12em;color:var(--muted);font-weight:500;margin:26px 0 10px}
 
 /* ===== 卡面 ===== */
-.cface{position:relative;aspect-ratio:1.586/1;border-radius:18px;padding:18px 20px;color:#fff;overflow:hidden;isolation:isolate;
+.cface{container-type:inline-size;position:relative;aspect-ratio:1.586/1;border-radius:clamp(12px,5%,18px);padding:5.5% 6.5%;color:#fff;overflow:hidden;isolation:isolate;
   background:linear-gradient(135deg,var(--g1),var(--g2));
   box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 14px 30px -12px color-mix(in srgb,var(--g2) 70%,#000),0 4px 10px rgba(0,0,0,.25);
   display:grid;grid-template-rows:auto auto 1fr auto;text-shadow:0 1px 2px rgba(0,0,0,.25)}
@@ -96,29 +96,30 @@ main{padding-top:10px}
   box-shadow:0 0 0 22px rgba(255,255,255,.05),0 0 0 44px rgba(255,255,255,.035)}
 .cface.expired{filter:grayscale(.85) brightness(.7)}
 .cf-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.cf-name{font-size:1.3rem;font-weight:700;letter-spacing:.04em}
-.cf-brand{font-family:var(--num);font-weight:700;font-size:1rem;letter-spacing:.18em;opacity:.85}
-.cf-mid{display:flex;align-items:center;gap:10px;margin-top:10px}
-.chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#f7e7a1,#c9a54a 45%,#f2dc8c);position:relative;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.cf-name{font-size:7.2cqw;font-weight:700;letter-spacing:.04em;line-height:1.2}
+.cf-brand{font-family:var(--num);font-weight:700;font-size:5.2cqw;letter-spacing:.18em;opacity:.85}
+.cf-mid{display:flex;align-items:center;gap:3cqw;margin-top:3cqw}
+.chip{width:11.5cqw;height:8.5cqw;border-radius:1.6cqw;background:linear-gradient(135deg,#f7e7a1,#c9a54a 45%,#f2dc8c);position:relative;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 .chip::before,.chip::after{content:"";position:absolute;background:rgba(0,0,0,.18)}
 .chip::before{left:0;right:0;top:50%;height:1px}
 .chip::after{top:0;bottom:0;left:50%;width:1px}
-.cf-mid svg{width:20px;height:20px;opacity:.8}
-.cf-rate{align-self:center;font-family:var(--num);font-weight:700;font-size:clamp(2.2rem,9vw,3rem);line-height:1;letter-spacing:.01em}
-.cf-lines{align-self:center;font-size:.86rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cf-mid svg{width:6cqw;height:6cqw;opacity:.8}
+.cf-rate{font-family:var(--num);font-weight:700;font-size:12.5cqw;line-height:1;letter-spacing:.01em;white-space:nowrap}
+.cf-rate.long{font-size:9cqw}
+.cf-lines{align-self:center;font-size:4.6cqw;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .cf-lines mark{color:#14110a;text-shadow:none}
 .cf-bot{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;flex-wrap:wrap}
-.cf-valid{font-family:var(--num);font-size:1.05rem;letter-spacing:.08em}
-.cf-valid small{display:block;font-size:.58rem;letter-spacing:.2em;opacity:.75;line-height:1}
-.cf-pills{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
-.pill{font-size:.72rem;line-height:1.5;padding:1px 8px;border-radius:999px;background:rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;text-shadow:none}
+.cf-valid{font-family:var(--num);font-size:5cqw;letter-spacing:.06em;white-space:nowrap}
+.cf-valid small{display:block;font-size:2.8cqw;letter-spacing:.2em;opacity:.75;line-height:1}
+.cf-pills{position:absolute;top:17cqw;right:6.5cqw;display:flex;gap:1.2cqw;flex-wrap:wrap;justify-content:flex-end;max-width:60%}
+.pill{font-size:3.6cqw;line-height:1.5;padding:.2cqw 2.4cqw;border-radius:999px;background:rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;text-shadow:none}
 .pill.hit{background:rgb(var(--hl));color:#14110a;font-weight:700}
 
 /* ===== 搜尋：錢包 ===== */
 .wallet-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:6px 0 10px}
 .wallet-head b{font-size:1.05rem}
 .wallet-head span{font-size:.82rem;color:var(--muted)}
-.wallet{display:grid;grid-auto-flow:column;grid-auto-columns:min(86%,360px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -18px;padding:4px 18px 18px;scrollbar-width:none}
+.wallet{scroll-padding-inline:18px;display:grid;grid-auto-flow:column;grid-auto-columns:min(86%,360px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -18px;padding:4px 18px 18px;scrollbar-width:none}
 .wallet::-webkit-scrollbar{display:none}
 .wallet .cface{scroll-snap-align:start}
 .wallet.single{grid-auto-columns:min(100%,400px)}
@@ -159,7 +160,7 @@ main{padding-top:10px}
 .panel li{margin:4px 0}
 
 /* ===== 方案總覽：卡片牆 ===== */
-.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 details.wcard>summary{list-style:none;cursor:pointer;border-radius:18px}
 details.wcard>summary::-webkit-details-marker{display:none}
 details.wcard>summary .cface{transition:transform .2s ease}
@@ -198,7 +199,7 @@ details.tips ol{padding-left:22px;margin:6px 0 0}
 .gnotes li{margin:8px 0}
 
 /* ===== 加碼活動：票券 ===== */
-.ticket{display:grid;grid-template-columns:96px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden;position:relative}
+.ticket{display:grid;grid-template-columns:88px minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden;position:relative}
 .ticket.off{opacity:.55}
 .tk-l{display:grid;place-items:center;background:linear-gradient(160deg,#8e2de2,#e0408a);color:#fff;font-family:var(--num);font-weight:700;font-size:2rem;position:relative}
 .tk-l::after{content:"";position:absolute;right:-1px;top:8px;bottom:8px;border-right:2px dashed var(--bg)}
@@ -206,6 +207,8 @@ details.tips ol{padding-left:22px;margin:6px 0 0}
 .tk-r h3{margin:0 0 4px;font-size:1.02rem}
 .tk-r p{margin:2px 0;font-size:.88rem;color:var(--muted)}
 .tk-r .row{margin-top:8px}
+.tk-r .tag{white-space:normal}
+.rg-list li>div{min-width:0}
 
 /* 螢光筆 */
 mark{color:#14110a;text-shadow:none;
@@ -528,8 +531,8 @@ function cardFace(p,o={}){
     <div class="cf-mid"><span class="chip"></span>${NFC}</div>
     ${o.lines? `<div class="cf-lines">${o.lines}</div>` : ""}
     <div class="cf-bot"><span class="cf-valid"><small>VALID</small>${mdp(p.start)} – ${mdp(p.end)}</span>
-      <span class="cf-rate" style="font-size:clamp(1.9rem,8vw,2.6rem)">${esc(rate)}</span></div>
-    ${pills.length?`<div class="cf-pills" style="position:absolute;top:50px;right:18px">${pills.join("")}</div>`:""}
+      <span class="cf-rate${String(rate).length>6?" long":""}">${esc(rate)}</span></div>
+    ${pills.length?`<div class="cf-pills">${pills.join("")}</div>`:""}
   </div>`;
 }
 
