@@ -320,3 +320,19 @@ details.why a{font-size:.84rem}
 :root[data-theme="light"] .rgroup,:root[data-theme="light"] .panel,:root[data-theme="light"] .today-line,:root[data-theme="light"] .ticket,:root[data-theme="light"] .lvbox,:root[data-theme="light"] .gnotes,:root[data-theme="light"] details.wcard[open]{box-shadow:0 6px 18px -14px rgba(16,24,48,.35)}
 :root[data-theme="light"] .pill{background:rgba(0,0,0,.22)}
 :root[data-theme="light"] .hitsum{border-color:#c9a400}
+
+/* ===== 權益分級（官網） ===== */
+.lvgrid{display:grid;grid-auto-flow:column;grid-auto-columns:min(78%,260px);gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -18px 6px;padding:2px 18px 6px;scroll-padding-inline:18px;scroll-snap-type:x mandatory}
+.lvgrid::-webkit-scrollbar{display:none}
+@media (min-width:700px){.lvgrid{grid-auto-flow:row;grid-template-columns:repeat(3,1fr);margin:0 0 6px;padding:0}}
+.lvcard{scroll-snap-align:start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;position:relative}
+.lvcard.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent)}
+.lv-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lv-name{font-size:.9rem;color:var(--muted)}
+.lv-badge{background:linear-gradient(90deg,#f59e3b,#ef7d1a);color:#fff;font-weight:700;font-size:.78rem;padding:2px 10px;border-radius:999px}
+.lv-head{font-weight:700;font-size:1.05rem;color:#2ecc71;margin-top:6px}
+:root[data-theme="light"] .lv-head{color:#12a150}
+.lv-when{font-size:.8rem;color:var(--muted);background:var(--surface-2);border-radius:8px;padding:3px 10px;margin:8px 0;display:inline-block}
+.lvcard ul{margin:0;padding-left:18px;font-size:.86rem}
+.lvcard li{margin:4px 0}
+.lv-cur{position:absolute;right:14px;bottom:10px;font-size:.72rem;color:var(--accent)}
