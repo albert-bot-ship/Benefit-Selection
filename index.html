@@ -75,7 +75,7 @@
       <button data-lv="2" aria-pressed="false">L3</button>
     </div></div>
   <div class="sheet-row"><span class="lbl">資格</span>
-    <label class="toggle"><input type="checkbox" id="bday">本月是我生日</label>
+    <label class="toggle"><input type="checkbox" id="bday" checked>顯示慶生月方案</label>
     <label class="toggle"><input type="checkbox" id="kids">符合童樂匯資格</label></div>
   <div class="sheet-row"><span class="lbl">外觀</span>
     <div class="seg" id="themeSeg">
@@ -319,7 +319,6 @@ function matchInfo(name, alias, gt, tq){
 const HOW_TXT={syn:"別名相符", alias:"別名相符", group:"類別相符"};
 
 function eligible(p){
-  if(p.req==="bday" && !state.bday) return {ok:false, why:"限生日當月"};
   if(p.req==="kids" && !state.kids) return {ok:false, why:"需童樂匯資格"};
   return {ok:true};
 }
@@ -330,7 +329,7 @@ const SKIN={autumn:["#f7971e","#b3261e"],digital:["#2b5cff","#7a3cff"],dine:["#8
 function skin(p){ const g=SKIN[p.id]||["#666","#222"]; return `--g1:${g[0]};--g2:${g[1]}`; }
 function mdp(s){ const d=pd(s); return String(d.getMonth()+1).padStart(2,"0")+"/"+String(d.getDate()).padStart(2,"0"); }
 const NFC=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8.5 8.5a5 5 0 0 1 0 7"/><path d="M12 6a8.5 8.5 0 0 1 0 12"/><path d="M15.5 3.5a12 12 0 0 1 0 17"/></svg>`;
-function reqLabel(p){ return p.req==="bday"?"限生日當月": p.req==="kids"?"需童樂匯資格": p.req==="pxpay"?"須以全支付付款": p.req==="fixed"?"切換規則依官網注意事項":""; }
+function reqLabel(p){ return p.req==="kids"?"需童樂匯資格": p.req==="pxpay"?"須以全支付付款": p.req==="fixed"?"切換規則依官網注意事項":""; }
 function cardFace(p,o={}){
   const st=status(p.start,p.end);
   const rate = o.rate!=null ? o.rate : (p.rate===L ? fmt(LEVEL_RATES[state.lv])+"%" : p.sum);
@@ -372,6 +371,12 @@ function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} 
 const cur=load("cube-today",null);
 state.todayPlan = (cur && cur.d===todayKey()) ? cur.id : "";
 state.favs = load("cube-favs",[]);
+state.bday = load("cube-show-bday",true);
+function expiryHTML(){
+  const list=PLANS.filter(p=>status(p.start,p.end).k==="warn");
+  if(!list.length) return "";
+  return `<div class="expiry"><b>⏰ 即將結束的方案</b>${list.map(p=>`<div class="ex-row"><span class="mini" style="${skin(p)}"></span><span>${esc(p.name)}</span><span class="ex-d">${ymd(p.end)} 結束・${status(p.start,p.end).txt}</span></div>`).join("")}</div>`;
+}
 state.amt = "";
 function planById(id){ return PLANS.find(p=>p.id===id); }
 
@@ -421,7 +426,7 @@ function bestHTML(best,top,tq){
   const blocks=[...byPlan].map(([p,rs])=>{
     const pay=payFor(rs[0]);
     return `<div class="bp" style="${skin(p)}">
-      <div class="bp-h"><span class="mini" style="${skin(p)}"></span><div><div class="bp-n">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今天已切</span>`:""}</div>
+      <div class="bp-h"><span class="mini" style="${skin(p)}"></span><div><div class="bp-n">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今天已切</span>`:""}${(st=>st.k==="warn"?`<span class="tag warn">${st.txt}，${ymd(p.end)} 結束</span>`:"")(status(p.start,p.end))}</div>
       <div class="bp-c">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div></div>
       ${pay?`<div class="pay-h">結帳可用付款方式</div><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div>`:""}
       ${p.req==="pxpay"?`<div class="tag need need-block">須選定「全支付」方案並以全支付綁定CUBE信用卡刷卡消費</div>`:""}
@@ -471,7 +476,7 @@ document.addEventListener("input",e=>{
 function renderSearch(){
   const box=$("#v-search");
   const tq=terms(state.q);
-  let list=ENTRIES.filter(e=> state.cat==="all" || e.cat===state.cat);
+  let list=ENTRIES.filter(e=> (state.cat==="all" || e.cat===state.cat) && (state.bday || e.plan.id!=="bday"));
   if(tq.length) list=list.filter(e=>tq.some(t=>e.hay.includes(t)));
   else if(state.cat==="all"){ box.innerHTML=introHTML(); bindQuick(); return; }
 
@@ -538,6 +543,7 @@ function fallbackHTML(empty){
 function introHTML(){
   const q=["蝦皮","7-11","全聯","Netflix","新光三越","麥當勞","日本","高鐵","Uber Eats","壽司郎","加油","ChatGPT"];
   return `<p class="hint">輸入店家、品牌或類別，找出今天該刷哪張「權益卡」。也可以點上方類別直接瀏覽。</p>
+   ${expiryHTML()}
    ${todayLine([],[])}
    ${state.favs.length?`<div class="sec">我的收藏</div><div class="quick fav-list">${state.favs.map(x=>`<span class="favchip"><button data-q="${esc(x)}">♥ ${esc(x)}</button><button data-act="unfav" data-q="${esc(x)}" aria-label="移除收藏">✕</button></span>`).join("")}</div>`:""}
    <div class="sec">常用搜尋</div>
@@ -647,7 +653,8 @@ document.querySelectorAll("#lv button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#lv button").forEach(x=>x.setAttribute("aria-pressed", x===b));
   render();
 });
-$("#bday").onchange=e=>{state.bday=e.target.checked; render();};
+$("#bday").checked=state.bday;
+$("#bday").onchange=e=>{state.bday=e.target.checked; save("cube-show-bday",state.bday); render();};
 $("#kids").onchange=e=>{state.kids=e.target.checked; render();};
 
 /* ===== 外觀：自動（依 iPhone 定位計算日出日落）／淺色／深色 ===== */
