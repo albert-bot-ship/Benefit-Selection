@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CUBE 卡權益查詢</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#090c15;
+  --surface:rgba(255,255,255,.045);
+  --surface-2:rgba(255,255,255,.075);
+  --line:rgba(255,255,255,.09);
+  --text:#eef1f7;
+  --muted:#9aa6bf;
+  --dim:#5f6a84;
+  --accent:#6ea8ff;
+  --warn:#ffb547;
+  --need:#ff6b81;
+  --ok:#3ddc97;
+  --hl:255,231,0;
+  --font:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --num:"Barlow Condensed","Arial Narrow","Noto Sans TC",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    color-scheme:light;
+    --bg:#eef1f7; --surface:#ffffff; --surface-2:#f3f5fa; --line:rgba(16,24,48,.1);
+    --text:#121a2e; --muted:#5b6782; --dim:#9aa4bb; --accent:#2e6bdc; --warn:#b26a00; --need:#d0244a; --ok:#0f9d64;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(60vw 40vh at 85% -5%,rgba(110,168,255,.16),transparent 70%),
+             radial-gradient(50vw 40vh at -10% 30%,rgba(168,85,247,.10),transparent 70%)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+a{color:var(--accent)}
+.wrap{max-width:820px;margin:0 auto;padding:0 18px 56px}
+
+header.top{padding:26px 0 6px;display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:30px;border-radius:6px;flex:none;position:relative;
+  background:linear-gradient(135deg,#2b5cff,#8e2de2 55%,#e0408a);box-shadow:0 6px 16px rgba(80,90,255,.35)}
+.logo::after{content:"";position:absolute;left:7px;top:9px;width:11px;height:9px;border-radius:2px;background:linear-gradient(135deg,#f6e27a,#b8932f)}
+header.top h1{margin:0;font-size:1.6rem;letter-spacing:.02em;line-height:1.2}
+header.top p{margin:2px 0 0;color:var(--muted);font-size:.86rem}
+
+.sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;padding:12px 0;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{flex:1;border:0;background:transparent;padding:9px 6px;border-radius:999px;cursor:pointer;color:var(--muted);font-weight:500;font-size:.95rem}
+.tabs button[aria-selected="true"]{background:var(--text);color:var(--bg)}
+.controls{margin-top:12px;display:grid;gap:12px}
+.searchbox{position:relative}
+.searchbox svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);pointer-events:none}
+.searchbox input{width:100%;padding:15px 48px 15px 46px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font-size:1.08rem;transition:border-color .15s,box-shadow .15s}
+.searchbox input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+.searchbox input::placeholder{color:var(--dim)}
+.searchbox input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
+.searchbox button{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:var(--surface-2);color:var(--muted);width:32px;height:32px;border-radius:50%;cursor:pointer}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.lbl{font-size:.82rem;color:var(--muted)}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;padding:4px 13px;border-radius:999px;cursor:pointer;color:var(--muted);font-size:.86rem}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:.86rem;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--accent);margin:0}
+.toggle:has(input:checked){color:var(--text);border-color:var(--accent)}
+.cats{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:none;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 13px;font-size:.84rem;cursor:pointer;color:var(--muted)}
+.cats button[aria-pressed="true"]{background:var(--surface-2);border-color:var(--text);color:var(--text)}
+
+main{padding-top:10px}
+.hint{color:var(--muted);font-size:.9rem;margin:6px 0}
+.sec{font-size:.8rem;letter-spacing:.12em;color:var(--muted);font-weight:500;margin:26px 0 10px}
+
+/* ===== 卡面 ===== */
+.cface{position:relative;aspect-ratio:1.586/1;border-radius:18px;padding:18px 20px;color:#fff;overflow:hidden;isolation:isolate;
+  background:linear-gradient(135deg,var(--g1),var(--g2));
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 14px 30px -12px color-mix(in srgb,var(--g2) 70%,#000),0 4px 10px rgba(0,0,0,.25);
+  display:grid;grid-template-rows:auto auto 1fr auto;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.cface::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(120% 80% at 100% 0%,rgba(255,255,255,.28),transparent 55%),
+             radial-gradient(70% 70% at -10% 110%,rgba(0,0,0,.28),transparent 60%)}
+.cface::after{content:"";position:absolute;width:62%;aspect-ratio:1;right:-18%;bottom:-38%;border-radius:50%;border:1px solid rgba(255,255,255,.22);z-index:-1;
+  box-shadow:0 0 0 22px rgba(255,255,255,.05),0 0 0 44px rgba(255,255,255,.035)}
+.cface.expired{filter:grayscale(.85) brightness(.7)}
+.cf-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.cf-name{font-size:1.3rem;font-weight:700;letter-spacing:.04em}
+.cf-brand{font-family:var(--num);font-weight:700;font-size:1rem;letter-spacing:.18em;opacity:.85}
+.cf-mid{display:flex;align-items:center;gap:10px;margin-top:10px}
+.chip{width:38px;height:28px;border-radius:6px;background:linear-gradient(135deg,#f7e7a1,#c9a54a 45%,#f2dc8c);position:relative;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.chip::before,.chip::after{content:"";position:absolute;background:rgba(0,0,0,.18)}
+.chip::before{left:0;right:0;top:50%;height:1px}
+.chip::after{top:0;bottom:0;left:50%;width:1px}
+.cf-mid svg{width:20px;height:20px;opacity:.8}
+.cf-rate{align-self:center;font-family:var(--num);font-weight:700;font-size:clamp(2.2rem,9vw,3rem);line-height:1;letter-spacing:.01em}
+.cf-lines{align-self:center;font-size:.86rem;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cf-lines mark{color:#14110a;text-shadow:none}
+.cf-bot{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;flex-wrap:wrap}
+.cf-valid{font-family:var(--num);font-size:1.05rem;letter-spacing:.08em}
+.cf-valid small{display:block;font-size:.58rem;letter-spacing:.2em;opacity:.75;line-height:1}
+.cf-pills{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.pill{font-size:.72rem;line-height:1.5;padding:1px 8px;border-radius:999px;background:rgba(0,0,0,.28);backdrop-filter:blur(4px);white-space:nowrap;text-shadow:none}
+.pill.hit{background:rgb(var(--hl));color:#14110a;font-weight:700}
+
+/* ===== 搜尋：錢包 ===== */
+.wallet-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:6px 0 10px}
+.wallet-head b{font-size:1.05rem}
+.wallet-head span{font-size:.82rem;color:var(--muted)}
+.wallet{display:grid;grid-auto-flow:column;grid-auto-columns:min(86%,360px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -18px;padding:4px 18px 18px;scrollbar-width:none}
+.wallet::-webkit-scrollbar{display:none}
+.wallet .cface{scroll-snap-align:start}
+.wallet.single{grid-auto-columns:min(100%,400px)}
+.cf-req{font-size:.74rem;background:rgba(0,0,0,.3);padding:1px 8px;border-radius:999px;justify-self:start;margin-top:4px}
+@media (prefers-reduced-motion:no-preference){
+  .wallet .cface{animation:pull .45s cubic-bezier(.2,.8,.2,1) both}
+  .wallet .cface:nth-child(2){animation-delay:.06s}.wallet .cface:nth-child(3){animation-delay:.12s}
+  @keyframes pull{from{opacity:0;transform:translateY(26px) rotate(-2deg) scale(.96)}to{opacity:1;transform:none}}
+}
+
+.rgroup{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:12px;overflow:hidden}
+.rgroup.off{opacity:.55}
+.rg-head{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.mini{width:42px;height:27px;border-radius:5px;background:linear-gradient(135deg,var(--g1),var(--g2));grid-row:1/3;position:relative;box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.mini::after{content:"";position:absolute;left:6px;top:8px;width:9px;height:7px;border-radius:1.5px;background:linear-gradient(135deg,#f6e27a,#b8932f)}
+.rg-name{font-weight:700;font-size:1.05rem}
+.rg-rate{grid-row:1/3;grid-column:3;font-family:var(--num);font-weight:700;font-size:1.9rem;line-height:1}
+.rg-rate small{display:block;font-family:var(--font);font-weight:400;font-size:.7rem;color:var(--muted);text-align:right}
+.rg-meta{display:flex;flex-wrap:wrap;gap:5px;grid-column:2}
+.tag{font-size:.74rem;padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
+.tag.need{border-color:var(--need);color:var(--need)}
+.tag.end{color:var(--dim)}
+.tag.how{border-style:dashed;border-color:rgb(var(--hl));color:rgb(var(--hl))}
+.rg-list{list-style:none;margin:0;padding:4px 0}
+.rg-list li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 16px}
+.rg-list li+li{border-top:1px dashed var(--line)}
+.rg-list .nm{font-weight:500}
+.rg-list .gt{font-size:.8rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:2px}
+.rg-list .rr{font-family:var(--num);font-weight:700;font-size:1.25rem;white-space:nowrap}
+
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.quick button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:.9rem}
+.quick button:hover{border-color:var(--accent)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 18px;margin-top:16px;font-size:.9rem}
+.panel b{display:block;margin-bottom:4px}
+.panel ul{margin:0;padding-left:18px;color:var(--muted)}
+.panel li{margin:4px 0}
+
+/* ===== 方案總覽：卡片牆 ===== */
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+details.wcard>summary{list-style:none;cursor:pointer;border-radius:18px}
+details.wcard>summary::-webkit-details-marker{display:none}
+details.wcard>summary .cface{transition:transform .2s ease}
+details.wcard>summary:hover .cface{transform:translateY(-3px)}
+details.wcard[open]{grid-column:1/-1;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:14px}
+details.wcard[open]>summary .cface{max-width:400px}
+.wbody{padding:16px 4px 4px}
+.grp{padding:14px 0;border-top:1px solid var(--line)}
+.grp:first-of-type{border-top:0}
+.grp h3{margin:0 0 10px;font-size:1rem;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.grp h3 .rt{font-family:var(--num);font-weight:700;font-size:1.35rem;color:var(--g1);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chips span{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:4px 10px;font-size:.88rem}
+.chips span.hit{border-color:rgba(var(--hl),.9)}
+.chips span.hit.whole{color:#14110a;border-color:transparent;
+  background:linear-gradient(104deg,rgba(var(--hl),0) .9%,rgba(var(--hl),.95) 3%,rgba(var(--hl),.65) 50%,rgba(var(--hl),.9) 97%,rgba(var(--hl),0) 100%)}
+details.tips{margin-top:10px;font-size:.84rem;color:var(--muted)}
+details.tips>summary{cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;border:1px solid var(--line);font-size:.78rem;list-style:none}
+details.tips>summary::-webkit-details-marker{display:none}
+details.tips>summary::before{content:"+";font-weight:700}
+details.tips[open]>summary::before{content:"−"}
+details.tips p,details.tips li{margin:6px 0}
+details.tips ul{list-style:none;padding:0;margin:6px 0 0}
+details.tips ol{padding-left:22px;margin:6px 0 0}
+.hitsum{background:var(--surface);border:1px solid rgba(var(--hl),.8);border-radius:14px;padding:12px 16px;margin-bottom:14px;font-size:.92rem}
+.lvwrap{overflow-x:auto}
+.lvtable{width:100%;border-collapse:collapse;font-size:.86rem;margin:8px 0}
+.lvtable th,.lvtable td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;white-space:nowrap}
+.lvtable th{color:var(--muted);font-weight:500}
+.lvbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 16px;margin-bottom:16px}
+.gnotes{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 16px}
+.gnotes>summary{cursor:pointer;font-weight:700;list-style:none}
+.gnotes>summary::-webkit-details-marker{display:none}
+.gnotes>summary span{font-weight:400;color:var(--muted);font-size:.84rem;margin-left:8px}
+.gnotes ol{padding-left:22px;color:var(--muted);font-size:.86rem}
+.gnotes li{margin:8px 0}
+
+/* ===== 加碼活動：票券 ===== */
+.ticket{display:grid;grid-template-columns:96px 1fr;background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-bottom:14px;overflow:hidden;position:relative}
+.ticket.off{opacity:.55}
+.tk-l{display:grid;place-items:center;background:linear-gradient(160deg,#8e2de2,#e0408a);color:#fff;font-family:var(--num);font-weight:700;font-size:2rem;position:relative}
+.tk-l::after{content:"";position:absolute;right:-1px;top:8px;bottom:8px;border-right:2px dashed var(--bg)}
+.tk-r{padding:14px 16px}
+.tk-r h3{margin:0 0 4px;font-size:1.02rem}
+.tk-r p{margin:2px 0;font-size:.88rem;color:var(--muted)}
+.tk-r .row{margin-top:8px}
+
+/* 螢光筆 */
+mark{color:#14110a;text-shadow:none;
+  background:
+    linear-gradient(104deg,rgba(var(--hl),0) .9%,rgba(var(--hl),.95) 2.6%,rgba(var(--hl),.72) 6%,rgba(var(--hl),.58) 90%,rgba(var(--hl),.9) 96%,rgba(var(--hl),0) 99%),
+    linear-gradient(183deg,rgba(var(--hl),0) 0%,rgba(var(--hl),.35) 8%,rgba(var(--hl),0) 16%);
+  padding:.02em .3em;margin:0 -.12em;border-radius:.35em .9em .4em .8em;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]) .tag.how{color:#8a6d00;border-color:#c9a400}
+}
+
+footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);font-size:.8rem;color:var(--muted)}
+footer ul{padding-left:18px;margin:6px 0}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="logo" aria-hidden="true"></span>
+    <div><h1>CUBE 卡權益查詢</h1>
+    <p>輸入店家名稱，找出今天該切哪個方案。資料整理日：2026/10/27</p></div>
+  </header>
+
+  <div class="sticky">
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-view="search">搜尋通路</button>
+      <button role="tab" aria-selected="false" data-view="plans">方案總覽</button>
+      <button role="tab" aria-selected="false" data-view="acts">加碼活動</button>
+    </div>
+    <div class="controls">
+      <div class="searchbox" id="searchRow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="例如：蝦皮、7-11、全聯、Netflix、日本" autocomplete="off" aria-label="搜尋店家或通路">
+        <button id="clear" aria-label="清除搜尋" hidden>✕</button>
+      </div>
+      <div class="row">
+        <span class="lbl">我的等級</span>
+        <div class="seg" id="lv">
+          <button data-lv="0" aria-pressed="false">L1</button>
+          <button data-lv="1" aria-pressed="true">L2</button>
+          <button data-lv="2" aria-pressed="false">L3</button>
+        </div>
+        <label class="toggle"><input type="checkbox" id="bday">本月是我生日</label>
+        <label class="toggle"><input type="checkbox" id="kids">符合童樂匯資格</label>
+      </div>
+      <div class="cats" id="cats" aria-label="類別篩選"></div>
+    </div>
+  </div>
+
+  <main>
+    <section id="v-search"></section>
+    <section id="v-plans" hidden></section>
+    <section id="v-acts" hidden></section>
+  </main>
+
+  <footer>
+    <div>資料來源</div>
+    <ul>
+      <li><a href="https://www.cathay-cube.com.tw/cathaybk/personal/product/credit-card/cards/cube-list" target="_blank" rel="noopener">國泰世華 CUBE卡權益方案（官網）</a>：各方案通路、使用提醒、注意事項</li>
+      <li><a href="https://www.cathaybk.com.tw/cathaybk/promo/event/credit-card/product/japanrewards/index.html" target="_blank" rel="noopener">國泰世華《秋日遊》活動網頁（官網）</a></li>
+    </ul>
+    <div>通路與回饋以刷卡簽單上的特店名稱、國泰世華官網及 CUBE App 公告為準。分期付款僅 0.3%。</div>
+  </footer>
+</div>
+
+<script>
+/* ===== 資料 ===== */
+const CATS = {
+  ai:"AI・串流", eshop:"網購", dept:"百貨商場", dining:"餐飲", delivery:"外送", drug:"藥妝",
+  travel:"旅遊住宿", air:"航空", transport:"交通", overseas:"海外・日本", cvs:"超商",
+  market:"量販超市", car:"加油・充電・停車", ent:"娛樂", kids:"親子", fee:"保費・學費", life:"生活其他"
+};
+const L = "L"; // 依等級：L1 2%、L2 3%、L3 3.3%
+const LEVEL_RATES = [2, 3, 3.3];
+
+const PLANS = [
+{ id:"autumn", name:"秋日遊", color:"#ff8a3d", start:"2026-10-01", end:"2026-11-30", sum:"3%~8%",
+  notes:["自2024年2月1日起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"日本必逛＋遊日必備之指定消費", cat:"overseas", r:3.5, items:["日本實體消費",{n:"愛電王實體門市",a:"edion"},{n:"大丸百貨福岡天神店",a:"daimaru"},{n:"MITSUI OUTLET PARK實體商場",a:"三井"},{n:"台場DiverCity Tokyo Plaza"},{n:"BicCamera集團實體門市",a:"bic camera 必酷"},{n:"Apple錢包指定交通卡(Suica 、PASMO、ICOCA)",a:"西瓜卡 suica pasmo icoca"},{n:"GO Taxi App(預約叫車平台)",a:"計程車 taxi"}]},
+  {t:"日本四大機場指定免稅店", cat:"overseas", r:4, items:["成田機場指定免稅店 (Fa-So-La DUTY FREE、JAPAN DUTY FREE、JAL DUTYFREE)","關西機場指定免稅店 (KIX DUTY FREE、TRK ARRIVAL Duty Free Shop、關西旅日記)","新千歲機場指定免稅店(New Chitose Airport Duty Free Shop)","福岡機場免稅店 (FUKUOKA AIRPORT DUTYFREE SHOP)"]},
+  {t:"日本IP專賣店 / 人氣愛店 / 餐廳預約平台", cat:"overseas", r:5, note:["1.上述商店限定地點為日本之實體門市，不包含百貨及商場門市、店中櫃、非常態之期間限定快閃店、禮品卡購買或儲值、第三方支付平台及及線上購物消費及線上預訂商品現場取貨等經本行公告排除之項目。", "2.餐廳預約平台回饋僅適用訂位餐廳並於平台實際付款之交易(如平台系統使用費、訂位相關線上預付扣等)；餐費是否需預付及實際支付方式依各餐廳及平台規定。回饋不包含僅完成依訂位未付款、現場支付餐費、取消訂位退餐廳、自行收款及所有餐廳預訂平台完成交易之及其他非指定金額。", "3.優惠通路請依刷卡簽單或 CUBE App 消費資訊中所示商家資訊為準，非以餐廳名稱含依據。"], items:[{n:"寶可夢中心 5家指定門市",a:"pokemon"},{n:"SANRIO 三麗鷗 14家指定門市",a:"sanrio 凱蒂貓"},"KIDDY LAND 6家指定門市",{n:"UNIQLO實體門市",a:"uniqlo 優衣庫"},"Alpen GROUP實體門市","ABC-MART實體門市","Loft實體門市","3COINS 15家指定門市",{n:"Tabelog",a:"食べログ"},"TableCheck","OMAKASE"]},
+  {t:"海外旅遊規劃 ( 機票、訂房、行程)", cat:"travel", r:5, items:["Klook 指定日本商品",{n:"Hotels.com 專屬網頁訂房"},{n:"Expedia 專屬網頁訂房"}]},
+  {t:"海外旅遊規劃 ( 機票、訂房、行程)", cat:"travel", r:3.5, items:[{n:"國泰航空",a:"cathay pacific"},{n:"台灣虎航",a:"tigerair"},"Agoda","KKday",{n:"ezTravel易遊網",a:"易遊網"},"可樂旅遊","東南旅遊","Club Med"]},
+  {t:"海外旅遊規劃 ( 機票、訂房、行程)", cat:"travel", r:3, note:["1.當您訂購旅遊商品(如國內外訂房、旅行社預訂飯店及行程)時，若採先訂後付或到店付款等支付方式，飯店可能會進行信用卡預授權，此時飯店還不會進行實際信用卡扣款交易，請務必留意需於飯店實際扣款當日切換為「秋日遊」權益方案，若實際扣款當日未切換為「秋日遊」權益，將導致該筆消費不適用「秋日遊」回饋方案，恕無法再以任何形式要求追溯或提供該筆刷卡金額之小樹點(信用卡)回饋。", "2.訂房平台若選擇到店付款，可能會以「飯店、住宿」認列進行信用卡扣款交易，消費會不適用「秋日遊」權益。消費回饋依據特約商店與收單機構登入之特約商店名稱判斷，優惠通路依刷卡簽單或CUBE App消費資訊中所示商家資訊為準，非以發票上列示之商家名稱為依據。", "3.國泰航空、台灣虎航回饋僅包含「臨櫃、官網、App購票」，不包含「機上免稅商品」、「機場商店」、「貴賓室」、「哩程數」、「套裝行程」、「以哩程數全數或部份兌換機票之附加費用(包含但不限於升等/行李/稅/費用或其他)」等非購買機票之消費。"], items:["Trip.com","Klook"]},
+  {t:"國內日系質感飯店", cat:"travel", r:5, note:["1.限交易地點為臺灣之上述指定飯店消費，不包含同品牌於其他國家或地區之飯店、餐廳或其他通路消費。", "2.透過訂房平台、旅行社或其他第三方通路完成付款之交易，若非以活動指定飯店名稱請款，恕不適用本活動回饋。", "3.住宿請依飯店實際訂房情況為準，恕不保證訂房。如採先訂後付款、到店付款或其他非訂房即可完成扣款之付款方式，回饋資格以實際信用卡交易授權日為準，持卡人須於實際授權當日切換為「秋日遊」權益方案。", "4.消費依據特約商店與收單機構登錄之特約商店名稱判斷。優惠通路依刷卡簽單或CUBE App消費資訊中所示商家資訊為準，非以飯店訂房名稱、發票或收據上列示之商家名稱為依據。"], items:["JR東日本大飯店 台北","礁溪寒沐酒店(住宿)","索拉利亞西鐵飯店台北西門","台北大倉久和大飯店","日勝生加賀屋國際溫泉飯店"]},
+  {t:"國內日系購物名店", cat:"life", r:8, items:["HANDS 台隆手創館 南港Lalaport店"]},
+  {t:"國內日系購物名店", cat:"life", r:5, items:["明曜百貨",{n:"台灣DON DON DONKI 唐吉訶德",a:"唐吉訶德 donki"},"Xpark水生公園","UNITED ARROWS LTD.官方購物網站"]},
+  {t:"國內日系購物名店", cat:"dept", r:3.5, items:[{n:"遠東SOGO (含Garden City大巨蛋)",a:"sogo 崇光"},"日藥本舖指定門市"]},
+  {t:"國內日系購物名店", cat:"life", r:3, note:["1.上述通路消費之交易地點僅限台灣，不包含其他海外地區的品牌/通路消費，且部份品牌回饋不適用設立於百貨、飯店、車站及商場內等門市。", "2.國內百貨回饋資格係以刷卡簽單上之特店名稱認定，不包含店中櫃，如：無印良品｜UNIQLO｜GU｜Gap｜H&M｜ZARA｜lululemon...等。請依刷卡簽單或CUBE App消費資訊中查看，非以發票上列示之商家名稱為依據。", "例如：SOGO內之全家便利超商為百貨公司店中櫃，簽單上之特店名稱為：Family Mart，故不符合【秋日遊】指定消費回饋。", "3.UNIQLO網路商店、GU台灣網路商店、UNITED ARROWS LTD.官方購物網站：回饋加碼僅適用品牌台灣官方網路商店並使用CUBE信用卡輸入卡號刷卡交易。"], items:[{n:"UNIQLO網路商店/直營店",a:"uniqlo 優衣庫"},"GU台灣網路商店",{n:"MITSUI OUTLET PARK(林口、台中港、台南)",a:"三井 outlet"},{n:"Mitsui Shopping Park LaLaport(南港、台中)",a:"lalaport 三井"}]},
+  {t:"國內日系美食饗宴", cat:"dining", r:8, items:["橘色涮涮屋 (一館|二館|台中館)","Extension 1 by橘色","雞湯桑指定門市","朝炭 (含官網訂位)","初魚鮨 (限官網訂位與指定門市)","初魚 鉄板料亭 (限官網訂位與指定門市)","作 天麩羅．割烹 (限官網訂位)","濟安鮨日本料理","侍燒肉","梵燒肉","元一天婦羅","鳥苑","燒鳥すみか","山崎","成蔵"]},
+  {t:"國內日系美食饗宴", cat:"dining", r:5, items:["爭鮮迴轉壽司","爭鮮PLUS","錢都日式涮涮鍋",{n:"客美多咖啡",a:"komeda"},{n:"すき家 SUKIYA",a:"sukiya 食其家"},{n:"必勝客",a:"pizza hut"}]},
+  {t:"國內日系美食饗宴", cat:"dining", r:3.5, note:["1.僅限地點為台灣之指定餐飲消費，不包含其他海外地區之品牌/通路消費。", "2.回饋不適用設置於百貨、商場（含車站商場、美食街、國道服務區美食街）等實體門市。", "3.透過inline訂位或外帶之刷卡消費(含訂金/餐費等)不適用本活動回饋，且於inline上付款的費用不可至現場退換刷。"], items:[{n:"摩斯漢堡(APP+實體店)",a:"mos"},{n:"台灣壽司郎",a:"sushiro 壽司郎"}]}
+  ]},
+
+{ id:"digital", name:"玩數位", color:"#3fa9f5", start:"2026-01-01", end:"2026-12-31", rate:L, sum:"2%／3%／3.3%",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"AI工具", cat:"ai", r:L, items:[{n:"ChatGPT",a:"openai gpt"},"Canva","Claude","Cursor","Duolingo","Gamma","Gemini","Notion","Perplexity","Speak"]},
+  {t:"數位/串流平台", cat:"ai", r:L, items:["Apple 媒體服務","Google Play","Disney+","Netflix","Spotify",{n:"YouTube Premium",a:"yt youtube"},{n:"Max",a:"hbo"}]},
+  {t:"網購平台", cat:"eshop", r:L, items:[{n:"蝦皮購物",a:"shopee"},"momo購物網",{n:"PChome 24h購物(不含儲值及電子票券)",a:"pchome"},"小樹購(不含電子票券)"]},
+  {t:"國際電商", cat:"eshop", r:L, items:[{n:"Coupang 酷澎(台灣)",a:"酷澎 coupang"},{n:"淘寶/天貓",a:"taobao"}]}
+  ]},
+
+{ id:"dine", name:"樂饗購", color:"#5b4fd6", start:"2026-01-01", end:"2026-12-31", rate:L, sum:"2%／3%／3.3%",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"國內指定百貨", cat:"dept", r:L, note:["使用提醒：國內百貨回饋資格係以刷卡簽單上之特店名稱認定，不包含店中櫃，如：無印良品｜UNIQLO｜GU｜Gap｜H&M｜ZARA｜lululemon...等。請依刷卡簽單或CUBE App消費資訊中查看，非以發票上列示之商家名稱為依據。", "例如：台北101之APPLE STORE為百貨公司店中櫃，簽單上之特店名稱為：APPLE STORE，故不符合【樂饗購】指定消費回饋。"], items:[{n:"遠東SOGO百貨",a:"sogo 崇光"},"遠東Garden City",{n:"新光三越",a:"skm"},"遠東百貨","台北101","BELLAVITA","微風廣場","統一時代台北店(不含DREAM PLAZA)","誠品生活","ATT 4 FUN","京站","美麗華","NOKE忠泰樂生活","大葉高島屋",{n:"Mitsui Shopping Park LaLaport(南港、台中)",a:"lalaport 三井"},"宏匯廣場","台茂購物中心","大江國際購物中心","Big City遠東巨城購物中心","中友百貨","廣三SOGO","南紡購物中心","耐斯廣場","夢時代","漢神百貨","漢神巨蛋","新月廣場","CITYLINK","秀泰生活","環球購物中心","太平洋百貨","華泰名品城","SKM Park",{n:"MITSUI OUTLET PARK(林口、台中港、台南)",a:"三井 outlet"}]},
+  {t:"國內外送平台", cat:"delivery", r:L, items:[{n:"Uber Eats",a:"ubereats"},{n:"foodpanda",a:"熊貓"}]},
+  {t:"國內餐飲", cat:"dining", r:L, note:["1. 本活動回饋適用範圍涵蓋透過聯合信用卡中心小額支付平台收費之餐廳，如：早餐店－拉亞漢堡 | 咖啡店－% Arabica咖啡、黑沃咖啡 | 連鎖速食店－SUBWAY | 手搖飲－50嵐、麻古茶坊 | 小型餐飲－六扇門時尚湯鍋、八方雲集。", "2. 限選定「樂饗購」權益方案，方可獲指定消費回饋，選定其他方案則不予回饋。"], items:[{n:"國內餐飲(不含餐券)",a:"餐廳 吃飯 飲料 咖啡 星巴克 starbucks 拉亞漢堡 arabica 黑沃咖啡 subway 50嵐 麻古茶坊 六扇門 八方雲集"},{n:"連鎖速食－麥當勞",a:"mcdonald 麥當當"}]},
+  {t:"國內藥妝", cat:"drug", r:L, items:[{n:"康是美",a:"cosmed"},{n:"屈臣氏",a:"watsons"}]}
+  ]},
+
+{ id:"travel", name:"趣旅行", color:"#00b3a4", start:"2026-01-01", end:"2026-12-31", rate:L, sum:"2%／3%／3.3%",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"指定海外消費", cat:"overseas", r:L, items:[{n:"海外實體消費(含國外餐飲、飯店到店付款等)",a:"國外 出國 日本 韓國 泰國 歐洲 美國"}]},
+  {t:"日本指定遊樂園", cat:"overseas", r:L, items:[{n:"東京迪士尼樂園",a:"disney"},"東京華納兄弟哈利波特影城",{n:"大阪環球影城(USJ)",a:"usj universal"}]},
+  {t:"指定國內外交通", cat:"transport", r:L, note:["使用提醒：國內交通僅限短程叫車服務，不含「長租車」、「機場接送」、「代駕服務」、「企業長租」、「訂閱租賃」、「中古車租賃」等消費。"], items:[{n:"Apple錢包指定交通卡 (SUICA 、PASMO、ICOCA)",a:"西瓜卡 suica"},"Uber","Grab",{n:"台灣高鐵",a:"高鐵 thsr"},"yoxi","台灣大車隊","iRent","和運租車","格上租車"]},
+  {t:"指定航空公司", cat:"air", r:L, note:["使用提醒：係指以信用卡刷卡購買之指定國內外航空公司機票(限航空公司臨櫃、官網購票或航空公司APP，不含旅行社、線上旅遊平台、旗下子公司購票)，且不包含「機上免稅商品」、「機場商店」、「貴賓室」、「哩程數」、「套裝行程」、「以哩程數全數或部份兌換機票之附加費用(包含但不限於升等/行李/稅/費用或其他)」等非購買機票之消費。"], items:[{n:"中華航空",a:"華航 china airlines"},{n:"長榮航空",a:"eva"},{n:"星宇航空",a:"starlux"},{n:"台灣虎航",a:"tigerair"},{n:"國泰航空",a:"cathay pacific"},{n:"樂桃航空",a:"peach"},"阿聯酋航空",{n:"酷航",a:"scoot"},"捷星航空",{n:"日本航空",a:"jal 日航"},{n:"ANA全日空",a:"ana"},"亞洲航空","聯合航空","新加坡航空","越捷航空","大韓航空","達美航空","土耳其航空","卡達航空","法國航空"]},
+  {t:"指定飯店住宿", cat:"travel", r:L, note:["使用提醒：係指於指定飯店集團臨櫃、官網以信用卡刷卡付款之訂房(不包含於旅行社預訂飯店或透過飯店官網同時訂購機+酒、樂園套票等產品，如欲於旅行社訂購飯店住宿相關商品，請參考列表中指定旅行社進行消費)，且符合依收單機構所設定登錄之住宿相關分類代碼 (MCC code為3500~3999、7011、7012、7032、7033)。倘因該特約商店登錄於收單機構之代碼與其營業項目不相符，導致未能正確判斷消費，則不列入本回饋計算。"], items:[{n:"國內飯店住宿",a:"飯店 住宿 旅館"},"星野集團","全球迪士尼飯店","東橫INN"]},
+  {t:"指定旅遊/訂房平台", cat:"travel", r:L, note:["使用提醒：", "1. 當您訂購旅遊商品(如國內外訂房、旅行社預訂飯店及行程)時，若採先訂後付或到店付款等支付方式，飯店可能會進行信用卡預授權，此時飯店還不會進行實際信用卡扣款交易，請務必留意需於飯店實際扣款當日切換為【趣旅行權益方案】。", "2. Agoda、Airbnb、Booking.com、Trip.com等海外訂房平台進行訂房時，可能會有海外交易授權時間差問題，導致實際信用卡延遲授權或延遲扣款交易，且依各平台而有所不同，非本行系統原因所致，建議延長切換【趣旅行權益方案】時間。", "3. 訂房平台若選擇到店付款，可能會以”飯店住宿”權益進行信用卡扣款交易，消費會不適用”訂房平台”權益。"], items:["KKday","Klook","Agoda","Airbnb","Booking.com","Trip.com",{n:"ezTravel易遊網",a:"易遊網"}]},
+  {t:"指定旅行社", cat:"travel", r:L, note:["使用提醒：「國內旅行社」係指於下列指定旅行社(限直營)以信用卡刷卡購買之旅遊商品，不包含加盟店、旗下子公司之消費。"], items:["雄獅旅遊","可樂旅遊","東南旅遊","五福旅遊","燦星旅遊","山富旅遊","長汎假期","鳳凰旅行社","Ezfly易飛網","理想旅遊","永利旅行社","三賀旅行社"]}
+  ]},
+
+{ id:"select", name:"集精選", color:"#8bc34a", start:"2026-01-01", end:"2026-12-31", rate:2, sum:"2%",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"充電站", cat:"car", r:2, note:["充電站消費回饋包含指定商戶透過綠界、藍新支付平台之交易。"], items:["U-POWER","EVOASIS","EVALUE","TAIL","iCharging"]},
+  {t:"停車費", cat:"car", r:2, items:["車麻吉(不含加油、充電)","uTagGo(不含月租停車)"]},
+  {t:"量販超市", cat:"market", r:2, items:[{n:"萬家福(樂家康)",a:"家樂福 carrefour"},"LOPIA台灣",{n:"全聯福利中心 實體門市(不含大全聯)",a:"px pxpay"}]},
+  {t:"指定加油", cat:"car", r:2, items:[{n:"台灣中油-直營站",a:"中油 cpc 加油"}]},
+  {t:"指定超商", cat:"cvs", r:2, items:[{n:"7-ELEVEN (7-11) 實體門市",a:"711 7-11 小七 seven"},{n:"全家便利商店 實體門市",a:"familymart 全家"}]},
+  {t:"生活家居", cat:"life", r:2, items:["IKEA宜家家居"]}
+  ]},
+
+{ id:"fpg", name:"台塑家", color:"#e5383b", start:"2026-06-01", end:"2026-12-31", rate:2, sum:"2%",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"加油站", cat:"car", r:2, note:["使用提醒：本活動回饋限以台塑石油、台亞、福懋、統一速邁樂(限本島)等指定台塑加油站，且須以實體CUBE信用卡或將CUBE信用卡綁定於Apple Pay/Samsung Pay/Google Pay/台塑石油Pay/Garmin Pay支付，排除網路交易、儲值卡、錢包儲值交易、電子支付及第三方支付綁卡掃碼付款交易(例如：icash Pay、街口支付、LINE Pay、台灣Pay、悠遊付、OPEN錢包、Pi拍錢包、橘子支付、支付寶等)。"], items:[{n:"台塑石油加油站",a:"台塑 加油"},"台亞加油站","福懋加油站","統一速邁樂(限本島)加油站"]},
+  {t:"健康生活", cat:"life", r:2, note:["使用提醒：回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。"], items:["台塑生醫實體門市","長庚生技實體門市","台塑蔬菜實體門市","台塑購物網"]},
+  {t:"指定超商", cat:"cvs", r:2, items:[{n:"7-ELEVEN (7-11) 實體門市",a:"711 7-11 小七 seven"},{n:"全家便利商店 實體門市",a:"familymart 全家"},{n:"萊爾富實體門市",a:"hilife"}]}
+  ]},
+
+{ id:"pxpay", name:"全支付", color:"#ffc400", start:"2026-04-22", end:"2026-12-31", rate:2, sum:"2%", req:"pxpay",
+  notes:["（選定「全支付」方案並以全支付綁定CUBE信用卡刷卡消費，方可獲指定消費回饋）", "自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"量販超市", cat:"market", r:2, items:[{n:"全聯福利中心",a:"px 小時達 全電商 分批取"},"大全聯"]},
+  {t:"全支付國內通路", cat:"life", r:2, note:["以下消費品項不列入本活動回饋計算：全支付刷卡繳稅、繳費、跨境支付及全支付儲值（含信用卡儲值、現金儲值、銀行帳戶儲值等）、公益捐款及乘車碼服務、菸酒、代收代售、一歲以下嬰兒奶粉、購買紙本/電子禮券、福利卡兌換或加贈商品、官網/賣場/DM標示或公告之指定排除商品等消費，以及排除全支付所公告不適用之消費項目。"], items:["全支付國內合作通路"]}
+  ]},
+
+{ id:"fixed", name:"固定回饋", color:"#9aa4bb", start:"2026-08-03", end:"2026-12-31", sum:"1.2% / 2.5%", req:"fixed",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
+  groups:[
+  {t:"一般消費(不含保費)", cat:"life", r:1.2, items:["一般消費 (不含保費)"]},
+  {t:"指定海外消費", cat:"overseas", r:2.5, items:["海外實體消費(含國外餐飲、飯店到店付款等)"]}
+  ]},
+
+{ id:"bday", name:"慶生月", color:"#ff5fa2", start:"2026-10-01", end:"2026-12-31", sum:"3.5% / 5% / 10%", req:"bday",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。", "全新登場「慶生月揪團派對」，達任務每隊抽3千點小樹點(信用卡)", "團體賽 全新登場「慶生月揪團派隊」活動期間：2026/10/1~12/31 限定三名生日為10~12月之CUBE信用卡正卡持卡人組成團隊，三位團隊成員之CUBE信用卡於指定期間內「慶生月」指定通路加總消費金額達5,000元，即可參與「好運獎」抽獎活動；累積消費金額前十名之團隊，可再參與「彩蛋獎」抽獎活動。", "個人賽 「慶生月踩點吉章」壽星於生日當月，任一子任務完成一筆消費達NT$500(含)以上可集一章，達成三項子任務集滿三章享200點小樹點(信用卡)。"],
+  groups:[
+  {t:"口碑名店聚餐首選，熱鬧慶生", cat:"dining", r:10, note:["1.回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.不適用設立於百貨、飯店及商場內等實體門市。不適用透過 inline 刷卡消費支付。"], items:["大腕燒肉","茶六燒肉堂","老井極上燒肉","屋馬燒肉","鼎王麻辣鍋","無老鍋","老四川巴蜀麻辣燙","詹記麻辣火鍋"]},
+  {t:"中西式佳餚、火鍋， 豐富美味", cat:"dining", r:10, note:["1.回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.不適用設立於百貨、飯店及商場內等實體門市。不適用透過 inline 刷卡消費支付。"], items:["青沐","所 SUO","嵩 sung","JAI 宅","新東南海鮮餐廳","龍都酒樓","吉品海鮮餐廳","老新台菜","輕井澤鍋物","湯棧"]},
+  {t:"主廚演繹料理魅力， 沉浸感動", cat:"dining", r:10, note:["1.回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.不適用設立於百貨、飯店及商場內等實體門市。不適用透過 inline刷卡消費支付。"], items:["Hābu小餐館「榮獲2026米其林一星」","空盤 KOMBOI","野驢小餐館","肉料理福"]},
+  {t:"精選人氣餐廳及甜點咖啡", cat:"dining", r:10, note:["1.回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.不適用設立於百貨、飯店及商場內等實體門市。不適用透過 inline 刷卡消費支付。"], items:[{n:"台灣壽司郎",a:"sushiro 壽司郎"},"UNCLE SHAWN 燒肉餐酒館","UNCLE RAY串燒·牛飲·咖喱 台中店","蜀叔麻辣鍋 台北店","Pastaio","Pastaio noodle cafe","小方舟串燒酒場","毛丼丼飯專門店","毛房蔥柚鍋．冷藏肉專門","毛蔬亞洲蔬食","法國的秘密甜點(大安店/官網)","法朋烘焙甜點坊(門市/官網)","Miss V Bakery(門市/官網)","興波咖啡 華山旗艦店/南港展覽館店"]},
+  {t:"日本指定樂園、遊戲及旅遊時光", cat:"ent", r:10, note:["日本指定遊樂園實體消費：東京迪士尼樂園 大阪環球影城(USJ)"], items:[{n:"東京迪士尼樂園",a:"disney"},{n:"大阪環球影城(USJ)",a:"usj universal"},{n:"PlayStation",a:"ps5 sony"},{n:"Nintendo",a:"任天堂 switch"},"巴哈姆特動畫瘋"]},
+  {t:"日本指定樂園、遊戲及旅遊時光", cat:"travel", r:3.5, items:["Klook"]},
+  {t:"歌聲暢快身心及 都會享樂體驗", cat:"ent", r:10, items:["錢櫃KTV","好樂迪KTV","星聚點KTV","享溫馨KTV"]},
+  {t:"歌聲暢快身心及 都會享樂體驗", cat:"ent", r:5, items:["FunNow"]},
+  {t:"購物盡興外送便利，增添精彩", cat:"dept", r:3.5, items:[{n:"新光三越 (不含SKM Park Outlets 高雄草衙)",a:"skm"}]},
+  {t:"購物盡興外送便利，增添精彩", cat:"delivery", r:3.5, items:[{n:"Uber Eats",a:"ubereats"}]}
+  ]},
+
+{ id:"kids", name:"童樂匯", color:"#7ed6df", start:"2026-07-01", end:"2026-12-31", sum:"1% / 5% / 10%", req:"kids",
+  notes:["自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。", "立即解鎖最高10%回饋，再享每月5次臺幣跨轉免手續費優惠！", "解鎖期間：2026/7/1 - 11/20，每月20日(含)前客戶須符合以下2項條件，次月1日起可切換至童樂匯。．條件一：客戶與其未成年子女須持有本行帳戶。． 條件二：客戶須持有有效CUBE信用卡正卡。", "1.活動適用未成年子女年齡僅限2008/6/1以後出生。", "2.客戶須登記為未成年開戶時所須之法定代理人/監護人。", "3.客戶及其未成年子女須為本行有效存戶(不得為警示帳戶、受裁處告誡等)。", "4.跨轉優惠使用限制：(1) 限於國泰世華CUBE網銀或CUBE App執行臺幣跨行轉帳交易使用，其他通路恕無法適用。(2) 每月跨轉優惠次數僅限當月6日至次月5日期間使用，該期間未使用之優惠次數，恕無法遞延至次月使用或轉讓。"],
+  groups:[
+  {t:"保費", cat:"fee", r:1, note:["1. 參加保費0利率分期之交易，不列入本活動回饋之計算範圍。", "2. 透過第三方支付(如街口支付、Line Pay、Pi錢包、歐付寶)繳保費不適用本活動。", "3. 若扣繳國泰人壽保費時超過可用額度，本行可依持卡人之信用及往來狀況同意臨時調高額度，恕不另行通知。", "4. 本活動保費回饋不包含國泰人壽躉繳保費、國泰人壽投資型及利率變動型年金保費、國泰人壽團體保險自費件，及國泰人壽2021年6月底前購買之傳統型商品保單所衍生之續期保費。"], items:["國內各大壽險公司保費","國內各大產險公司保費"]},
+  {t:"指定私校學費", cat:"fee", r:1, note:["1. 本活動僅適用於透過i繳費平台繳學費，恕不適用於其他管道刷卡繳交者。", "2.台北歐洲學校繳納學費須先透過學校家長專屬入口（TES AOS）操作，並依網站指引跳轉至 i 繳費專屬平台完成繳費。"], items:["台北美國學校","台北歐洲學校","台北市私立道明外僑學校","馬禮遜學校","康乃薾美國學校","台北私立立人國際國小","康橋國際學校","華盛頓小學","復興實驗高中","維多利亞雙語中小學","高雄美國學校"]},
+  {t:"親子餐廳", cat:"kids", r:5, note:["1.回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.不適用設立於百貨、飯店及商場內等實體門市。", "3.因「甲蟲秘境」通知將自2026/07/26起停止接受消費者以信用卡付款，本行僅依信用卡業務機構管理辦法第19條，故公告「甲蟲秘境」之回饋活動自2026/07/26起終止。"], items:[{n:"台灣壽司郎",a:"sushiro 壽司郎"},"雞湯大叔","陶板屋(限使用王品瘋Pay結帳)","YAYOI彌生軒(限街邊店)","大戶屋","大樹先生的家","Money Jump 媽妳講親子餐廳","小島3.5度親子餐廳"]},
+  {t:"親子育樂", cat:"kids", r:5, note:["1. 遊樂園購票：回饋限遊樂園現場或官網購票，不含旅行社/線上旅遊平台/其他通路購票。", "2.Xpark：回饋限於館內人工結帳櫃台之消費(不適用於線上購票及自動售票機)。"], items:["Klook",{n:"東京迪士尼樂園",a:"disney"},{n:"大阪環球影城(USJ)",a:"usj"},"麗寶樂園","六福村主題樂園","九族文化村","劍湖山世界主題樂園","義大遊樂世界","小叮噹科學園區主題樂園","Xpark","巧虎夢想樂園"]},
+  {t:"親子飯店", cat:"kids", r:5, note:["1.回饋限直接透過飯店官網訂購住宿，不適用於旅行社或其他訂房平台訂房。", "2.回饋項目不包含婚宴方案、館內附設餐廳費用、館內商場如outlet等消費。"], items:["台北喜來登大飯店","蘭城晶英酒店","台南晶英酒店","礁溪寒沐酒店","大溪笠復威斯汀度假酒店","煙波大飯店新竹湖濱館","麗寶福容大飯店","雲品溫泉酒店","和逸飯店(台南西門館、桃園館)","義大皇家酒店","高雄萬豪酒店","墾丁凱撒大飯店","花蓮遠雄悅來大飯店","瑞穗天合國際觀光酒店","六福莊","宜蘭礁溪鳳凰酒店","桃園名人堂花園大飯店"]},
+  {t:"母嬰用品店", cat:"kids", r:5, note:["1.回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.不適用設立於百貨、飯店及商場內等實體門市。", "3.一歲以下嬰幼兒奶粉及藥品不適用此活動。"], items:["卡多摩嬰童館","媽咪愛","樂兒屋","寶齡婦幼館/ 步步樂BuBuLuv","安琪兒婦嬰百貨","宜兒樂","麗兒采家","Taobaby濤寶日記","俏媽咪","媽媽好"]},
+  {t:"五感體驗課", cat:"kids", r:10, note:["1.限教學課程購買，不含展演門票、贊助捐款、教材、教具租借、場地租借等其他費用。", "2.Yamaha音樂教室：限台灣直營門市及揚昇石牌音樂教室。", "3.本行僅依信用卡業務機構管理辦法第19條，公告「朱宗慶打擊樂教學系統」之回饋活動自2026/9/11起終止。"], items:["雲門舞集舞蹈教室","Yamaha音樂教室","TutorABC Junior","Etalking Kids","iSKI滑雪俱樂部","汐游寶寶/風城游汐谷"]},
+  {t:"嬰幼童品牌官網", cat:"kids", r:10, note:["1.品牌回饋僅限於台灣官網之消費，不包含百貨商場內(如百貨公司、量販商場、車站商場、機場美食街)設立之店家。係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。", "2.含透過綠界支付平台之交易。", "3.一歲以下嬰幼兒奶粉及藥品不適用此活動。"], items:["10mois台灣官網","Mamas&Papas台灣官網","古北町台灣官網","Little Wonders台灣官網","Seahorse Originals台灣官網"]}
+  ]}
+];
+
+const GLOBAL_NOTES = ["CUBE卡權益如未敘明則適用期間為：2026/1/1~2026/12/31，詳依 CUBE卡權益方案頁面說明為準。", "方案每正卡人每日限變更一次 (固定回饋另依該權益方案注意事項說明)，附卡適用方案依正卡持卡人設定為準。", "方案設定自當日零時起之消費即依當次變更後之方案計算回饋，方案設定依本行系統紀錄之日期為準。(舉例：小華2026/1/10 17:00變更方案為「樂饗購」，且 2026/1/10 10:30 有一筆Uber消費、18:00 有一筆遠東SOGO百貨消費，則 2026/1/10 之所有消費 (包含 Uber 與遠東SOGO百貨) 皆依「樂饗購」方案計算回饋。)", "保費僅回饋0.3%小樹點(信用卡)且壽險保費不含國泰人壽之躉繳保費、投資型及利率變動型年金保費。", "CUBE App領取優惠券活動：參加本活動需於活動期間登入本行CUBE App之「CUBE優惠券專區」完成領取優惠券，且回饋計算將於活動領取日後(含當日)之新增消費方符合回饋計算。", "CUBE卡各項回饋若未敍明，則以小樹點(信用卡)回饋，其餘商家回饋點數，則依各商家或活動說明為準。", "小樹點(信用卡)點數價值為1點等值NT$1，CUBE卡於每筆消費請款入帳後，依該筆消費之授權日判斷適用權益方案、符合之優惠券，以各別回饋率計算小樹點(信用卡)並依小數點第一位四捨五入至整數位，並於次二日(遇假日順延)回饋至正卡人信用卡帳戶，實際回饋時間依本行作業時間為準。(舉例：小華2026/1/10 適用方案為「樂饗購」並權益分級為Level 2，且當日10:30有一筆雄獅旅行社消費NT$1,800，18:00有一筆新光三越消費NT$3,000。雄獅旅行社不屬「樂饗購」方案指定消費，因此屬一般消費，回饋率0.3%；新光三越於「樂饗購」方案中屬指定美食/購物消費，回饋率3%，小華分別獲得兩筆消費回饋5點、90點，詳細計算見下方表格；小明2026/1/15適用方案為「趣旅行」並權益分級為Level 2，且當日15:30有一筆Agoda授權NT$5,000，後續Agoda提供銀行之消費日為2026/1/20，而小明2026/1/20適用方案為「樂饗購」，則此筆交易本行收到授權日為2026/1/15，故以「趣旅行」計算回饋率，Agoda於「趣旅行」方案中屬指定旅遊/交通消費，回饋率3%，小明可獲得該筆消費回饋150點)\n*授權日為持卡人實際刷卡之日期，消費日為商家提供銀行之交易日期，惟部分商家授權日可能與實際刷卡消費日不同，如因此無法獲得加碼回饋，請洽本行客服處理。", "正附卡消費合併計算，小樹點(信用卡)回饋歸戶至正卡持卡人信用卡帳戶。", "消費折抵金以消費金額乘以回饋比率，四捨五入計算至整數位，於每筆消費請款入帳後計算，並於次三日 (遇假日順延) 回饋至正卡人信用卡帳戶，本行系統自動將該筆回饋金額折抵於原刷卡交易，實際回饋時間依本行作業時間為準。", "合作商戶點之點數以消費金額乘以回饋比率，四捨五入計算至整數位，將於活動結束後統一回饋至合作商戶會員帳戶，入點資訊請於活動結束後至合作商戶會員帳戶查詢，實際回饋時間依商戶作業時間為準。", "如有退貨將比對該筆退貨交易原始消費之適用權益方案，依該方案計算回饋後予以扣除，若商家退款交易資料不足以辨認原始消費之適用權益方案，則依一般消費計算扣除回饋。", "自2024/2/1起於特約商店分期付款消費不適用各權益方案之「指定消費」加碼回饋（含提前結清），如分期付款消費項目屬一般消費，則仍適用原一般消費0.3%回饋。2024/1/31(含)前特約商店分期付款消費分期仍適用權益方案「指定消費」回饋，於每期入帳後回饋至正卡人信用卡帳戶，消費日依帳單列示日期為準。", "自2026/1/1起，CUBE信用卡每月指定消費之累計消費金額以「消費日當日信用額度」加計新臺幣50萬元為限。持卡人因信用額度異動，致當月份有不同之消費日當日信用額度時，其調整後金額上限，不溯及適用至當月已核發小樹點(信用卡)之消費，超出此限額之消費如屬一般消費，仍適用一般消費0.3%回饋。正、附卡信用額度與溢繳金額合併計算。持卡人當月回饋之小樹點（信用卡）總額，以本行最終檢核之結果為準，持卡人同意本行得逕行扣回逾發之小樹點（信用卡）。若點數扣回作業執行時持卡人已將點數使用完畢，將改以1點小樹點(信用卡)等值NT$1之價值入信用卡帳單，持卡人仍應繳納。", "各權益方案之「指定消費」或「優惠券」消費，限直接使用CUBE卡刷卡或使用該卡加入Apple Pay /Samsung Pay/Google Pay/Garmin Pay消費，皆不含透過綠界支付平台、藍新支付平台、91APP或其它第三方支付平台之交易，亦不含透過綁定其他型態支付工具之消費(如：LINE Pay、街口支付、全盈+PAY、全支付、Pi錢包、橘子支付、歐付寶、icash pay、OPEN錢包、My FamiPay、悠遊付、ezPay、GOMAJI Pay、friday wallet、PayPal、支付寶等)。「指定消費」包含玩數位之指定線上消費、樂饗購之指定美食/購物消費、趣旅行之指定旅遊消費、集精選之指定品牌/生活消費包含OPEN錢包於超商消費、My FamiPay超商消費、 PX Pay店內消費，排除菸品、代收代售、禮券購買消費。", "各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。CUBE卡之「一般消費」係排除以下消費或費用：信用卡相關利息及費用(包含但不限於利息、年費、掛失費、預借現金手續費、違約金、國外交易手續費、調閱簽帳單手續費、補發帳單手續費等非消費款項)、預借現金、帳單分期、單筆消費分期(刷卡樂分期)、通信貸款、餘額代償金額及經本行公告除外之專案、稅款、學費、公用事業費用(包含但不限於網路通訊／影音服務等相關費用及附加費)、路邊停車費、公務機關各項費用、透過繳費平台（如公務機關信用卡繳費平台，含公務機關／國營事業／公立醫療院所等、電子化繳費稅處理平台、醫指付、本行CUBE網銀或CUBE App線上繳費服務)繳納之費用、代繳國泰人壽「躉繳」、「投資型」及「利率變動型年金」保單、代扣基金、悠遊卡加值、一卡通加值、icash加值、便利超商消費、透過聯合信用卡處理中心小額支付平台之特約商店之消費（如便利超商、連鎖速食店、停車費等）、全聯福利中心消費、大全聯消費（含實體門市與線上通路）、eTag儲值/eTag智慧停車費代扣繳、遠東SOGO百貨貴賓廳之消費金額、國壽不動產租金代收、未經主管機關核准之境外投資交易平台（包含但不限於eToro）、匯兌平台（包含但不限於Wise）、數位（虛擬）貨幣及旅行支票（包含但不限於MCC code為4829、6012、6211、6051）之交易、博奕類（包含但不限於MCC code為7995）之交易、其他經本行公告排除之項目。", "各權益方案之「指定消費」之消費回饋項目及注意事項依CUBE卡權益方案頁面說明為準；「優惠券」之適用通路及注意事項依優惠券頁面說明為準。", "持卡人於計算回饋時須持有效卡，且上一期無逾期未繳款之紀錄；若持卡人終止信用卡或遭停止使用信用卡權利、延滯繳款或其他違反信用卡約定條款等情事時，將喪失活動回饋資格。", "消費回饋之認定依本行系統為主，本行將依商店提供之交易說明比對，若因商店請款資料變更以致交易說明資訊和本行可判別之資訊不同，或上述回饋通路旗下商品之清算資料類別與本行認列之清算資料不同，導致未列入回饋計算(不包含各商家之排除項目)，請來電告知，本行將於確認後以個案方式提供回饋，且不另行通知，惟回饋恕不溯及既往。除本項說明項目之外，不符回饋通路者，不予個案回饋。", "持卡人於網路商店購物時，應注意是否為國外交易。凡「交易(含辦理退款)之貨幣非為新臺幣」，或「以新臺幣交易，惟特約商店登記國別碼非臺灣」，或「以新臺幣交易，惟特約商店所屬收單機構所在地非臺灣」皆為國外交易，將依信用卡國際組織之交易結匯日匯率換算為新臺幣，並須收取國外交易手續費，請參閱本行信用卡約定條款第十六條之約定。註：網頁以「tw」為網域名稱者，或於我國有設立分公司者，並非當然屬於我國境內特約商店，持卡人仍須注意是否為跨境交易；如無法辨識，建議於交易前先向商家確認後，再進行交易。", "若有任何因為電腦、網路、電話、技術或不可歸責於本行之事由，而使持卡人之交易紀錄有遺失、錯誤、無法辨識或毀損情況，本行不負任何法律責任，持卡人亦不得因此異議。", "若刷卡消費為虛偽不實套利之交易，經本行查證後將逕行扣回已回饋之小樹點(信用卡)，若點數扣除作業時持卡人已將點數使用完畢，將改以1點小樹點(信用卡)等值新台幣壹元之價值入信用卡帳單。", "本活動之相關活動辦法、未盡事項或變更，悉依本行/各合作店家規定及解釋為準。本行保留活動修改、變更及終止之權利，並於本行網站公告。", "本頁所稱CUBE卡為CUBE信用卡，不含CUBE簽帳金融卡。"];
+
+/* 加碼活動：type plan=需搭配方案、any=不限方案 */
+const ACTS = [
+  {t:"每週四外出用餐", rate:"5%", start:"2026-06-01", end:"2026-12-31",
+   d:"每週四外出用餐單筆滿NT$2,000可獲加碼優惠券5%小樹點(信用卡)", extra:"活動期間：2026/6/1~2026/12/31"},
+  {t:"CUBE美食家", rate:"10%", start:"2026-06-01", end:"2026-12-31",
+   d:"CUBE美食家單月餐廳消費滿NT$20,000可獲指定餐廳優惠券10%小樹點(信用卡)", extra:"活動期間：2026/6/1~2026/12/31　CUBE美食家消費累積期間：2026/5/1~2026/11/30"}
+];
+
+/* 同義詞：任一詞命中即擴充整組 */
+const SYN = [
+  ["7-11","711","7-eleven","小七","seven","統一超商"],
+  ["全家","familymart","family mart"],
+  ["萊爾富","hilife"],
+  ["全聯","px","pxpay"],
+  ["家樂福","carrefour","萬家福","樂家康"],
+  ["麥當勞","mcdonald","mcd"],
+  ["星巴克","starbucks"],
+  ["sogo","崇光","遠東sogo"],
+  ["壽司郎","sushiro"],
+  ["youtube","yt"],
+  ["chatgpt","gpt","openai"],
+  ["高鐵","thsr"],
+  ["唐吉訶德","donki","don don donki"],
+  ["迪士尼","disney"],
+  ["環球影城","usj","universal"],
+  ["uniqlo","優衣庫"],
+  ["中油","cpc"],
+  ["西瓜卡","suica"],
+  ["華航","中華航空"],
+  ["日航","日本航空","jal"]
+];
+
+/* ===== 工具 ===== */
+const $ = s => document.querySelector(s);
+const state = { view:"search", q:"", lv:1, bday:false, kids:false, cat:"all" };
+const DAY = 864e5;
+function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
+function pd(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
+function md(s){ const d=pd(s); return (d.getMonth()+1)+"/"+d.getDate(); }
+function status(start,end){
+  const t=today(), s=pd(start), e=pd(end);
+  if(t<s) return {k:"soon", txt:md(start)+" 開始", active:false};
+  if(t>e) return {k:"end", txt:"已結束", active:false};
+  const left=Math.round((e-t)/DAY)+1;
+  if(left<=31) return {k:"warn", txt:"剩 "+left+" 天", active:true};
+  return {k:"on", txt:"至 "+md(end), active:true};
+}
+function norm(s){
+  return String(s).toLowerCase()
+    .replace(/[\uff01-\uff5e]/g, c=>String.fromCharCode(c.charCodeAt(0)-0xfee0))
+    .replace(/[\s・·／\/（）()「」\-]/g,"");
+}
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function fmt(n){ return (Math.round(n*10)/10).toString(); }
+function rateOf(r){ return r===L ? LEVEL_RATES[state.lv] : r; }
+
+/* 攤平成可搜尋清單 */
+const ENTRIES = [];
+PLANS.forEach(p=>{
+  p.groups.forEach(g=>{
+    g.items.forEach(it=>{
+      const o = typeof it==="string" ? {n:it} : it;
+      ENTRIES.push({ plan:p, group:g, name:o.n, alias:o.a||"", boost:o.b||null, cat:g.cat,
+        hay: norm([o.n.replace(/不含[^）)]*/g,""), o.a||"", g.t].join(" ")) });
+    });
+  });
+});
+
+function terms(q){
+  const nq=norm(q); if(!nq) return [];
+  const set=new Set([nq]);
+  SYN.forEach(group=>{
+    const ng=group.map(norm);
+    if(ng.some(w=>w===nq)) ng.forEach(w=>set.add(w));
+  });
+  return [...set];
+}
+
+/* 標示：在原文中找出符合字串的位置（忽略「不含…」段落） */
+function markText(text, tq){
+  let ns="", map=[];
+  for(let i=0;i<text.length;i++){ for(const ch of norm(text[i])){ ns+=ch; map.push(i); } }
+  const skip=[]; text.replace(/不含[^）)]*/g,(m,off)=>{ skip.push([off,off+m.length]); return m; });
+  let rg=[];
+  tq.forEach(t=>{ if(!t) return; let k=ns.indexOf(t);
+    while(k!==-1){ const a=map[k], b=map[k+t.length-1]+1;
+      if(!skip.some(([x,y])=>a<y&&b>x)) rg.push([a,b]); k=ns.indexOf(t,k+1); } });
+  if(!rg.length) return {html:esc(text), found:false};
+  rg.sort((x,y)=>x[0]-y[0]); const mg=[rg[0].slice()];
+  rg.slice(1).forEach(r=>{ const l=mg[mg.length-1]; if(r[0]<=l[1]) l[1]=Math.max(l[1],r[1]); else mg.push(r.slice()); });
+  let out="", pos=0;
+  mg.forEach(([a,b])=>{ out+=esc(text.slice(pos,a))+"<mark>"+esc(text.slice(a,b))+"</mark>"; pos=b; });
+  return {html:out+esc(text.slice(pos)), found:true};
+}
+/* 判斷某通路是否符合搜尋，以及符合方式：text 名稱文字、alias 別名、group 類別名稱 */
+function matchInfo(name, alias, gt, tq){
+  if(!tq.length) return null;
+  const nName=norm(name.replace(/不含[^）)]*/g,""));
+  if(nName.includes(tq[0])) return "text";
+  if(tq.some(t=>nName.includes(t))) return "syn";
+  if(alias && tq.some(t=>norm(alias).includes(t))) return "alias";
+  if(tq.some(t=>norm(gt).includes(t))) return "group";
+  return null;
+}
+const HOW_TXT={syn:"別名相符", alias:"別名相符", group:"類別相符"};
+
+function eligible(p){
+  if(p.req==="bday" && !state.bday) return {ok:false, why:"限生日當月"};
+  if(p.req==="kids" && !state.kids) return {ok:false, why:"需童樂匯資格"};
+  return {ok:true};
+}
+
+/* ===== 卡面配色（僅視覺） ===== */
+const SKIN={autumn:["#f7971e","#b3261e"],digital:["#2b5cff","#7a3cff"],dine:["#8e2de2","#d63384"],travel:["#00a99d","#1d5fd8"],
+  select:["#4caf50","#0b6b4f"],fpg:["#e53935","#6d0f1f"],pxpay:["#e0a800","#d9480f"],fixed:["#8e9eab","#353f4b"],bday:["#ff6a88","#b0124f"],kids:["#3cc8a8","#1a5a9c"]};
+function skin(p){ const g=SKIN[p.id]||["#666","#222"]; return `--g1:${g[0]};--g2:${g[1]}`; }
+function mdp(s){ const d=pd(s); return String(d.getMonth()+1).padStart(2,"0")+"/"+String(d.getDate()).padStart(2,"0"); }
+const NFC=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8.5 8.5a5 5 0 0 1 0 7"/><path d="M12 6a8.5 8.5 0 0 1 0 12"/><path d="M15.5 3.5a12 12 0 0 1 0 17"/></svg>`;
+function reqLabel(p){ return p.req==="bday"?"限生日當月": p.req==="kids"?"需童樂匯資格": p.req==="pxpay"?"須以全支付付款": p.req==="fixed"?"切換規則依官網注意事項":""; }
+function cardFace(p,o={}){
+  const st=status(p.start,p.end);
+  const rate = o.rate!=null ? o.rate : (p.rate===L ? fmt(LEVEL_RATES[state.lv])+"%" : p.sum);
+  const pills=[];
+  if(o.hits) pills.push(`<span class="pill hit">符合 ${o.hits} 筆</span>`);
+  if(st.k==="warn"||st.k==="end"||st.k==="soon") pills.push(`<span class="pill">${st.txt}</span>`);
+  if(o.showReq!==false && reqLabel(p)) pills.push(`<span class="pill">${reqLabel(p)}</span>`);
+  return `<div class="cface${st.active?"":" expired"}" style="${skin(p)}">
+    <div class="cf-top"><span class="cf-name">${esc(p.name)}</span><span class="cf-brand">CUBE</span></div>
+    <div class="cf-mid"><span class="chip"></span>${NFC}</div>
+    ${o.lines? `<div class="cf-lines">${o.lines}</div>` : ""}
+    <div class="cf-bot"><span class="cf-valid"><small>VALID</small>${mdp(p.start)} – ${mdp(p.end)}</span>
+      <span class="cf-rate" style="font-size:clamp(1.9rem,8vw,2.6rem)">${esc(rate)}</span></div>
+    ${pills.length?`<div class="cf-pills" style="position:absolute;top:50px;right:18px">${pills.join("")}</div>`:""}
+  </div>`;
+}
+
+/* ===== 搜尋畫面 ===== */
+function renderSearch(){
+  const box=$("#v-search");
+  const tq=terms(state.q);
+  let list=ENTRIES.filter(e=> state.cat==="all" || e.cat===state.cat);
+  if(tq.length) list=list.filter(e=>tq.some(t=>e.hay.includes(t)));
+  else if(state.cat==="all"){ box.innerHTML=introHTML(); bindQuick(); return; }
+
+  const rows=list.map(e=>{
+    const st=status(e.plan.start,e.plan.end), el=eligible(e.plan);
+    return {...e, st, el, rate:rateOf(e.group.r), usable: st.active && el.ok};
+  }).sort((a,b)=> (b.usable-a.usable) || (b.rate-a.rate) || a.name.localeCompare(b.name,"zh-Hant"));
+
+  let html="";
+  const top=rows.find(r=>r.usable);
+  if(tq.length && top){
+    const best=rows.filter(r=>r.usable && r.rate===top.rate), byPlan=new Map();
+    best.forEach(r=>{ if(!byPlan.has(r.plan)) byPlan.set(r.plan,[]); byPlan.get(r.plan).push(r.name); });
+    const cards=[...byPlan].map(([pl,names])=>cardFace(pl,{rate:fmt(top.rate)+"%",
+      lines:names.map(n=>markText(n,tq).html).join("、")})).join("");
+    html+=`<div class="wallet-head" role="status"><b>今天刷這張</b><span>${byPlan.size>1?`${byPlan.size} 個方案同為 ${fmt(top.rate)}%，左右滑動`:""}</span></div>
+      <div class="wallet${byPlan.size===1?" single":""}">${cards}</div>`;
+  }
+  if(rows.length){
+    const groups=new Map();
+    rows.forEach(r=>{ if(!groups.has(r.plan)) groups.set(r.plan,[]); groups.get(r.plan).push(r); });
+    html+=`<div class="sec">${tq.length?"所有符合的方案":"此類別的通路"}　${groups.size} 個方案・${rows.length} 筆</div>`;
+    html+=[...groups].map(([p,rs])=>groupHTML(p,rs,tq)).join("");
+  }
+  if(tq.length) html+=fallbackHTML(!rows.length);
+  if(!tq.length && !rows.length) html+=`<p class="hint">這個類別目前沒有通路。</p>`;
+  box.innerHTML=html;
+}
+function groupHTML(p,rs,tq){
+  const r0=rs[0], max=Math.max(...rs.map(r=>r.rate));
+  const tags=[];
+  if(r0.st.k==="warn") tags.push(`<span class="tag warn">${r0.st.txt}</span>`);
+  else if(r0.st.k==="end"||r0.st.k==="soon") tags.push(`<span class="tag end">${r0.st.txt}</span>`);
+  else tags.push(`<span class="tag">${r0.st.txt}</span>`);
+  if(!r0.el.ok) tags.push(`<span class="tag need">${r0.el.why}</span>`);
+  if(p.req==="pxpay") tags.push(`<span class="tag need">須以全支付付款</span>`);
+  if(p.req==="fixed") tags.push(`<span class="tag need">切換規則依官網注意事項</span>`);
+  const items=rs.map(r=>{
+    const how=matchInfo(r.name, r.alias, r.group.t, tq||[]);
+    const nameHTML=(how==="text"||how==="syn") ? markText(r.name,tq).html : (how==="alias" ? `<mark>${esc(r.name)}</mark>` : esc(r.name));
+    const gt = how==="group" ? markText(r.group.t,tq).html : esc(r.group.t);
+    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}</div></div><b class="rr">${fmt(r.rate)}%</b></li>`;
+  }).join("");
+  return `<section class="rgroup${r0.usable?"":" off"}" style="${skin(p)}">
+    <div class="rg-head"><span class="mini"></span><span class="rg-name">${esc(p.name)}</span>
+      <span class="rg-rate">${fmt(max)}%${p.rate===L?`<small>L${state.lv+1}</small>`:""}</span>
+      <span class="rg-meta">${tags.join("")}</span></div>
+    <ul class="rg-list">${items}</ul></section>`;
+}
+function fallbackHTML(empty){
+  return `<div class="panel">${empty?"<b>找不到這個通路</b><p class=\"hint\" style=\"margin-top:0\">可能不在任何方案的指定清單內，或名稱寫法不同（可試試品牌英文名或縮寫）。</p>":"<b>其他提醒</b>"}
+    <ul><li>除固定回饋外，非指定通路皆為一般消費 0.3%</li>
+    <li>固定回饋：一般消費（不含保費）1.2%、海外實體消費 2.5%</li>
+    <li>指定消費限直接刷 CUBE 卡或綁定 Apple Pay／Samsung Pay／Google Pay／Garmin Pay，不含 LINE Pay、街口支付、全盈+PAY、全支付、Pi 錢包、icash Pay、OPEN 錢包、My FamiPay、悠遊付等（集精選超商 OPEN 錢包、My FamiPay、PX Pay 店內消費及全支付方案除外）</li>
+    <li>百貨回饋以簽單特店名稱認定，不含店中櫃</li>
+    <li>特約商店分期付款（含提前結清）僅適用一般消費 0.3%</li></ul></div>`;
+}
+function introHTML(){
+  const q=["蝦皮","7-11","全聯","Netflix","新光三越","麥當勞","日本","高鐵","Uber Eats","壽司郎","加油","ChatGPT"];
+  return `<p class="hint">輸入店家、品牌或類別，找出今天該刷哪張「權益卡」。也可以點上方類別直接瀏覽。</p>
+   <div class="quick">${q.map(x=>`<button data-q="${esc(x)}">${esc(x)}</button>`).join("")}</div>
+   <div class="sec">目前錢包裡的權益</div>
+   <div class="wallet">${PLANS.filter(p=>status(p.start,p.end).active).map(p=>cardFace(p)).join("")}</div>
+   ${fallbackHTML(false)}`;
+}
+function bindQuick(){
+  document.querySelectorAll(".quick button").forEach(b=>b.onclick=()=>{ $("#q").value=b.dataset.q; state.q=b.dataset.q; syncClear(); render(); });
+}
+
+/* ===== 方案總覽 ===== */
+function renderPlans(){
+  const lvTable=`<div class="lvbox"><div class="lvwrap"><table class="lvtable"><thead><tr><th>等級</th><th>條件</th><th>玩數位・樂饗購・趣旅行</th></tr></thead><tbody>
+    <tr><td>L1</td><td>持有 CUBE 正卡</td><td>2%</td></tr>
+    <tr><td>L2</td><td>持有 CUBE 正卡，且以 CUBE App 繳納信用卡費或申請自動扣繳信用卡費（兩項皆限本人本行帳戶、信用卡費）</td><td>3%</td></tr>
+    <tr><td>L3</td><td>持有 CUBE 正卡，且為國泰世華財富管理貴賓</td><td>3.3%</td></tr></tbody></table></div>
+    <p class="hint">方案切換與回饋計算規則，請見頁面最下方「注意事項」（官網原文）。</p></div>`;
+  const tq=terms(state.q); let hitPlans=0, hitItems=0;
+  const html=PLANS.map(p=>{
+    let pHits=0;
+    const groups=p.groups.filter(g=>state.cat==="all"||g.cat===state.cat).map(g=>{
+      const gHit = tq.length && tq.some(t=>norm(g.t).includes(t));
+      const chips=g.items.map(it=>{
+        const o=typeof it==="string"?{n:it}:it, how=matchInfo(o.n,o.a,g.t,tq);
+        if(how) pHits++;
+        const inner = (how==="text"||how==="syn") ? markText(o.n,tq).html : esc(o.n);
+        const cls = how ? ` class="hit${(how==="text"||how==="syn")?"":" whole"}"` : "";
+        const tip = how && how!=="text" ? ` title="${HOW_TXT[how]}"` : "";
+        return `<span${cls}${tip}>${inner}</span>`;
+      }).join("");
+      const notes = g.note ? [].concat(g.note) : [];
+      return `<div class="grp"><h3><span>${gHit?markText(g.t,tq).html:esc(g.t)}</span><span class="rt">${fmt(rateOf(g.r))}%</span></h3>
+      <div class="chips">${chips}</div>
+      ${notes.length?`<details class="tips"><summary>使用提醒</summary>${notes.map(n=>`<p>${esc(n).replace(/\n/g,"<br>")}</p>`).join("")}</details>`:""}</div>`;
+    }).join("");
+    if(state.cat!=="all" && !groups) return "";
+    if(pHits){ hitPlans++; hitItems+=pHits; }
+    const open = tq.length ? pHits>0 : false;
+    return `<details class="wcard" style="${skin(p)}" ${open?"open":""}>
+      <summary>${cardFace(p,{hits:pHits})}</summary>
+      <div class="wbody">
+        <details class="tips" style="margin:0 0 6px"><summary>方案說明（官網）</summary><ul>${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></details>
+        ${groups}</div></details>`;
+  }).join("");
+  const sumBox = tq.length ? `<div class="hitsum">「${esc(state.q)}」出現在 ${hitPlans} 個方案、共 ${hitItems} 筆通路，已自動展開並標示。${hitPlans?"":"目前沒有方案包含這個通路。"}</div>` : "";
+  const gTable=`<div class="lvwrap"><table class="lvtable"><thead><tr><th>消費項目</th><th>消費金額</th><th>消費類別</th><th>回饋率</th><th>回饋點數</th></tr></thead><tbody>
+    <tr><td>雄獅旅行社</td><td>NT$1,800</td><td>一般消費</td><td>0.3%</td><td>5 (1800*0.3%=5.4)</td></tr>
+    <tr><td>新光三越</td><td>NT$3,000</td><td>指定美食/購物消費</td><td>3%</td><td>90 (3000*3%=90)</td></tr></tbody></table></div>`;
+  const gNotes=`<details class="gnotes"><summary>注意事項<span>官網「CUBE卡權益方案」頁面共通注意事項</span></summary>
+    <ol>${GLOBAL_NOTES.map((n,i)=>`<li>${esc(n).replace(/\n/g,"<br>")}${i===6?gTable:""}</li>`).join("")}</ol></details>`;
+  $("#v-plans").innerHTML=sumBox+lvTable+`<p class="hint">點卡片查看通路與使用提醒</p>`+(html?`<div class="cardgrid">${html}</div>`:`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes;
+}
+
+/* ===== 加碼活動 ===== */
+function renderActs(){
+  const card=a=>{ const st=status(a.start,a.end); return `<div class="ticket${st.active?"":" off"}">
+    <div class="tk-l">${esc(a.rate)}</div>
+    <div class="tk-r"><h3>${esc(a.t)}</h3><p>${esc(a.d)}</p><p>${esc(a.extra)}</p>
+      <div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網列於「樂饗購」方案頁面「CUBE餐飲活動」</span></div></div></div>`; };
+  $("#v-acts").innerHTML=`<div class="sec">CUBE餐飲活動</div>${ACTS.map(card).join("")}
+    <p class="hint"><a href="https://www.cathay-cube.com.tw/content/cub-aem-cs/zh-tw/cathaybk/personal/event/overview/credit-card/dining/202604/cube_dining" target="_blank" rel="noopener">前往活動網頁查看詳情</a></p>
+    <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint" style="margin:0">${esc(GLOBAL_NOTES[4])}</p></div>`;
+}
+
+/* ===== 控制項 ===== */
+function renderCats(){
+  const all=[["all","全部"],...Object.entries(CATS)];
+  $("#cats").innerHTML=all.map(([k,v])=>`<button data-cat="${k}" aria-pressed="${state.cat===k}">${v}</button>`).join("");
+  document.querySelectorAll("#cats button").forEach(b=>b.onclick=()=>{state.cat=b.dataset.cat; renderCats(); render();});
+}
+function syncClear(){ $("#clear").hidden=!state.q; }
+function render(){
+  $("#v-search").hidden=state.view!=="search";
+  $("#v-plans").hidden=state.view!=="plans";
+  $("#v-acts").hidden=state.view!=="acts";
+  $("#searchRow").hidden=state.view==="acts";
+  $("#cats").hidden=state.view==="acts";
+  if(state.view==="search") renderSearch();
+  if(state.view==="plans") renderPlans();
+  if(state.view==="acts") renderActs();
+}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{
+  state.view=b.dataset.view;
+  document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected", x===b));
+  render();
+});
+let tmr; $("#q").addEventListener("input",e=>{ clearTimeout(tmr); tmr=setTimeout(()=>{state.q=e.target.value.trim(); syncClear(); render();},120); });
+$("#clear").onclick=()=>{ $("#q").value=""; state.q=""; syncClear(); render(); $("#q").focus(); };
+document.querySelectorAll("#lv button").forEach(b=>b.onclick=()=>{
+  state.lv=+b.dataset.lv;
+  document.querySelectorAll("#lv button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  render();
+});
+$("#bday").onchange=e=>{state.bday=e.target.checked; render();};
+$("#kids").onchange=e=>{state.kids=e.target.checked; render();};
+
+renderCats(); render();
+</script>
+</body>
+</html>
