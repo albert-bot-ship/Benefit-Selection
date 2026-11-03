@@ -398,6 +398,13 @@ function calcHTML(rate){
   return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點<small>${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入</small></span>`;
 }
 
+/* 輸入一次金額，所有方案同步試算（官網注意事項第7條：四捨五入至整數位） */
+function updatePts(){
+  const a=parseFloat(String(state.amt).replace(/,/g,""));
+  document.querySelectorAll(".pts[data-rate]").forEach(el=>{
+    el.textContent = a>0 ? Math.round(a*parseFloat(el.dataset.rate)/100).toLocaleString()+" 點" : "";
+  });
+}
 /* ===== 這個回饋怎麼來的 ===== */
 function ymd(s){ const d=pd(s); return d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate(); }
 function whyHTML(r){
@@ -422,9 +429,9 @@ function todayLine(rows,tq){
   const hit=rows.filter(r=>r.plan===p);
   let txt;
   if(!tq.length) return `<div class="today-line"><span class="mini" style="${skin(p)}"></span><span>今天已切「${esc(p.name)}」</span><button class="linkbtn" data-act="set-today">更改</button></div>`;
-  if(hit.length){ const m=Math.max(...hit.map(r=>r.rate)); txt=`<b>${fmt(m)}%</b>（${esc(hit.find(r=>r.rate===m).name)}）`; }
-  else if(p.id==="fixed") txt=`非指定海外消費時，以一般消費(不含保費) <b>1.2%</b> 計算；官網注意事項第15條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
-  else txt=`非「${esc(p.name)}」指定通路，以一般消費 <b>0.3%</b> 計算；官網注意事項第15條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
+  if(hit.length){ const m=Math.max(...hit.map(r=>r.rate)); txt=`<b>${fmt(m)}%</b>（${esc(hit.find(r=>r.rate===m).name)}）<small class="pts" data-rate="${m}"></small>`; }
+  else if(p.id==="fixed") txt=`非指定海外消費時，以一般消費(不含保費) <b>1.2%</b> 計算<small class="pts" data-rate="1.2"></small>；官網注意事項第15條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
+  else txt=`非「${esc(p.name)}」指定通路，以一般消費 <b>0.3%</b> 計算<small class="pts" data-rate="0.3"></small>；官網注意事項第15條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
   return `<div class="today-line"><span class="mini" style="${skin(p)}"></span><span>今天已切「${esc(p.name)}」：${txt}</span><button class="linkbtn" data-act="set-today">更改</button></div>`;
 }
 
@@ -479,7 +486,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
 });
 document.addEventListener("input",e=>{
-  if(e.target.id==="amt"){ state.amt=e.target.value; const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
+  if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
 });
 
 
@@ -519,6 +526,7 @@ function renderSearch(){
   if(tq.length) html+=fallbackHTML(!rows.length);
   if(!tq.length && !rows.length) html+=`<p class="hint">這個類別目前沒有通路。</p>`;
   box.innerHTML=html;
+  updatePts();
 }
 function groupHTML(p,rs,tq){
   const r0=rs[0], max=Math.max(...rs.map(r=>r.rate));
@@ -533,7 +541,7 @@ function groupHTML(p,rs,tq){
     const how=matchInfo(r.name, r.alias, r.group.t, tq||[]);
     const nameHTML=(how==="text"||how==="syn") ? markText(r.name,tq).html : (how==="alias" ? `<mark>${esc(r.name)}</mark>` : esc(r.name));
     const gt = how==="group" ? markText(r.group.t,tq).html : esc(r.group.t);
-    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><b class="rr">${fmt(r.rate)}%</b></li>`;
+    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><div class="rrw"><b class="rr">${fmt(r.rate)}%</b><small class="pts" data-rate="${r.rate}"></small></div></li>`;
   }).join("");
   return `<section class="rgroup${r0.usable?"":" off"}" style="${skin(p)}">
     <div class="rg-head"><span class="mini"></span><span class="rg-name">${esc(p.name)}</span>
