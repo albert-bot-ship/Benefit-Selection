@@ -344,3 +344,11 @@ details.why a{font-size:.84rem}
 .ex-row .mini{width:32px;height:21px;flex:none}
 .ex-row .mini::after{left:4px;top:6px;width:7px;height:5px}
 .ex-d{margin-left:auto;color:var(--warn);font-size:.84rem;white-space:nowrap}
+
+/* ===== CUBE App 領券 ===== */
+.tag.cp{border-color:var(--ok);color:var(--ok)}
+.cp-note{margin-top:10px;font-size:.86rem;background:color-mix(in srgb,var(--ok) 10%,transparent);border:1px solid color-mix(in srgb,var(--ok) 45%,transparent);border-radius:12px;padding:8px 12px}
+.cp-note b{display:block;color:var(--ok);font-size:.8rem}
+.cp-note small{display:block;color:var(--muted);font-size:.76rem}
+.chips span em{font-style:normal;color:var(--ok);font-size:.76rem;margin-left:4px}
+.tk-cp{background:linear-gradient(160deg,#16a34a,#0f766e)}
