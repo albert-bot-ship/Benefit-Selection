@@ -17,7 +17,7 @@
 <meta name="apple-mobile-web-app-title" content="CUBE權益">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,700;1,600;1,700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
@@ -504,15 +504,16 @@ function bestHTML(best,top,tq){
     return `<div class="bp" style="${skin(p)}">
       <div class="bp-h"><span class="mini" style="${skin(p)}"></span><div><div class="bp-n">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今天已切</span>`:""}${(st=>st.k==="warn"?`<span class="tag warn">${st.txt}，${ymd(p.end)} 結束</span>`:"")(status(p.start,p.end))}</div>
       <div class="bp-c">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div></div>
-      ${pay?`<div class="pay-h">結帳可用付款方式</div><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div>`:""}
-      ${[...new Set(rs.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active).map(id=>{const c=COUPONS[id];return `<div class="cp-note"><b>另有 CUBE App 領券</b>${esc(c.t)}：${esc(c.d)}${c.cap?`<small>${esc(c.cap)}</small>`:""}${c.period?`<small>活動期間：${esc(c.period)}</small>`:`<small>活動期間依官網活動詳情</small>`}</div>`;}).join("")}
       ${p.req==="pxpay"?`<div class="tag need need-block">須選定「全支付」方案並以全支付綁定CUBE信用卡刷卡消費</div>`:""}
+      ${pay?`<details class="fold"><summary>結帳可用付款方式</summary><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div></details>`:""}
+      ${[...new Set(rs.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active).map(id=>{const c=COUPONS[id];return `<details class="fold cp-fold"><summary>另有 CUBE App 領券</summary><div class="cp-note">${esc(c.t)}：${esc(c.d)}${c.cap?`<small>${esc(c.cap)}</small>`:""}${c.period?`<small>活動期間：${esc(c.period)}</small>`:`<small>活動期間依官網活動詳情</small>`}</div></details>`;}).join("")}
       ${whyHTML(rs[0])}</div>`;
   }).join("");
   return `<section class="best" aria-label="最佳選擇">
     <div class="best-top"><span class="badge-best">★ 最佳選擇</span>
       <button class="fav${fav?" on":""}" data-act="fav" aria-pressed="${fav}" aria-label="收藏這個搜尋">${fav?"♥":"♡"}</button></div>
-    <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}${cps.length===1?`<small>已領券最高 ${esc(COUPONS[cps[0]].rate)}</small>`:""}</span></div>
+    <div class="best-hero"><div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}${cps.length===1?`<small>已領券最高 ${esc(COUPONS[cps[0]].rate)}</small>`:""}</span></div>
+      <div class="best-cards${byPlan.size>1?" multi":""}">${[...byPlan.keys()].slice(0,2).map(p=>cardFace(p,{rate:fmt(top.rate)+"%",showReq:false})).join("")}</div></div>
     <div class="calc"><label>幣別<select id="cur">${CURS.map(c=>`<option value="${c[0]}"${c[0]===state.cur?" selected":""}>${c[1]} ${c[0]}</option>`).join("")}</select></label><label>試算金額 ${curInfo(state.cur)[2]}<input id="amt" inputmode="decimal" placeholder="${state.cur==="TWD"?"例如 1800":"例如 10000"}" value="${esc(state.amt)}"></label>${fxRowHTML()}<span id="calcOut" data-rate="${top.rate}" data-cp="${cps.join(",")}">${calcHTML(top.rate,cps)}</span></div>
     ${blocks}
   </section>`;
