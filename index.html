@@ -215,11 +215,15 @@ const GLOBAL_NOTES = ["CUBE卡權益如未敘明則適用期間為：2026/1/1~20
 /* CUBE App 領券（src：資料來源；cap：加碼上限與入帳期限，依官網秋日遊活動頁／CUBE App券面原文） */
 const COUPON_URL="https://www.cathay-cube.com.tw/cathaybk/personal/event/overview/credit-card/travel/202501/JP_DiscountPocket";
 const COUPONS={
-  edion:{t:"日本愛電王",rate:"10.2%",d:"[秋日遊限定] CUBE App領券消費享最高10.2%小樹點(信用卡)回饋",period:"2026/10/1~ 2026/12/31",start:"2026-10-01",end:"2026-12-31",cap:"加碼上限400點，入帳日需於2026/12/31(含)前",src:"官網「旅日優惠口袋」"},
-  daimaru:{t:"日本大丸百貨福岡天神店",rate:"8%",d:"CUBE App領券消費享最高8%小樹點(信用卡)回饋",period:"",start:null,end:null,cap:"加碼回饋無上限，入帳日需於2027/01/15(含)前",src:"官網「旅日優惠口袋」"},
-  mitsui:{t:"日本三井指定商場",rate:"5%",d:"CUBE App領券消費享最高5%小樹點(信用卡)回饋",sub:"本活動適用商場包含全日本MITSUI OUTLET PARK + 台場DiverCity Tokyo Plaza",period:"2026/8/1~ 2026/12/31",start:"2026-08-01",end:"2026-12-31",cap:"加碼上限500點，入帳日需於2027/01/15(含)前",src:"官網「旅日優惠口袋」"},
-  apple:{t:"Apple錢包日本指定交通卡",rate:"5%",d:"[秋日遊] CUBE App領取「Apple錢包日本指定交通卡加碼1.5%」優惠券，切換秋日遊3.5%＋領券加碼1.5%，最高5%小樹點(信用卡)回饋",sub:"限以「Apple 錢包」加入Suica、PASMO、ICOCA並綁定CUBE信用卡儲值，不適用Line Pay、街口支付、全支付等",period:"2026/10/1~ 2026/11/30",start:"2026-10-01",end:"2026-11-30",cap:"加碼上限200點，入帳日需於2026/12/15(含)前",src:"官網秋日遊活動頁、CUBE App券面"}
+  edion:{t:"日本愛電王",rate:"10.2%",d:"[秋日遊限定] CUBE App領券消費享最高10.2%小樹點(信用卡)回饋",period:"2026/10/1~ 2026/12/31",start:"2026-10-01",end:"2026-12-31",add:6.7,capPts:400,cap:"加碼上限400點，入帳日需於2026/12/31(含)前",src:"官網「旅日優惠口袋」"},
+  daimaru:{t:"日本大丸百貨福岡天神店",rate:"8%",d:"CUBE App領券消費享最高8%小樹點(信用卡)回饋",period:"",start:null,end:null,add:4.5,capPts:null,cap:"加碼回饋無上限，入帳日需於2027/01/15(含)前",src:"官網「旅日優惠口袋」"},
+  mitsui:{t:"日本三井指定商場",rate:"5%",d:"CUBE App領券消費享最高5%小樹點(信用卡)回饋",sub:"本活動適用商場包含全日本MITSUI OUTLET PARK + 台場DiverCity Tokyo Plaza",period:"2026/8/1~ 2026/12/31",start:"2026-08-01",end:"2026-12-31",add:1.7,capPts:500,cap:"加碼上限500點，入帳日需於2027/01/15(含)前",src:"官網「旅日優惠口袋」"},
+  apple:{t:"Apple錢包日本指定交通卡",rate:"5%",d:"[秋日遊] CUBE App領取「Apple錢包日本指定交通卡加碼1.5%」優惠券，切換秋日遊3.5%＋領券加碼1.5%，最高5%小樹點(信用卡)回饋",sub:"限以「Apple 錢包」加入Suica、PASMO、ICOCA並綁定CUBE信用卡儲值，不適用Line Pay、街口支付、全支付等",period:"2026/10/1~ 2026/11/30",start:"2026-10-01",end:"2026-11-30",add:1.5,capPts:200,cap:"加碼上限200點，入帳日需於2026/12/15(含)前",src:"官網秋日遊活動頁、CUBE App券面"}
 };
+/* 領券加碼點數（券皆已領取）：單筆四捨五入，依每正卡戶累計上限封頂；未扣除已獲得點數 */
+function cpBonus(a,id){ const c=COUPONS[id]; if(!c||!c.add||!cpStatus(c).active) return null;
+  const raw=Math.round(a*c.add/100), pts=c.capPts!=null?Math.min(raw,c.capPts):raw;
+  return {c,pts,capped:c.capPts!=null&&raw>c.capPts}; }
 function cpStatus(c){ return c.start? status(c.start,c.end) : {k:"on",txt:"期間依官網活動詳情",active:true}; }
 function cpTag(id){ const c=COUPONS[id]; if(!c) return ""; const st=cpStatus(c); if(!st.active) return ""; return `<span class="tag cp">CUBE App領券最高${c.rate}</span>`; }
 
@@ -392,18 +396,24 @@ state.amt = "";
 function planById(id){ return PLANS.find(p=>p.id===id); }
 
 /* ===== 試算（官網注意事項第7條：依小數點第一位四捨五入至整數位） ===== */
-function calcHTML(rate){
+function calcHTML(rate,cps=[]){
   const a=parseFloat(String(state.amt).replace(/,/g,""));
   if(!(a>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
   const raw=a*rate/100, pts=Math.round(raw);
-  return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點<small>${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入</small></span>`;
+  const bs=cps.map(id=>cpBonus(a,id)).filter(Boolean);
+  const baseLine=`${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入`;
+  if(!bs.length) return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點<small>${baseLine}</small></span>`;
+  const total = bs.length===1 ? pts+bs[0].pts : pts;
+  const lines=bs.map(b=>`<small>領券加碼 ${fmt(b.c.add)}%${bs.length>1?`（${esc(b.c.t)}）`:""}：${b.pts.toLocaleString()} 點（${b.c.capPts!=null?`累計上限${b.c.capPts}點${b.capped?"，本筆已封頂":""}`:"無上限"}）</small>`).join("");
+  return `<span class="calc-out"><b>${total.toLocaleString()}</b> 點${bs.length===1?"（合計）":""}<small>權益 ${fmt(rate)}%：${pts.toLocaleString()} 點（${baseLine}）</small>${lines}<small>${bs.length>1?"加碼依通路擇一適用；":""}累計上限未扣除已獲得的加碼點數</small></span>`;
 }
 
 /* 輸入一次金額，所有方案同步試算（官網注意事項第7條：四捨五入至整數位） */
 function updatePts(){
   const a=parseFloat(String(state.amt).replace(/,/g,""));
   document.querySelectorAll(".pts[data-rate]").forEach(el=>{
-    el.textContent = a>0 ? Math.round(a*parseFloat(el.dataset.rate)/100).toLocaleString()+" 點" : "";
+    const base=Math.round(a*parseFloat(el.dataset.rate)/100), b=el.dataset.cp?cpBonus(a,el.dataset.cp):null;
+    el.textContent = a>0 ? (b ? (base+b.pts).toLocaleString()+" 點（含券 "+b.pts.toLocaleString()+"）" : base.toLocaleString()+" 點") : "";
   });
 }
 /* ===== 這個回饋怎麼來的 ===== */
@@ -441,6 +451,7 @@ function bestHTML(best,top,tq){
   const byPlan=new Map();
   best.forEach(r=>{ if(!byPlan.has(r.plan)) byPlan.set(r.plan,[]); byPlan.get(r.plan).push(r); });
   const fav=state.favs.includes(state.q);
+  const cps=[...new Set(best.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active);
   const blocks=[...byPlan].map(([p,rs])=>{
     const pay=payFor(rs[0]);
     return `<div class="bp" style="${skin(p)}">
@@ -454,8 +465,8 @@ function bestHTML(best,top,tq){
   return `<section class="best" aria-label="最佳選擇">
     <div class="best-top"><span class="badge-best">★ 最佳選擇</span>
       <button class="fav${fav?" on":""}" data-act="fav" aria-pressed="${fav}" aria-label="收藏這個搜尋">${fav?"♥":"♡"}</button></div>
-    <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}</span></div>
-    <div class="calc"><label>試算金額 NT$<input id="amt" inputmode="decimal" placeholder="例如 1800" value="${esc(state.amt)}"></label><span id="calcOut">${calcHTML(top.rate)}</span></div>
+    <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}${cps.length===1?`<small>已領券最高 ${esc(COUPONS[cps[0]].rate)}</small>`:""}</span></div>
+    <div class="calc"><label>試算金額 NT$<input id="amt" inputmode="decimal" placeholder="例如 1800" value="${esc(state.amt)}"></label><span id="calcOut" data-rate="${top.rate}" data-cp="${cps.join(",")}">${calcHTML(top.rate,cps)}</span></div>
     ${blocks}
   </section>`;
 }
@@ -487,7 +498,7 @@ document.addEventListener("click",e=>{
   if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
 });
 document.addEventListener("input",e=>{
-  if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
+  if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r,(o.dataset.cp||"").split(",").filter(Boolean)); }
 });
 
 
@@ -542,7 +553,7 @@ function groupHTML(p,rs,tq){
     const how=matchInfo(r.name, r.alias, r.group.t, tq||[]);
     const nameHTML=(how==="text"||how==="syn") ? markText(r.name,tq).html : (how==="alias" ? `<mark>${esc(r.name)}</mark>` : esc(r.name));
     const gt = how==="group" ? markText(r.group.t,tq).html : esc(r.group.t);
-    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><div class="rrw"><b class="rr">${fmt(r.rate)}%</b><small class="pts" data-rate="${r.rate}"></small></div></li>`;
+    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><div class="rrw"><b class="rr">${fmt(r.rate)}%</b><small class="pts" data-rate="${r.rate}"${r.cp?` data-cp="${r.cp}"`:""}></small></div></li>`;
   }).join("");
   return `<section class="rgroup${r0.usable?"":" off"}" style="${skin(p)}">
     <div class="rg-head"><span class="mini"></span><span class="rg-name">${esc(p.name)}</span>
