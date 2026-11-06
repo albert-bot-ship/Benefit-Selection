@@ -53,6 +53,7 @@
     <ul>
       <li><a href="https://www.cathay-cube.com.tw/cathaybk/personal/product/credit-card/cards/cube-list" target="_blank" rel="noopener">國泰世華 CUBE卡權益方案（官網）</a>：各方案通路、使用提醒、注意事項</li>
       <li><a href="https://www.cathaybk.com.tw/cathaybk/promo/event/credit-card/product/japanrewards/index.html" target="_blank" rel="noopener">國泰世華《秋日遊》活動網頁（官網）</a></li>
+      <li>國外交易服務費0.5%：國泰世華信用卡約定條款第十六條（官網權益手冊）；Visa手續費與外幣匯率為參考值，匯率來源 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a></li>
     </ul>
     <div>回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。（官網使用提醒）</div>
     <div>自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。（官網各權益方案說明）</div>
@@ -393,24 +394,64 @@ function expiryHTML(){
   return `<div class="expiry"><b>⏰ 即將結束的方案</b>${list.map(p=>`<div class="ex-row"><span class="mini" style="${skin(p)}"></span><span>${esc(p.name)}</span><span class="ex-d">${ymd(p.end)} 結束・${status(p.start,p.end).txt}</span></div>`).join("")}</div>`;
 }
 state.amt = "";
+/* ===== 外幣換算（參考匯率：ExchangeRate-API；國外交易手續費依信用卡約定條款第十六條） ===== */
+const CURS=[["TWD","新臺幣","NT$"],["JPY","日圓","¥"],["KRW","韓元","₩"],["USD","美元","US$"],["EUR","歐元","€"],["THB","泰銖","฿"],["HKD","港幣","HK$"],["CNY","人民幣","CN¥"]];
+const FX_URL="https://open.er-api.com/v6/latest/TWD";
+const FEE_BANK=0.5;   /* 國泰國外交易服務費：交易金額百分之0.5（約定條款第十六條） */
+const FEE_ORG=1;      /* Visa 手續費：官方未載固定費率，依該組織規定，此為參考值 */
+state.cur=load("cube-cur","TWD");
+state.fx=load("cube-fx",null);
+state.fxEdit={}; state.fxErr="";
+function curInfo(c){ return CURS.find(x=>x[0]===c)||CURS[0]; }
+function fxAuto(c){ const r=state.fx&&state.fx.rates&&state.fx.rates[c]; return r>0 ? Number((1/r).toPrecision(4)) : NaN; }
+function fxRate(){ if(state.cur==="TWD") return 1; const e=parseFloat(state.fxEdit[state.cur]); return e>0 ? e : fxAuto(state.cur); }
+function rawAmt(){ return parseFloat(String(state.amt).replace(/,/g,"")); }
+function twdAmt(){ const a=rawAmt(), r=fxRate(); return a>0&&r>0 ? (state.cur==="TWD"?a:Math.round(a*r)) : NaN; }
+async function loadFx(force){
+  if(!force && state.fx && Date.now()-state.fx.fetched<6*36e5) return;
+  try{
+    const res=await fetch(FX_URL), j=await res.json();
+    if(j.result!=="success"||!j.rates) throw new Error("bad");
+    state.fx={rates:j.rates, upd:j.time_last_update_unix*1000, fetched:Date.now()};
+    save("cube-fx",state.fx); state.fxErr="";
+  }catch(e){ state.fxErr = state.fx ? "無法更新匯率，沿用上次資料，可手動修改" : "無法取得匯率，請手動輸入"; }
+}
+function fxRowHTML(){
+  if(state.cur==="TWD") return "";
+  const ci=curInfo(state.cur), r=fxRate();
+  const when=state.fx?new Date(state.fx.upd):null;
+  const t=when?`${when.getFullYear()}/${when.getMonth()+1}/${when.getDate()} ${hm(when)}`:"";
+  return `<div class="fxrow"><label>匯率 1 ${ci[0]} =<input id="fx" inputmode="decimal" value="${r>0?r:""}" placeholder="輸入匯率">NT$</label><button class="linkbtn" data-act="fx-refresh">更新匯率</button>
+    <small>${state.fxErr?esc(state.fxErr)+"。":""}參考匯率${t?`（資料時間 ${t}）`:""}，可手動改成 Visa 匯率；實際依 Visa 結匯日匯率換算。<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a></small></div>`;
+}
+function recalc(){
+  updatePts(); const o=document.getElementById("calcOut");
+  if(o) o.innerHTML=calcHTML(parseFloat(o.dataset.rate),(o.dataset.cp||"").split(",").filter(Boolean));
+}
 function planById(id){ return PLANS.find(p=>p.id===id); }
 
 /* ===== 試算（官網注意事項第7條：依小數點第一位四捨五入至整數位） ===== */
 function calcHTML(rate,cps=[]){
-  const a=parseFloat(String(state.amt).replace(/,/g,""));
-  if(!(a>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
+  const ra=rawAmt(), foreign=state.cur!=="TWD";
+  if(!(ra>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
+  const a=twdAmt();
+  if(!(a>0)) return `<span class="calc-out muted">請輸入匯率</span>`;
+  const ci=curInfo(state.cur);
+  const fxLine = foreign ? `<small>${ci[2]}${ra.toLocaleString()} × ${fxRate()} ≈ NT$${a.toLocaleString()}（${parseFloat(state.fxEdit[state.cur])>0?"手動匯率":"參考匯率"}）</small>` : "";
+  const feeLines=(tot)=>{ if(!foreign) return ""; const fee=Math.round(a*(FEE_BANK+FEE_ORG)/100);
+    return `<small>國外交易手續費約 NT$${fee.toLocaleString()}（國泰服務費${FEE_BANK}%＋Visa手續費約${FEE_ORG}%，不列入回饋計算）</small><small class="net">淨回饋約 ${(tot-fee).toLocaleString()} 點（回饋點數 − 手續費）</small>`; };
   const raw=a*rate/100, pts=Math.round(raw);
   const bs=cps.map(id=>cpBonus(a,id)).filter(Boolean);
   const baseLine=`${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入`;
-  if(!bs.length) return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點<small>${baseLine}</small></span>`;
+  if(!bs.length) return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點${fxLine}<small>${baseLine}</small>${feeLines(pts)}</span>`;
   const total = bs.length===1 ? pts+bs[0].pts : pts;
   const lines=bs.map(b=>`<small>領券加碼 ${fmt(b.c.add)}%${bs.length>1?`（${esc(b.c.t)}）`:""}：${b.pts.toLocaleString()} 點（${b.c.capPts!=null?`累計上限${b.c.capPts}點${b.capped?"，本筆已封頂":""}`:"無上限"}）</small>`).join("");
-  return `<span class="calc-out"><b>${total.toLocaleString()}</b> 點${bs.length===1?"（合計）":""}<small>權益 ${fmt(rate)}%：${pts.toLocaleString()} 點（${baseLine}）</small>${lines}<small>${bs.length>1?"加碼依通路擇一適用；":""}累計上限未扣除已獲得的加碼點數</small></span>`;
+  return `<span class="calc-out"><b>${total.toLocaleString()}</b> 點${bs.length===1?"（合計）":""}${fxLine}<small>權益 ${fmt(rate)}%：${pts.toLocaleString()} 點（${baseLine}）</small>${lines}<small>${bs.length>1?"加碼依通路擇一適用；":""}累計上限未扣除已獲得的加碼點數</small>${feeLines(total)}</span>`;
 }
 
 /* 輸入一次金額，所有方案同步試算（官網注意事項第7條：四捨五入至整數位） */
 function updatePts(){
-  const a=parseFloat(String(state.amt).replace(/,/g,""));
+  const a=twdAmt();
   document.querySelectorAll(".pts[data-rate]").forEach(el=>{
     const base=Math.round(a*parseFloat(el.dataset.rate)/100), b=el.dataset.cp?cpBonus(a,el.dataset.cp):null;
     el.textContent = a>0 ? (b ? (base+b.pts).toLocaleString()+" 點（含券 "+b.pts.toLocaleString()+"）" : base.toLocaleString()+" 點") : "";
@@ -466,7 +507,7 @@ function bestHTML(best,top,tq){
     <div class="best-top"><span class="badge-best">★ 最佳選擇</span>
       <button class="fav${fav?" on":""}" data-act="fav" aria-pressed="${fav}" aria-label="收藏這個搜尋">${fav?"♥":"♡"}</button></div>
     <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}${cps.length===1?`<small>已領券最高 ${esc(COUPONS[cps[0]].rate)}</small>`:""}</span></div>
-    <div class="calc"><label>試算金額 NT$<input id="amt" inputmode="decimal" placeholder="例如 1800" value="${esc(state.amt)}"></label><span id="calcOut" data-rate="${top.rate}" data-cp="${cps.join(",")}">${calcHTML(top.rate,cps)}</span></div>
+    <div class="calc"><label>幣別<select id="cur">${CURS.map(c=>`<option value="${c[0]}"${c[0]===state.cur?" selected":""}>${c[1]} ${c[0]}</option>`).join("")}</select></label><label>試算金額 ${curInfo(state.cur)[2]}<input id="amt" inputmode="decimal" placeholder="${state.cur==="TWD"?"例如 1800":"例如 10000"}" value="${esc(state.amt)}"></label>${fxRowHTML()}<span id="calcOut" data-rate="${top.rate}" data-cp="${cps.join(",")}">${calcHTML(top.rate,cps)}</span></div>
     ${blocks}
   </section>`;
 }
@@ -495,10 +536,15 @@ document.addEventListener("click",e=>{
     const i=state.favs.indexOf(state.q); if(i>=0) state.favs.splice(i,1); else if(state.q) state.favs.unshift(state.q);
     save("cube-favs",state.favs); render();
   }
+  if(t.dataset.act==="fx-refresh"){ delete state.fxEdit[state.cur]; t.disabled=true; loadFx(true).then(render); }
   if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
 });
+document.addEventListener("change",async e=>{
+  if(e.target.id==="cur"){ state.cur=e.target.value; state.amt=""; save("cube-cur",state.cur); if(state.cur!=="TWD") await loadFx(false); render(); }
+});
 document.addEventListener("input",e=>{
-  if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r,(o.dataset.cp||"").split(",").filter(Boolean)); }
+  if(e.target.id==="amt"){ state.amt=e.target.value; recalc(); }
+  if(e.target.id==="fx"){ state.fxEdit[state.cur]=e.target.value; recalc(); }
 });
 
 
@@ -746,6 +792,7 @@ setInterval(applyTheme,60000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) applyTheme(); });
 
 renderCats(); render();
+if(state.cur!=="TWD") loadFx(false).then(render);
 </script>
 </body>
 </html>
