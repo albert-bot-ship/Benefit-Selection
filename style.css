@@ -359,3 +359,12 @@ details.why a{font-size:.84rem}
 .pts{display:block;font-family:var(--num);font-weight:700;font-size:1rem;color:var(--ok);white-space:nowrap}
 .pts:empty{display:none}
 .today-line .pts{display:inline;margin-left:6px}
+
+/* ===== 外幣換算 ===== */
+.calc select{min-height:44px;padding:0 10px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:16px}
+.fxrow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;width:100%}
+.fxrow label{font-size:.88rem;color:var(--muted);display:flex;align-items:center;gap:6px}
+.fxrow input{width:110px}
+.fxrow small{display:block;width:100%;font-size:.74rem;color:var(--dim)}
+.fxrow small a{font-size:.74rem}
+.calc-out small.net{color:var(--text);font-weight:700}
