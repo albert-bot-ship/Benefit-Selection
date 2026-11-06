@@ -368,3 +368,16 @@ details.why a{font-size:.84rem}
 .fxrow small{display:block;width:100%;font-size:.74rem;color:var(--dim)}
 .fxrow small a{font-size:.74rem}
 .calc-out small.net{color:var(--text);font-weight:700}
+
+/* ===== 匯率換算分頁 ===== */
+.conv-out b{display:block;font-family:var(--num);font-weight:700;font-size:2.6rem;line-height:1.1;color:#2ecc71}
+:root[data-theme="light"] .conv-out b{color:#12a150}
+.conv-out small{display:block;color:var(--muted);font-size:.84rem}
+.conv-out small.net{color:var(--text);font-weight:700;font-size:.95rem;margin-top:2px}
+.fx-note{margin:10px 0 0;font-size:.8rem}
+.fx-head{justify-content:space-between;margin-bottom:6px}
+.fxtable td{vertical-align:middle}
+.fxtable tr.on td:first-child{color:var(--accent);font-weight:700}
+.fxtable input{width:96px;min-height:40px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:16px}
+.panel .calc{border-bottom:0;padding-top:0}
+.fx-src{margin-top:10px}
