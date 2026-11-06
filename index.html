@@ -46,6 +46,7 @@
     <section id="v-search"></section>
     <section id="v-plans" hidden></section>
     <section id="v-acts" hidden></section>
+    <section id="v-fx" hidden></section>
   </main>
 
   <footer>
@@ -64,6 +65,7 @@
   <button role="tab" aria-selected="true" data-view="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>搜尋通路</button>
   <button role="tab" aria-selected="false" data-view="plans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg>方案總覽</button>
   <button role="tab" aria-selected="false" data-view="acts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2"/></svg>加碼活動</button>
+  <button role="tab" aria-selected="false" data-view="fx"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3"/><path d="M20 16H7l3 3"/></svg>匯率換算</button>
 </div></nav>
 
 <div class="sheet" id="settings" hidden><div class="sheet-in" role="dialog" aria-label="設定">
@@ -398,10 +400,14 @@ state.amt = "";
 const CURS=[["TWD","新臺幣","NT$"],["JPY","日圓","¥"],["KRW","韓元","₩"],["USD","美元","US$"],["EUR","歐元","€"],["THB","泰銖","฿"],["HKD","港幣","HK$"],["CNY","人民幣","CN¥"]];
 const FX_URL="https://open.er-api.com/v6/latest/TWD";
 const FEE_BANK=0.5;   /* 國泰國外交易服務費：交易金額百分之0.5（約定條款第十六條） */
-const FEE_ORG=1;      /* Visa 手續費：官方未載固定費率，依該組織規定，此為參考值 */
+const FEE_ORG_DEF=1;  /* Visa 手續費預設值：官方未載固定費率，依該組織規定，此為參考值，可於「匯率換算」頁修改 */
 state.cur=load("cube-cur","TWD");
 state.fx=load("cube-fx",null);
-state.fxEdit={}; state.fxErr="";
+state.fxEdit=load("cube-fx-edit",{}); state.fxErr="";
+state.feeOrg=load("cube-fee-org",FEE_ORG_DEF);
+state.fxAmt="";
+function feeOrg(){ const v=parseFloat(state.feeOrg); return v>=0 ? v : FEE_ORG_DEF; }
+function saveFxEdit(){ save("cube-fx-edit",state.fxEdit); }
 function curInfo(c){ return CURS.find(x=>x[0]===c)||CURS[0]; }
 function fxAuto(c){ const r=state.fx&&state.fx.rates&&state.fx.rates[c]; return r>0 ? Number((1/r).toPrecision(4)) : NaN; }
 function fxRate(){ if(state.cur==="TWD") return 1; const e=parseFloat(state.fxEdit[state.cur]); return e>0 ? e : fxAuto(state.cur); }
@@ -438,8 +444,8 @@ function calcHTML(rate,cps=[]){
   if(!(a>0)) return `<span class="calc-out muted">請輸入匯率</span>`;
   const ci=curInfo(state.cur);
   const fxLine = foreign ? `<small>${ci[2]}${ra.toLocaleString()} × ${fxRate()} ≈ NT$${a.toLocaleString()}（${parseFloat(state.fxEdit[state.cur])>0?"手動匯率":"參考匯率"}）</small>` : "";
-  const feeLines=(tot)=>{ if(!foreign) return ""; const fee=Math.round(a*(FEE_BANK+FEE_ORG)/100);
-    return `<small>國外交易手續費約 NT$${fee.toLocaleString()}（國泰服務費${FEE_BANK}%＋Visa手續費約${FEE_ORG}%，不列入回饋計算）</small><small class="net">淨回饋約 ${(tot-fee).toLocaleString()} 點（回饋點數 − 手續費）</small>`; };
+  const feeLines=(tot)=>{ if(!foreign) return ""; const fee=Math.round(a*(FEE_BANK+feeOrg())/100);
+    return `<small>國外交易手續費約 NT$${fee.toLocaleString()}（國泰服務費${FEE_BANK}%＋Visa手續費約${feeOrg()}%，不列入回饋計算）</small><small class="net">淨回饋約 ${(tot-fee).toLocaleString()} 點（回饋點數 − 手續費）</small>`; };
   const raw=a*rate/100, pts=Math.round(raw);
   const bs=cps.map(id=>cpBonus(a,id)).filter(Boolean);
   const baseLine=`${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入`;
@@ -536,15 +542,21 @@ document.addEventListener("click",e=>{
     const i=state.favs.indexOf(state.q); if(i>=0) state.favs.splice(i,1); else if(state.q) state.favs.unshift(state.q);
     save("cube-favs",state.favs); render();
   }
-  if(t.dataset.act==="fx-refresh"){ delete state.fxEdit[state.cur]; t.disabled=true; loadFx(true).then(render); }
+  if(t.dataset.act==="fx-refresh"){ delete state.fxEdit[state.cur]; saveFxEdit(); t.disabled=true; loadFx(true).then(render); }
+  if(t.dataset.act==="fx-update"){ t.disabled=true; loadFx(true).then(render); }
+  if(t.dataset.act==="fx-auto"){ delete state.fxEdit[t.dataset.c]; saveFxEdit(); render(); }
+  if(t.dataset.act==="fee-reset"){ state.feeOrg=FEE_ORG_DEF; save("cube-fee-org",state.feeOrg); render(); }
   if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
 });
 document.addEventListener("change",async e=>{
-  if(e.target.id==="cur"){ state.cur=e.target.value; state.amt=""; save("cube-cur",state.cur); if(state.cur!=="TWD") await loadFx(false); render(); }
+  if(e.target.id==="cur"||e.target.id==="fxCur"){ state.cur=e.target.value; state.amt=""; state.fxAmt=""; save("cube-cur",state.cur); if(state.cur!=="TWD") await loadFx(false); render(); }
 });
 document.addEventListener("input",e=>{
   if(e.target.id==="amt"){ state.amt=e.target.value; recalc(); }
-  if(e.target.id==="fx"){ state.fxEdit[state.cur]=e.target.value; recalc(); }
+  if(e.target.id==="fx"){ state.fxEdit[state.cur]=e.target.value; saveFxEdit(); recalc(); }
+  if(e.target.id==="fxAmt"){ state.fxAmt=e.target.value; convUpdate(); }
+  if(e.target.dataset.fxm){ const c=e.target.dataset.fxm; if(e.target.value.trim()) state.fxEdit[c]=e.target.value; else delete state.fxEdit[c]; saveFxEdit(); convUpdate(); }
+  if(e.target.id==="feeOrg"){ state.feeOrg=e.target.value; save("cube-fee-org",state.feeOrg); convUpdate(); }
 });
 
 
@@ -696,6 +708,52 @@ function renderActs(){
     <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint m0">${esc(GLOBAL_NOTES[4])}</p></div>`;
 }
 
+/* ===== 匯率換算 ===== */
+function convHTML(){
+  const ci=curInfo(state.cur), a=parseFloat(String(state.fxAmt).replace(/,/g,"")), r=fxRate();
+  if(state.cur==="TWD") return `<p class="hint m0">請先選擇外幣。</p>`;
+  if(!(a>0)) return `<p class="hint m0">輸入${ci[1]}金額，換算成新臺幣。</p>`;
+  if(!(r>0)) return `<p class="hint m0">請在下方匯率表輸入 ${ci[0]} 匯率。</p>`;
+  const nt=Math.round(a*r), fee=Math.round(nt*(FEE_BANK+feeOrg())/100);
+  return `<div class="conv-out"><b>NT$${nt.toLocaleString()}</b><small>${ci[2]}${a.toLocaleString()} × ${r}（${parseFloat(state.fxEdit[state.cur])>0?"手動匯率":"參考匯率"}）</small>
+    <small>國外交易手續費約 NT$${fee.toLocaleString()}（國泰服務費${FEE_BANK}%＋Visa手續費約${feeOrg()}%）</small>
+    <small class="net">刷卡實付約 NT$${(nt+fee).toLocaleString()}（含手續費）</small></div>`;
+}
+function convUpdate(){ const o=document.getElementById("convOut"); if(o) o.innerHTML=convHTML(); }
+function renderFx(){
+  const when=state.fx?new Date(state.fx.upd):null;
+  const t=when?`${when.getFullYear()}/${when.getMonth()+1}/${when.getDate()} ${hm(when)}`:"尚未取得";
+  const rows=CURS.filter(c=>c[0]!=="TWD").map(c=>{
+    const auto=fxAuto(c[0]), man=state.fxEdit[c[0]], on=parseFloat(man)>0;
+    return `<tr${c[0]===state.cur?' class="on"':""}><td>${c[1]} ${c[0]}</td><td>${auto>0?auto:"—"}</td>
+      <td><input data-fxm="${c[0]}" inputmode="decimal" value="${on?esc(man):""}" placeholder="自動" aria-label="${c[1]}手動匯率"></td>
+      <td>${on?`<button class="linkbtn" data-act="fx-auto" data-c="${c[0]}">恢復自動</button>`:`<span class="tag">自動</span>`}</td></tr>`;
+  }).join("");
+  $("#v-fx").innerHTML=`<div class="sec">外幣換算</div>
+    <div class="panel conv">
+      <div class="calc"><label>幣別<select id="fxCur">${CURS.map(c=>`<option value="${c[0]}"${c[0]===state.cur?" selected":""}>${c[1]} ${c[0]}</option>`).join("")}</select></label>
+      <label>金額 ${curInfo(state.cur)[2]}<input id="fxAmt" inputmode="decimal" placeholder="例如 10000" value="${esc(state.fxAmt)}"></label></div>
+      <div id="convOut">${convHTML()}</div>
+      <p class="hint fx-note">此幣別也是「搜尋通路」試算的預設幣別。</p>
+    </div>
+    <div class="sec">匯率設定</div>
+    <div class="panel">
+      <div class="row fx-head"><span class="lbl">資料時間：${t}</span><button class="linkbtn" data-act="fx-update">更新匯率</button></div>
+      ${state.fxErr?`<p class="hint">${esc(state.fxErr)}</p>`:""}
+      <div class="lvwrap"><table class="lvtable fxtable"><thead><tr><th>幣別</th><th>參考匯率（1外幣＝NT$）</th><th>手動匯率</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+      <p class="hint m0">有填手動匯率時優先使用，並會保存到你按「恢復自動」為止。可填入 Visa 官網查到的匯率。</p>
+    </div>
+    <div class="sec">手續費設定</div>
+    <div class="panel">
+      <div class="calc"><label>國泰服務費 <b>${FEE_BANK}%</b></label><label>Visa手續費<input id="feeOrg" inputmode="decimal" value="${esc(state.feeOrg)}">%</label>${parseFloat(state.feeOrg)!==FEE_ORG_DEF?`<button class="linkbtn" data-act="fee-reset">恢復預設 ${FEE_ORG_DEF}%</button>`:""}</div>
+      <ul class="q-list fx-src">
+        <li>國泰：交易金額百分之0.5計算之國外交易服務費<small>國泰世華信用卡約定條款第十六條（官網權益手冊）</small></li>
+        <li>Visa：各信用卡國際組織收取之費率依該組織規定，可能隨時變更，詳載於信用卡帳單或銀行網站；預設 ${FEE_ORG_DEF}% 為參考值<small>同上</small></li>
+        <li>匯率：依各信用卡國際組織之交易結匯日匯率換算；本頁匯率僅供參考<small>同上；參考匯率來源 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a></small></li>
+      </ul>
+    </div>`;
+}
+
 /* ===== 控制項 ===== */
 function renderCats(){
   const all=[["all","全部"],...Object.entries(CATS)];
@@ -707,11 +765,13 @@ function render(){
   $("#v-search").hidden=state.view!=="search";
   $("#v-plans").hidden=state.view!=="plans";
   $("#v-acts").hidden=state.view!=="acts";
-  $("#searchRow").hidden=state.view==="acts";
-  $("#cats").hidden=state.view==="acts";
+  $("#v-fx").hidden=state.view!=="fx";
+  $("#searchRow").hidden=state.view==="acts"||state.view==="fx";
+  $("#cats").hidden=state.view==="acts"||state.view==="fx";
   if(state.view==="search") renderSearch();
   if(state.view==="plans") renderPlans();
   if(state.view==="acts") renderActs();
+  if(state.view==="fx"){ renderFx(); if(!state.fx||Date.now()-state.fx.fetched>=6*36e5) loadFx(false).then(()=>{ if(state.view==="fx") renderFx(); }); }
 }
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   state.view=b.dataset.view;
