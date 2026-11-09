@@ -1,0 +1,17 @@
+{
+  "name": "CUBE 卡權益查詢",
+  "short_name": "CUBE權益",
+  "description": "查詢國泰世華 CUBE 卡各權益方案指定通路與回饋",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07070F",
+  "theme_color": "#07070F",
+  "lang": "zh-TW",
+  "icons": [
+    { "src": "./icon.png?v=2", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon.png?v=2", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon.png?v=2", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }
+  ]
+}
