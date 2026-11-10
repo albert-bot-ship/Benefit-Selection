@@ -7,8 +7,8 @@
 <meta name="description" content="查詢國泰世華 CUBE 卡各權益方案指定通路與回饋">
 <link rel="icon" type="image/png" href="./icon.png">
 <link rel="icon" type="image/jpeg" href="./icon.jpg">
-<!-- 換主畫面圖示時，請把 v= 後面的數字加 1（index.html 與 manifest.json 要一起改） -->
-<link rel="apple-touch-icon" href="./icon.jpg?v=2">
+<link rel="apple-touch-icon" href="./icon.png">
+<link rel="apple-touch-icon" href="./icon.jpg">
 <link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#07070F">
 <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
 <meta name="apple-mobile-web-app-title" content="CUBE權益">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,500;0,700;1,600;1,700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./style.css">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
@@ -46,7 +46,6 @@
     <section id="v-search"></section>
     <section id="v-plans" hidden></section>
     <section id="v-acts" hidden></section>
-    <section id="v-fx" hidden></section>
   </main>
 
   <footer>
@@ -54,22 +53,16 @@
     <ul>
       <li><a href="https://www.cathay-cube.com.tw/cathaybk/personal/product/credit-card/cards/cube-list" target="_blank" rel="noopener">國泰世華 CUBE卡權益方案（官網）</a>：各方案通路、使用提醒、注意事項</li>
       <li><a href="https://www.cathaybk.com.tw/cathaybk/promo/event/credit-card/product/japanrewards/index.html" target="_blank" rel="noopener">國泰世華《秋日遊》活動網頁（官網）</a></li>
-      <li>國外交易服務費0.5%：國泰世華信用卡約定條款第十六條（官網權益手冊）；Visa手續費與外幣匯率為參考值，匯率來源 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">ExchangeRate-API</a></li>
     </ul>
     <div>回饋係以刷卡簽單上之特約商店名稱認定，請依刷卡簽單或CUBE App消費資訊中查看為準，非以發票上列示之商家名稱為依據。（官網使用提醒）</div>
     <div>自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。（官網各權益方案說明）</div>
   </footer>
 </div>
 
-<svg class="tab-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
-  <linearGradient id="tabStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5B9BFF"/><stop offset=".6" stop-color="#9B5BFF"/><stop offset="1" stop-color="#FF4A3D"/></linearGradient>
-  <linearGradient id="tabFill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3D8BFF"/><stop offset="1" stop-color="#6F2DA8"/></linearGradient>
-</defs></svg>
 <nav class="tabbar" aria-label="分頁"><div class="tabbar-in" role="tablist">
-  <button role="tab" aria-selected="true" data-view="search"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="f" cx="10.5" cy="10.5" r="6.8"/><circle class="s" cx="10.5" cy="10.5" r="6.8" stroke-width="1.9"/><path class="s" d="M15.6 15.6 20.5 20.5" stroke-width="2.6"/><rect class="d" x="7.2" y="8.4" width="6.6" height="4.4" rx="1" stroke-width="1.3"/><path class="d" d="M8.6 11.2h1.6" stroke-width="1.3"/></svg>搜尋通路</button>
-  <button role="tab" aria-selected="false" data-view="plans"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect class="s" x="2.5" y="4" width="14" height="9.5" rx="2" stroke-width="1.6" transform="rotate(-8 9.5 8.75)"/><rect class="f" x="6.5" y="9" width="15" height="10.5" rx="2.2"/><rect class="s" x="6.5" y="9" width="15" height="10.5" rx="2.2" stroke-width="1.9"/><rect class="d" x="9" y="11.8" width="3.2" height="2.4" rx=".6" stroke-width="1.3"/><path class="d" d="M9 16.8h7" stroke-width="1.3"/></svg>方案總覽</button>
-  <button role="tab" aria-selected="false" data-view="acts"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="f" d="M4 5.5h16a1 1 0 0 1 1 1v3.2a2.3 2.3 0 0 0 0 4.6v3.2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3.2a2.3 2.3 0 0 0 0-4.6V6.5a1 1 0 0 1 1-1z"/><path class="s" d="M4 5.5h16a1 1 0 0 1 1 1v3.2a2.3 2.3 0 0 0 0 4.6v3.2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3.2a2.3 2.3 0 0 0 0-4.6V6.5a1 1 0 0 1 1-1z" stroke-width="1.9"/><path class="d" d="M9.3 15 14.7 9" stroke-width="1.6"/><circle class="d" cx="9.6" cy="9.6" r="1.1" stroke-width="1.4"/><circle class="d" cx="14.4" cy="14.4" r="1.1" stroke-width="1.4"/></svg>加碼活動</button>
-  <button role="tab" aria-selected="false" data-view="fx"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle class="s" cx="8.6" cy="9" r="5.6" stroke-width="1.6"/><circle class="f" cx="15.2" cy="14.6" r="6"/><circle class="s" cx="15.2" cy="14.6" r="6" stroke-width="1.9"/><path class="d" d="M13.1 11.9l2.1 2.6 2.1-2.6M15.2 14.5v3.6M13.5 15.2h3.4M13.5 16.7h3.4" stroke-width="1.3"/><path class="s" d="M3.2 15.5a6.5 6.5 0 0 0 4.3 3.9M7.6 19.4l-1.6.6M7.6 19.4l-.4-1.7" stroke-width="1.4"/></svg>匯率換算</button>
+  <button role="tab" aria-selected="true" data-view="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>搜尋通路</button>
+  <button role="tab" aria-selected="false" data-view="plans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg>方案總覽</button>
+  <button role="tab" aria-selected="false" data-view="acts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2"/></svg>加碼活動</button>
 </div></nav>
 
 <div class="sheet" id="settings" hidden><div class="sheet-in" role="dialog" aria-label="設定">
@@ -89,6 +82,7 @@
       <button data-mode="auto" aria-pressed="true">自動</button>
       <button data-mode="light" aria-pressed="false">淺色</button>
       <button data-mode="dark" aria-pressed="false">深色</button>
+      <button data-mode="luxury" aria-pressed="false">典藏</button>
     </div>
     <span class="sun-info" id="sunInfo"></span></div>
   <div class="sheet-row"><span class="lbl">今天切換的方案</span><button class="linkbtn" data-act="set-today" id="todayBtn">設定</button></div>
@@ -109,7 +103,7 @@ const PLANS = [
 { id:"autumn", name:"秋日遊", color:"#ff8a3d", start:"2026-10-01", end:"2026-11-30", sum:"3%~8%",
   notes:["自2024年2月1日起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
   groups:[
-  {t:"日本必逛＋遊日必備之指定消費", cat:"overseas", r:3.5, items:["日本實體消費",{n:"愛電王實體門市",a:"edion",cp:"edion"},{n:"大丸百貨福岡天神店",a:"daimaru 大丸",cp:"daimaru"},{n:"MITSUI OUTLET PARK實體商場",a:"三井",cp:"mitsui"},{n:"台場DiverCity Tokyo Plaza",a:"三井",cp:"mitsui"},{n:"BicCamera集團實體門市",a:"bic camera 必酷"},{n:"Apple錢包指定交通卡(Suica 、PASMO、ICOCA)",a:"西瓜卡 suica pasmo icoca",cp:"apple"},{n:"GO Taxi App(預約叫車平台)",a:"計程車 taxi"}]},
+  {t:"日本必逛＋遊日必備之指定消費", cat:"overseas", r:3.5, items:["日本實體消費",{n:"愛電王實體門市",a:"edion",cp:"edion"},{n:"大丸百貨福岡天神店",a:"daimaru 大丸",cp:"daimaru"},{n:"MITSUI OUTLET PARK實體商場",a:"三井",cp:"mitsui"},{n:"台場DiverCity Tokyo Plaza",a:"三井",cp:"mitsui"},{n:"BicCamera集團實體門市",a:"bic camera 必酷"},{n:"Apple錢包指定交通卡(Suica 、PASMO、ICOCA)",a:"西瓜卡 suica pasmo icoca"},{n:"GO Taxi App(預約叫車平台)",a:"計程車 taxi"}]},
   {t:"日本四大機場指定免稅店", cat:"overseas", r:4, items:["成田機場指定免稅店 (Fa-So-La DUTY FREE、JAPAN DUTY FREE、JAL DUTYFREE)","關西機場指定免稅店 (KIX DUTY FREE、TRK ARRIVAL Duty Free Shop、關西旅日記)","新千歲機場指定免稅店(New Chitose Airport Duty Free Shop)","福岡機場免稅店 (FUKUOKA AIRPORT DUTYFREE SHOP)"]},
   {t:"日本IP專賣店 / 人氣愛店 / 餐廳預約平台", cat:"overseas", r:5, note:["1.上述商店限定地點為日本之實體門市，不包含百貨及商場門市、店中櫃、非常態之期間限定快閃店、禮品卡購買或儲值、第三方支付平台及及線上購物消費及線上預訂商品現場取貨等經本行公告排除之項目。", "2.餐廳預約平台回饋僅適用訂位餐廳並於平台實際付款之交易(如平台系統使用費、訂位相關線上預付扣等)；餐費是否需預付及實際支付方式依各餐廳及平台規定。回饋不包含僅完成依訂位未付款、現場支付餐費、取消訂位退餐廳、自行收款及所有餐廳預訂平台完成交易之及其他非指定金額。", "3.優惠通路請依刷卡簽單或 CUBE App 消費資訊中所示商家資訊為準，非以餐廳名稱含依據。"], items:[{n:"寶可夢中心 5家指定門市",a:"pokemon"},{n:"SANRIO 三麗鷗 14家指定門市",a:"sanrio 凱蒂貓"},"KIDDY LAND 6家指定門市",{n:"UNIQLO實體門市",a:"uniqlo 優衣庫"},"Alpen GROUP實體門市","ABC-MART實體門市","Loft實體門市","3COINS 15家指定門市",{n:"Tabelog",a:"食べログ"},"TableCheck","OMAKASE"]},
   {t:"海外旅遊規劃 ( 機票、訂房、行程)", cat:"travel", r:5, items:["Klook 指定日本商品",{n:"Hotels.com 專屬網頁訂房"},{n:"Expedia 專屬網頁訂房"}]},
@@ -219,18 +213,13 @@ const PLANS = [
 
 const GLOBAL_NOTES = ["CUBE卡權益如未敘明則適用期間為：2026/1/1~2026/12/31，詳依 CUBE卡權益方案頁面說明為準。", "方案每正卡人每日限變更一次 (固定回饋另依該權益方案注意事項說明)，附卡適用方案依正卡持卡人設定為準。", "方案設定自當日零時起之消費即依當次變更後之方案計算回饋，方案設定依本行系統紀錄之日期為準。(舉例：小華2026/1/10 17:00變更方案為「樂饗購」，且 2026/1/10 10:30 有一筆Uber消費、18:00 有一筆遠東SOGO百貨消費，則 2026/1/10 之所有消費 (包含 Uber 與遠東SOGO百貨) 皆依「樂饗購」方案計算回饋。)", "保費僅回饋0.3%小樹點(信用卡)且壽險保費不含國泰人壽之躉繳保費、投資型及利率變動型年金保費。", "CUBE App領取優惠券活動：參加本活動需於活動期間登入本行CUBE App之「CUBE優惠券專區」完成領取優惠券，且回饋計算將於活動領取日後(含當日)之新增消費方符合回饋計算。", "CUBE卡各項回饋若未敘明，則以小樹點(信用卡)回饋，其餘商家回饋點數，則依各商家或活動說明為準。", "小樹點(信用卡)點數價值為1點等值NT$1，CUBE卡於每筆消費請款入帳後，依該筆消費之授權日判斷適用權益方案、符合之優惠券，以各別回饋率計算小樹點(信用卡)並依小數點第一位四捨五入至整數位，並於次二日(遇假日順延)回饋至正卡人信用卡帳戶，實際回饋時間依本行作業時間為準。(舉例：小華2026/1/10 適用方案為「樂饗購」並權益分級為Level 2，且當日10:30有一筆雄獅旅行社消費NT$1,800，18:00有一筆新光三越消費NT$3,000。雄獅旅行社不屬「樂饗購」方案指定消費，因此屬一般消費，回饋率0.3%；新光三越於「樂饗購」方案中屬指定美食/購物消費，回饋率3%，小華分別獲得兩筆消費回饋5點、90點，詳細計算見下方表格；小明2026/1/15適用方案為「趣旅行」並權益分級為Level 2，且當日15:30有一筆Agoda授權NT$5,000，後續Agoda提供銀行之消費日為2026/1/20，而小明2026/1/20適用方案為「樂饗購」，則此筆交易本行收到授權日為2026/1/15，故以「趣旅行」計算回饋率，Agoda於「趣旅行」方案中屬指定旅遊/交通消費，回饋率3%，小明可獲得該筆消費回饋150點)\n*授權日為持卡人實際刷卡之日期，消費日為商家提供銀行之交易日期，惟部分商家授權日可能與實際刷卡消費日不同，如因此無法獲得加碼回饋，請洽本行客服處理。", "正附卡消費合併計算，小樹點(信用卡)回饋歸戶至正卡持卡人信用卡帳戶。", "消費折抵金以消費金額乘以回饋比率，四捨五入計算至整數位，於每筆消費請款入帳後計算，並於次三日 (遇假日順延) 回饋至正卡人信用卡帳戶，本行系統自動將該筆回饋金額折抵於原刷卡交易，實際回饋時間依本行作業時間為準。", "合作商戶點之點數以消費金額乘以回饋比率，四捨五入計算至整數位，將於活動結束後統一回饋至合作商戶會員帳戶，入點資訊請於活動結束後至合作商戶會員帳戶查詢，實際回饋時間依商戶作業時間為準。", "如有退貨將比對該筆退貨交易原始消費之適用權益方案，依該方案計算回饋後予以扣除，若商家退款交易資料不足以辨認原始消費之適用權益方案，則依一般消費計算扣除回饋。", "自2024/2/1起於特約商店分期付款消費不適用各權益方案之「指定消費」加碼回饋（含提前結清），如分期付款消費項目屬一般消費，則仍適用原一般消費0.3%回饋。2024/1/31(含)前特約商店分期付款消費分期仍適用權益方案「指定消費」回饋，於每期入帳後回饋至正卡人信用卡帳戶，消費日依帳單列示日期為準。", "自2026/1/1起，CUBE信用卡每月指定消費之累計消費金額以「消費日當日信用額度」加計新臺幣50萬元為限。持卡人因信用額度異動，致當月份有不同之消費日當日信用額度時，其調整後金額上限，不溯及適用至當月已核發小樹點(信用卡)之消費，超出此限額之消費如屬一般消費，仍適用一般消費0.3%回饋。正、附卡信用額度與溢繳金額合併計算。持卡人當月回饋之小樹點（信用卡）總額，以本行最終檢核之結果為準，持卡人同意本行得逕行扣回逾發之小樹點（信用卡）。若點數扣回作業執行時持卡人已將點數使用完畢，將改以1點小樹點(信用卡)等值NT$1之價值入信用卡帳單，持卡人仍應繳納。", "各權益方案之「指定消費」或「優惠券」消費，限直接使用CUBE卡刷卡或使用該卡加入Apple Pay /Samsung Pay/Google Pay/Garmin Pay消費，皆不含透過綠界支付平台、藍新支付平台、91APP或其它第三方支付平台之交易，亦不含透過綁定其他型態支付工具之消費(如：LINE Pay、街口支付、全盈+PAY、全支付、Pi錢包、橘子支付、歐付寶、icash pay、OPEN錢包、My FamiPay、悠遊付、ezPay、GOMAJI Pay、friday wallet、PayPal、支付寶等)。「指定消費」包含玩數位之指定線上消費、樂饗購之指定美食/購物消費、趣旅行之指定旅遊消費、集精選之指定品牌/生活消費包含OPEN錢包於超商消費、My FamiPay超商消費、 PX Pay店內消費，排除菸品、代收代售、禮券購買消費。", "各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。CUBE卡之「一般消費」係排除以下消費或費用：信用卡相關利息及費用(包含但不限於利息、年費、掛失費、預借現金手續費、違約金、國外交易手續費、調閱簽帳單手續費、補發帳單手續費等非消費款項)、預借現金、帳單分期、單筆消費分期(刷卡樂分期)、通信貸款、餘額代償金額及經本行公告除外之專案、稅款、學費、公用事業費用(包含但不限於網路通訊／影音服務等相關費用及附加費)、路邊停車費、公務機關各項費用、透過繳費平台（如公務機關信用卡繳費平台，含公務機關／國營事業／公立醫療院所等、電子化繳費稅處理平台、醫指付、本行CUBE網銀或CUBE App線上繳費服務)繳納之費用、代繳國泰人壽「躉繳」、「投資型」及「利率變動型年金」保單、代扣基金、悠遊卡加值、一卡通加值、icash加值、便利超商消費、透過聯合信用卡處理中心小額支付平台之特約商店之消費（如便利超商、連鎖速食店、停車費等）、全聯福利中心消費、大全聯消費（含實體門市與線上通路）、eTag儲值/eTag智慧停車費代扣繳、遠東SOGO百貨貴賓廳之消費金額、國壽不動產租金代收、未經主管機關核准之境外投資交易平台（包含但不限於eToro）、匯兌平台（包含但不限於Wise）、數位（虛擬）貨幣及旅行支票（包含但不限於MCC code為4829、6012、6211、6051）之交易、博奕類（包含但不限於MCC code為7995）之交易、其他經本行公告排除之項目。", "各權益方案之「指定消費」之消費回饋項目及注意事項依CUBE卡權益方案頁面說明為準；「優惠券」之適用通路及注意事項依優惠券頁面說明為準。", "持卡人於計算回饋時須持有效卡，且上一期無逾期未繳款之紀錄；若持卡人終止信用卡或遭停止使用信用卡權利、延滯繳款或其他違反信用卡約定條款等情事時，將喪失活動回饋資格。", "消費回饋之認定依本行系統為主，本行將依商店提供之交易說明比對，若因商店請款資料變更以致交易說明資訊和本行可判別之資訊不同，或上述回饋通路旗下商品之清算資料類別與本行認列之清算資料不同，導致未列入回饋計算(不包含各商家之排除項目)，請來電告知，本行將於確認後以個案方式提供回饋，且不另行通知，惟回饋恕不溯及既往。除本項說明項目之外，不符回饋通路者，不予個案回饋。", "持卡人於網路商店購物時，應注意是否為國外交易。凡「交易(含辦理退款)之貨幣非為新臺幣」，或「以新臺幣交易，惟特約商店登記國別碼非臺灣」，或「以新臺幣交易，惟特約商店所屬收單機構所在地非臺灣」皆為國外交易，將依信用卡國際組織之交易結匯日匯率換算為新臺幣，並須收取國外交易手續費，請參閱本行信用卡約定條款第十六條之約定。註：網頁以「tw」為網域名稱者，或於我國有設立分公司者，並非當然屬於我國境內特約商店，持卡人仍須注意是否為跨境交易；如無法辨識，建議於交易前先向商家確認後，再進行交易。", "若有任何因為電腦、網路、電話、技術或不可歸責於本行之事由，而使持卡人之交易紀錄有遺失、錯誤、無法辨識或毀損情況，本行不負任何法律責任，持卡人亦不得因此異議。", "若刷卡消費為虛偽不實套利之交易，經本行查證後將逕行扣回已回饋之小樹點(信用卡)，若點數扣除作業時持卡人已將點數使用完畢，將改以1點小樹點(信用卡)等值新台幣壹元之價值入信用卡帳單。", "本活動之相關活動辦法、未盡事項或變更，悉依本行/各合作店家規定及解釋為準。本行保留活動修改、變更及終止之權利，並於本行網站公告。", "本頁所稱CUBE卡為CUBE信用卡，不含CUBE簽帳金融卡。"];
 
-/* CUBE App 領券（src：資料來源；cap：加碼上限與入帳期限，依官網秋日遊活動頁／CUBE App券面原文） */
+/* CUBE App 領券（官網「旅日優惠口袋」原文） */
 const COUPON_URL="https://www.cathay-cube.com.tw/cathaybk/personal/event/overview/credit-card/travel/202501/JP_DiscountPocket";
 const COUPONS={
-  edion:{t:"日本愛電王",rate:"10.2%",d:"[秋日遊限定] CUBE App領券消費享最高10.2%小樹點(信用卡)回饋",period:"2026/10/1~ 2026/12/31",start:"2026-10-01",end:"2026-12-31",add:6.7,capPts:400,cap:"加碼上限400點，入帳日需於2026/12/31(含)前",src:"官網「旅日優惠口袋」"},
-  daimaru:{t:"日本大丸百貨福岡天神店",rate:"8%",d:"CUBE App領券消費享最高8%小樹點(信用卡)回饋",period:"",start:null,end:null,add:4.5,capPts:null,cap:"加碼回饋無上限，入帳日需於2027/01/15(含)前",src:"官網「旅日優惠口袋」"},
-  mitsui:{t:"日本三井指定商場",rate:"5%",d:"CUBE App領券消費享最高5%小樹點(信用卡)回饋",sub:"本活動適用商場包含全日本MITSUI OUTLET PARK + 台場DiverCity Tokyo Plaza",period:"2026/8/1~ 2026/12/31",start:"2026-08-01",end:"2026-12-31",add:1.7,capPts:500,cap:"加碼上限500點，入帳日需於2027/01/15(含)前",src:"官網「旅日優惠口袋」"},
-  apple:{t:"Apple錢包日本指定交通卡",rate:"5%",d:"[秋日遊] CUBE App領取「Apple錢包日本指定交通卡加碼1.5%」優惠券，切換秋日遊3.5%＋領券加碼1.5%，最高5%小樹點(信用卡)回饋",sub:"限以「Apple 錢包」加入Suica、PASMO、ICOCA並綁定CUBE信用卡儲值，不適用Line Pay、街口支付、全支付等",period:"2026/10/1~ 2026/11/30",start:"2026-10-01",end:"2026-11-30",add:1.5,capPts:200,cap:"加碼上限200點，入帳日需於2026/12/15(含)前",src:"官網秋日遊活動頁、CUBE App券面"}
+  edion:{t:"日本愛電王",rate:"10.2%",d:"[秋日遊限定] CUBE App領券消費享最高10.2%小樹點(信用卡)回饋",period:"2026/10/1~ 2026/12/31",start:"2026-10-01",end:"2026-12-31"},
+  daimaru:{t:"日本大丸百貨福岡天神店",rate:"8%",d:"CUBE App領券消費享最高8%小樹點(信用卡)回饋",period:"",start:null,end:null},
+  mitsui:{t:"日本三井指定商場",rate:"5%",d:"CUBE App領券消費享最高5%小樹點(信用卡)回饋",sub:"本活動適用商場包含全日本MITSUI OUTLET PARK + 台場DiverCity Tokyo Plaza",period:"2026/8/1~ 2026/12/31",start:"2026-08-01",end:"2026-12-31"}
 };
-/* 領券加碼點數（券皆已領取）：單筆四捨五入，依每正卡戶累計上限封頂；未扣除已獲得點數 */
-function cpBonus(a,id){ const c=COUPONS[id]; if(!c||!c.add||!cpStatus(c).active) return null;
-  const raw=Math.round(a*c.add/100), pts=c.capPts!=null?Math.min(raw,c.capPts):raw;
-  return {c,pts,capped:c.capPts!=null&&raw>c.capPts}; }
 function cpStatus(c){ return c.start? status(c.start,c.end) : {k:"on",txt:"期間依官網活動詳情",active:true}; }
 function cpTag(id){ const c=COUPONS[id]; if(!c) return ""; const st=cpStatus(c); if(!st.active) return ""; return `<span class="tag cp">CUBE App領券最高${c.rate}</span>`; }
 
@@ -400,71 +389,21 @@ function expiryHTML(){
   return `<div class="expiry"><b>⏰ 即將結束的方案</b>${list.map(p=>`<div class="ex-row"><span class="mini" style="${skin(p)}"></span><span>${esc(p.name)}</span><span class="ex-d">${ymd(p.end)} 結束・${status(p.start,p.end).txt}</span></div>`).join("")}</div>`;
 }
 state.amt = "";
-/* ===== 外幣換算（參考匯率：ExchangeRate-API；國外交易手續費依信用卡約定條款第十六條） ===== */
-const CURS=[["TWD","新臺幣","NT$"],["JPY","日圓","¥"],["KRW","韓元","₩"],["USD","美元","US$"],["EUR","歐元","€"],["THB","泰銖","฿"],["HKD","港幣","HK$"],["CNY","人民幣","CN¥"]];
-const FX_URL="https://open.er-api.com/v6/latest/TWD";
-const FEE_BANK=0.5;   /* 國泰國外交易服務費：交易金額百分之0.5（約定條款第十六條） */
-const FEE_ORG_DEF=1;  /* Visa 手續費預設值：官方未載固定費率，依該組織規定，此為參考值，可於「匯率換算」頁修改 */
-state.cur=load("cube-cur","TWD");
-state.fx=load("cube-fx",null);
-state.fxEdit=load("cube-fx-edit",{}); state.fxErr="";
-state.feeOrg=load("cube-fee-org",FEE_ORG_DEF);
-state.fxAmt="";
-function feeOrg(){ const v=parseFloat(state.feeOrg); return v>=0 ? v : FEE_ORG_DEF; }
-function saveFxEdit(){ save("cube-fx-edit",state.fxEdit); }
-function curInfo(c){ return CURS.find(x=>x[0]===c)||CURS[0]; }
-function fxAuto(c){ const r=state.fx&&state.fx.rates&&state.fx.rates[c]; return r>0 ? Number((1/r).toPrecision(4)) : NaN; }
-function fxRate(){ if(state.cur==="TWD") return 1; const e=parseFloat(state.fxEdit[state.cur]); return e>0 ? e : fxAuto(state.cur); }
-function rawAmt(){ return parseFloat(String(state.amt).replace(/,/g,"")); }
-function twdAmt(){ const a=rawAmt(), r=fxRate(); return a>0&&r>0 ? (state.cur==="TWD"?a:Math.round(a*r)) : NaN; }
-async function loadFx(force){
-  if(!force && state.fx && Date.now()-state.fx.fetched<6*36e5) return;
-  try{
-    const res=await fetch(FX_URL), j=await res.json();
-    if(j.result!=="success"||!j.rates) throw new Error("bad");
-    state.fx={rates:j.rates, upd:j.time_last_update_unix*1000, fetched:Date.now()};
-    save("cube-fx",state.fx); state.fxErr="";
-  }catch(e){ state.fxErr = state.fx ? "無法更新匯率，沿用上次資料，可手動修改" : "無法取得匯率，請手動輸入"; }
-}
-function fxRowHTML(){
-  if(state.cur==="TWD") return "";
-  const ci=curInfo(state.cur), r=fxRate();
-  const when=state.fx?new Date(state.fx.upd):null;
-  const t=when?`${when.getFullYear()}/${when.getMonth()+1}/${when.getDate()} ${hm(when)}`:"";
-  return `<div class="fxrow"><label>匯率 1 ${ci[0]} =<input id="fx" inputmode="decimal" value="${r>0?r:""}" placeholder="輸入匯率">NT$</label><button class="linkbtn" data-act="fx-refresh">更新匯率</button>
-    <small>${state.fxErr?esc(state.fxErr)+"。":""}參考匯率${t?`（資料時間 ${t}）`:""}，可手動改成 Visa 匯率；實際依 Visa 結匯日匯率換算。<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a></small></div>`;
-}
-function recalc(){
-  updatePts(); const o=document.getElementById("calcOut");
-  if(o) o.innerHTML=calcHTML(parseFloat(o.dataset.rate),(o.dataset.cp||"").split(",").filter(Boolean));
-}
 function planById(id){ return PLANS.find(p=>p.id===id); }
 
 /* ===== 試算（官網注意事項第7條：依小數點第一位四捨五入至整數位） ===== */
-function calcHTML(rate,cps=[]){
-  const ra=rawAmt(), foreign=state.cur!=="TWD";
-  if(!(ra>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
-  const a=twdAmt();
-  if(!(a>0)) return `<span class="calc-out muted">請輸入匯率</span>`;
-  const ci=curInfo(state.cur);
-  const fxLine = foreign ? `<small>${ci[2]}${ra.toLocaleString()} × ${fxRate()} ≈ NT$${a.toLocaleString()}（${parseFloat(state.fxEdit[state.cur])>0?"手動匯率":"參考匯率"}）</small>` : "";
-  const feeLines=(tot)=>{ if(!foreign) return ""; const fee=Math.round(a*(FEE_BANK+feeOrg())/100);
-    return `<small>國外交易手續費約 NT$${fee.toLocaleString()}（國泰服務費${FEE_BANK}%＋Visa手續費約${feeOrg()}%，不列入回饋計算）</small><small class="net">淨回饋約 ${(tot-fee).toLocaleString()} 點（回饋點數 − 手續費）</small>`; };
+function calcHTML(rate){
+  const a=parseFloat(String(state.amt).replace(/,/g,""));
+  if(!(a>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
   const raw=a*rate/100, pts=Math.round(raw);
-  const bs=cps.map(id=>cpBonus(a,id)).filter(Boolean);
-  const baseLine=`${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入`;
-  if(!bs.length) return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點${fxLine}<small>${baseLine}</small>${feeLines(pts)}</span>`;
-  const total = bs.length===1 ? pts+bs[0].pts : pts;
-  const lines=bs.map(b=>`<small>領券加碼 ${fmt(b.c.add)}%${bs.length>1?`（${esc(b.c.t)}）`:""}：${b.pts.toLocaleString()} 點（${b.c.capPts!=null?`累計上限${b.c.capPts}點${b.capped?"，本筆已封頂":""}`:"無上限"}）</small>`).join("");
-  return `<span class="calc-out"><b>${total.toLocaleString()}</b> 點${bs.length===1?"（合計）":""}${fxLine}<small>權益 ${fmt(rate)}%：${pts.toLocaleString()} 點（${baseLine}）</small>${lines}<small>${bs.length>1?"加碼依通路擇一適用；":""}累計上限未扣除已獲得的加碼點數</small>${feeLines(total)}</span>`;
+  return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點<small>${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入</small></span>`;
 }
 
 /* 輸入一次金額，所有方案同步試算（官網注意事項第7條：四捨五入至整數位） */
 function updatePts(){
-  const a=twdAmt();
+  const a=parseFloat(String(state.amt).replace(/,/g,""));
   document.querySelectorAll(".pts[data-rate]").forEach(el=>{
-    const base=Math.round(a*parseFloat(el.dataset.rate)/100), b=el.dataset.cp?cpBonus(a,el.dataset.cp):null;
-    el.textContent = a>0 ? (b ? (base+b.pts).toLocaleString()+" 點（含券 "+b.pts.toLocaleString()+"）" : base.toLocaleString()+" 點") : "";
+    el.textContent = a>0 ? Math.round(a*parseFloat(el.dataset.rate)/100).toLocaleString()+" 點" : "";
   });
 }
 /* ===== 這個回饋怎麼來的 ===== */
@@ -502,23 +441,21 @@ function bestHTML(best,top,tq){
   const byPlan=new Map();
   best.forEach(r=>{ if(!byPlan.has(r.plan)) byPlan.set(r.plan,[]); byPlan.get(r.plan).push(r); });
   const fav=state.favs.includes(state.q);
-  const cps=[...new Set(best.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active);
   const blocks=[...byPlan].map(([p,rs])=>{
     const pay=payFor(rs[0]);
     return `<div class="bp" style="${skin(p)}">
       <div class="bp-h"><span class="mini" style="${skin(p)}"></span><div><div class="bp-n">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今天已切</span>`:""}${(st=>st.k==="warn"?`<span class="tag warn">${st.txt}，${ymd(p.end)} 結束</span>`:"")(status(p.start,p.end))}</div>
       <div class="bp-c">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div></div>
+      ${pay?`<div class="pay-h">結帳可用付款方式</div><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div>`:""}
+      ${[...new Set(rs.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active).map(id=>{const c=COUPONS[id];return `<div class="cp-note"><b>另有 CUBE App 領券</b>${esc(c.t)}：${esc(c.d)}${c.period?`<small>活動期間：${esc(c.period)}</small>`:`<small>活動期間依官網活動詳情</small>`}</div>`;}).join("")}
       ${p.req==="pxpay"?`<div class="tag need need-block">須選定「全支付」方案並以全支付綁定CUBE信用卡刷卡消費</div>`:""}
-      ${pay?`<details class="fold"><summary>結帳可用付款方式</summary><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div></details>`:""}
-      ${[...new Set(rs.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active).map(id=>{const c=COUPONS[id];return `<details class="fold cp-fold"><summary>另有 CUBE App 領券</summary><div class="cp-note">${esc(c.t)}：${esc(c.d)}${c.cap?`<small>${esc(c.cap)}</small>`:""}${c.period?`<small>活動期間：${esc(c.period)}</small>`:`<small>活動期間依官網活動詳情</small>`}</div></details>`;}).join("")}
       ${whyHTML(rs[0])}</div>`;
   }).join("");
   return `<section class="best" aria-label="最佳選擇">
     <div class="best-top"><span class="badge-best">★ 最佳選擇</span>
       <button class="fav${fav?" on":""}" data-act="fav" aria-pressed="${fav}" aria-label="收藏這個搜尋">${fav?"♥":"♡"}</button></div>
-    <div class="best-hero"><div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}${cps.length===1?`<small>已領券最高 ${esc(COUPONS[cps[0]].rate)}</small>`:""}</span></div>
-      <div class="best-cards${byPlan.size>1?" multi":""}">${[...byPlan.keys()].slice(0,2).map(p=>cardFace(p,{rate:fmt(top.rate)+"%",showReq:false})).join("")}</div></div>
-    <div class="calc"><label>幣別<select id="cur">${CURS.map(c=>`<option value="${c[0]}"${c[0]===state.cur?" selected":""}>${c[1]} ${c[0]}</option>`).join("")}</select></label><label>試算金額 ${curInfo(state.cur)[2]}<input id="amt" inputmode="decimal" placeholder="${state.cur==="TWD"?"例如 1800":"例如 10000"}" value="${esc(state.amt)}"></label>${fxRowHTML()}<span id="calcOut" data-rate="${top.rate}" data-cp="${cps.join(",")}">${calcHTML(top.rate,cps)}</span></div>
+    <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}</span></div>
+    <div class="calc"><label>試算金額 NT$<input id="amt" inputmode="decimal" placeholder="例如 1800" value="${esc(state.amt)}"></label><span id="calcOut">${calcHTML(top.rate)}</span></div>
     ${blocks}
   </section>`;
 }
@@ -547,21 +484,10 @@ document.addEventListener("click",e=>{
     const i=state.favs.indexOf(state.q); if(i>=0) state.favs.splice(i,1); else if(state.q) state.favs.unshift(state.q);
     save("cube-favs",state.favs); render();
   }
-  if(t.dataset.act==="fx-refresh"){ delete state.fxEdit[state.cur]; saveFxEdit(); t.disabled=true; loadFx(true).then(render); }
-  if(t.dataset.act==="fx-update"){ t.disabled=true; loadFx(true).then(render); }
-  if(t.dataset.act==="fx-auto"){ delete state.fxEdit[t.dataset.c]; saveFxEdit(); render(); }
-  if(t.dataset.act==="fee-reset"){ state.feeOrg=FEE_ORG_DEF; save("cube-fee-org",state.feeOrg); render(); }
   if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
 });
-document.addEventListener("change",async e=>{
-  if(e.target.id==="cur"||e.target.id==="fxCur"){ state.cur=e.target.value; state.amt=""; state.fxAmt=""; save("cube-cur",state.cur); if(state.cur!=="TWD") await loadFx(false); render(); }
-});
 document.addEventListener("input",e=>{
-  if(e.target.id==="amt"){ state.amt=e.target.value; recalc(); }
-  if(e.target.id==="fx"){ state.fxEdit[state.cur]=e.target.value; saveFxEdit(); recalc(); }
-  if(e.target.id==="fxAmt"){ state.fxAmt=e.target.value; convUpdate(); }
-  if(e.target.dataset.fxm){ const c=e.target.dataset.fxm; if(e.target.value.trim()) state.fxEdit[c]=e.target.value; else delete state.fxEdit[c]; saveFxEdit(); convUpdate(); }
-  if(e.target.id==="feeOrg"){ state.feeOrg=e.target.value; save("cube-fee-org",state.feeOrg); convUpdate(); }
+  if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
 });
 
 
@@ -616,7 +542,7 @@ function groupHTML(p,rs,tq){
     const how=matchInfo(r.name, r.alias, r.group.t, tq||[]);
     const nameHTML=(how==="text"||how==="syn") ? markText(r.name,tq).html : (how==="alias" ? `<mark>${esc(r.name)}</mark>` : esc(r.name));
     const gt = how==="group" ? markText(r.group.t,tq).html : esc(r.group.t);
-    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><div class="rrw"><b class="rr">${fmt(r.rate)}%</b><small class="pts" data-rate="${r.rate}"${r.cp?` data-cp="${r.cp}"`:""}></small></div></li>`;
+    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><div class="rrw"><b class="rr">${fmt(r.rate)}%</b><small class="pts" data-rate="${r.rate}"></small></div></li>`;
   }).join("");
   return `<section class="rgroup${r0.usable?"":" off"}" style="${skin(p)}">
     <div class="rg-head"><span class="mini"></span><span class="rg-name">${esc(p.name)}</span>
@@ -706,57 +632,11 @@ function renderActs(){
     <div class="tk-r"><h3>${esc(a.t)}</h3><p>${esc(a.d)}</p><p>${esc(a.extra)}</p>
       <div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網列於「樂饗購」方案頁面「CUBE餐飲活動」</span></div></div></div>`; };
   $("#v-acts").innerHTML=`<div class="sec">CUBE餐飲活動</div>${ACTS.map(card).join("")}
-    <div class="sec">CUBE App 領券</div>
-    ${Object.values(COUPONS).map(c=>{const st=cpStatus(c);return `<div class="ticket${st.active?"":" off"}"><div class="tk-l tk-cp">${esc(c.rate)}</div><div class="tk-r"><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p>${c.sub?`<p>${esc(c.sub)}</p>`:""}${c.cap?`<p>${esc(c.cap)}</p>`:""}<p>${c.period?"活動期間："+esc(c.period):"活動期間依官網活動詳情"}</p><div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">${esc(c.src||"")}</span></div></div></div>`;}).join("")}
+    <div class="sec">CUBE App 領券（旅日優惠口袋）</div>
+    ${Object.values(COUPONS).map(c=>{const st=cpStatus(c);return `<div class="ticket${st.active?"":" off"}"><div class="tk-l tk-cp">${esc(c.rate)}</div><div class="tk-r"><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p>${c.sub?`<p>${esc(c.sub)}</p>`:""}<p>${c.period?"活動期間："+esc(c.period):"活動期間依官網活動詳情"}</p><div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網「旅日優惠口袋」</span></div></div></div>`;}).join("")}
     <p class="hint"><a href="${COUPON_URL}" target="_blank" rel="noopener">前往旅日優惠口袋</a></p>
     <p class="hint"><a href="https://www.cathay-cube.com.tw/content/cub-aem-cs/zh-tw/cathaybk/personal/event/overview/credit-card/dining/202604/cube_dining" target="_blank" rel="noopener">前往活動網頁查看詳情</a></p>
     <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint m0">${esc(GLOBAL_NOTES[4])}</p></div>`;
-}
-
-/* ===== 匯率換算 ===== */
-function convHTML(){
-  const ci=curInfo(state.cur), a=parseFloat(String(state.fxAmt).replace(/,/g,"")), r=fxRate();
-  if(state.cur==="TWD") return `<p class="hint m0">請先選擇外幣。</p>`;
-  if(!(a>0)) return `<p class="hint m0">輸入${ci[1]}金額，換算成新臺幣。</p>`;
-  if(!(r>0)) return `<p class="hint m0">請在下方匯率表輸入 ${ci[0]} 匯率。</p>`;
-  const nt=Math.round(a*r), fee=Math.round(nt*(FEE_BANK+feeOrg())/100);
-  return `<div class="conv-out"><b>NT$${nt.toLocaleString()}</b><small>${ci[2]}${a.toLocaleString()} × ${r}（${parseFloat(state.fxEdit[state.cur])>0?"手動匯率":"參考匯率"}）</small>
-    <small>國外交易手續費約 NT$${fee.toLocaleString()}（國泰服務費${FEE_BANK}%＋Visa手續費約${feeOrg()}%）</small>
-    <small class="net">刷卡實付約 NT$${(nt+fee).toLocaleString()}（含手續費）</small></div>`;
-}
-function convUpdate(){ const o=document.getElementById("convOut"); if(o) o.innerHTML=convHTML(); }
-function renderFx(){
-  const when=state.fx?new Date(state.fx.upd):null;
-  const t=when?`${when.getFullYear()}/${when.getMonth()+1}/${when.getDate()} ${hm(when)}`:"尚未取得";
-  const rows=CURS.filter(c=>c[0]!=="TWD").map(c=>{
-    const auto=fxAuto(c[0]), man=state.fxEdit[c[0]], on=parseFloat(man)>0;
-    return `<tr${c[0]===state.cur?' class="on"':""}><td>${c[1]} ${c[0]}</td><td>${auto>0?auto:"—"}</td>
-      <td><input data-fxm="${c[0]}" inputmode="decimal" value="${on?esc(man):""}" placeholder="自動" aria-label="${c[1]}手動匯率"></td>
-      <td>${on?`<button class="linkbtn" data-act="fx-auto" data-c="${c[0]}">恢復自動</button>`:`<span class="tag">自動</span>`}</td></tr>`;
-  }).join("");
-  $("#v-fx").innerHTML=`<div class="sec">外幣換算</div>
-    <div class="panel conv">
-      <div class="calc"><label>幣別<select id="fxCur">${CURS.map(c=>`<option value="${c[0]}"${c[0]===state.cur?" selected":""}>${c[1]} ${c[0]}</option>`).join("")}</select></label>
-      <label>金額 ${curInfo(state.cur)[2]}<input id="fxAmt" inputmode="decimal" placeholder="例如 10000" value="${esc(state.fxAmt)}"></label></div>
-      <div id="convOut">${convHTML()}</div>
-      <p class="hint fx-note">此幣別也是「搜尋通路」試算的預設幣別。</p>
-    </div>
-    <div class="sec">匯率設定</div>
-    <div class="panel">
-      <div class="row fx-head"><span class="lbl">資料時間：${t}</span><button class="linkbtn" data-act="fx-update">更新匯率</button></div>
-      ${state.fxErr?`<p class="hint">${esc(state.fxErr)}</p>`:""}
-      <div class="lvwrap"><table class="lvtable fxtable"><thead><tr><th>幣別</th><th>參考匯率（1外幣＝NT$）</th><th>手動匯率</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
-      <p class="hint m0">有填手動匯率時優先使用，並會保存到你按「恢復自動」為止。可填入 Visa 官網查到的匯率。</p>
-    </div>
-    <div class="sec">手續費設定</div>
-    <div class="panel">
-      <div class="calc"><label>國泰服務費 <b>${FEE_BANK}%</b></label><label>Visa手續費<input id="feeOrg" inputmode="decimal" value="${esc(state.feeOrg)}">%</label>${parseFloat(state.feeOrg)!==FEE_ORG_DEF?`<button class="linkbtn" data-act="fee-reset">恢復預設 ${FEE_ORG_DEF}%</button>`:""}</div>
-      <ul class="q-list fx-src">
-        <li>國泰：交易金額百分之0.5計算之國外交易服務費<small>國泰世華信用卡約定條款第十六條（官網權益手冊）</small></li>
-        <li>Visa：各信用卡國際組織收取之費率依該組織規定，可能隨時變更，詳載於信用卡帳單或銀行網站；預設 ${FEE_ORG_DEF}% 為參考值<small>同上</small></li>
-        <li>匯率：依各信用卡國際組織之交易結匯日匯率換算；本頁匯率僅供參考<small>同上；參考匯率來源 <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a></small></li>
-      </ul>
-    </div>`;
 }
 
 /* ===== 控制項 ===== */
@@ -770,13 +650,11 @@ function render(){
   $("#v-search").hidden=state.view!=="search";
   $("#v-plans").hidden=state.view!=="plans";
   $("#v-acts").hidden=state.view!=="acts";
-  $("#v-fx").hidden=state.view!=="fx";
-  $("#searchRow").hidden=state.view==="acts"||state.view==="fx";
-  $("#cats").hidden=state.view==="acts"||state.view==="fx";
+  $("#searchRow").hidden=state.view==="acts";
+  $("#cats").hidden=state.view==="acts";
   if(state.view==="search") renderSearch();
   if(state.view==="plans") renderPlans();
   if(state.view==="acts") renderActs();
-  if(state.view==="fx"){ renderFx(); if(!state.fx||Date.now()-state.fx.fetched>=6*36e5) loadFx(false).then(()=>{ if(state.view==="fx") renderFx(); }); }
 }
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
   state.view=b.dataset.view;
@@ -841,7 +719,7 @@ function applyTheme(){
   document.documentElement.setAttribute("data-theme",theme);
   save("cube-theme-last",theme);
   const meta=document.querySelector('meta[name="theme-color"]');
-  if(meta) meta.setAttribute("content", theme==="light"?"#F3F5FA":"#07070F");
+  if(meta) meta.setAttribute("content", theme==="light"?"#F3F5FA":theme==="luxury"?"#120D12":"#07070F");
   document.querySelectorAll("#themeSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.mode===state.themeMode));
   const info=$("#sunInfo");
   if(info) info.textContent=`今日日出 ${hm(st.rise)}／日落 ${hm(st.set)}（${L.src}）`;
@@ -857,7 +735,6 @@ setInterval(applyTheme,60000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) applyTheme(); });
 
 renderCats(); render();
-if(state.cur!=="TWD") loadFx(false).then(render);
 </script>
 </body>
 </html>
