@@ -349,14 +349,54 @@ function cardFace(p,o={}){
   if(st.k==="warn"||st.k==="end"||st.k==="soon") pills.push(`<span class="pill">${st.txt}</span>`);
   if(o.showReq!==false && reqLabel(p)) pills.push(`<span class="pill">${reqLabel(p)}</span>`);
   return `<div class="cface${st.active?"":" expired"}" style="${skin(p)}">
-    <div class="cf-top"><span class="cf-name">${esc(p.name)}</span><span class="cf-brand">CUBE</span></div>
+    <div class="cf-top"><span class="cf-name">${esc(p.name)}</span><span class="cf-brand">CUBE</span>${o.peek?`<span class="cf-peek">${esc(o.peek)}</span>`:""}</div>
     <div class="cf-mid"><span class="chip"></span>${NFC}</div>
     ${o.lines? `<div class="cf-lines">${o.lines}</div>` : ""}
     <div class="cf-bot"><span class="cf-valid"><small>VALID</small>${mdp(p.start)} – ${mdp(p.end)}</span>
       <span class="cf-rate${String(rate).length>6?" long":""}">${esc(rate)}</span></div>
     ${pills.length?`<div class="cf-pills">${pills.join("")}</div>`:""}
+    ${progHTML(p)}
   </div>`;
 }
+/* 有效期進度條 */
+function progOf(p){ const s=pd(p.start), e=pd(p.end), t=today();
+  const total=Math.round((e-s)/DAY)+1, done=Math.min(total,Math.max(0,Math.round((t-s)/DAY)+1));
+  return Math.round(done/total*100); }
+function progHTML(p){ return `<span class="cf-prog ${status(p.start,p.end).k}" style="--p:${progOf(p)}%" aria-hidden="true"></span>`; }
+/* 卡片背面：依類別彙整回饋率 */
+function cardBack(p){
+  const st=status(p.start,p.end), by=new Map();
+  p.groups.forEach(g=>{ const r=rateOf(g.r); if(!by.has(g.cat)) by.set(g.cat,[r,r]); const m=by.get(g.cat); m[0]=Math.min(m[0],r); m[1]=Math.max(m[1],r); });
+  const rows=[...by].map(([c,[a,b]])=>`<li>${catIcon(c)}<span>${CATS[c]}</span><b>${a===b?fmt(a)+"%":fmt(a)+"–"+fmt(b)+"%"}</b></li>`).join("");
+  return `<div class="cface cback${st.active?"":" expired"}" style="${skin(p)}">
+    <span class="cb-stripe"></span>
+    <div class="cb-head"><span class="cb-name">${esc(p.name)}</span><span class="cb-period">${ymd(p.start)}–${ymd(p.end)}</span></div>
+    <ul class="cb-list">${rows}</ul>
+    <div class="cb-foot">期間已過 ${progOf(p)}%・${st.txt}${reqLabel(p)?"・"+reqLabel(p):""}</div>
+    ${progHTML(p)}</div>`;
+}
+/* 類別圖示 */
+const CAT_ICON={
+  all:'<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>',
+  ai:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 16v4M17 18h4"/>',
+  eshop:'<path d="M3 4h2.5l2.2 10.5h10.6L20.5 7H6.4"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>',
+  dept:'<path d="M5 8h14l-1 12H6z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/>',
+  dining:'<path d="M6 3v5a2 2 0 0 0 4 0V3M8 10v11M16.5 3c-2 1.5-2.5 5-.5 8v10"/>',
+  delivery:'<path d="M3 8l9-4 9 4v8l-9 4-9-4z"/><path d="M3 8l9 4 9-4M12 12v8"/>',
+  drug:'<path d="M4.9 12.1l7.2-7.2a4.5 4.5 0 0 1 6.4 6.4l-7.2 7.2a4.5 4.5 0 0 1-6.4-6.4z"/><path d="M8.5 8.5l7 7"/>',
+  travel:'<path d="M3 18V6M3 14h18v4M21 14v-2.5A3.5 3.5 0 0 0 17.5 8H11v6"/><circle cx="7" cy="10.5" r="1.8"/>',
+  air:'<path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  transport:'<rect x="5" y="3" width="14" height="14" rx="3"/><path d="M5 10h14M8.5 21l2-4M15.5 21l-2-4"/><circle cx="9" cy="13.5" r=".6"/><circle cx="15" cy="13.5" r=".6"/>',
+  overseas:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  cvs:'<path d="M4 9l1.5-5h13L20 9M4 9h16v11H4zM9.5 20v-5.5h5V20"/>',
+  market:'<path d="M3 9h18l-2 11H5zM8 9l3-6M16 9l-3-6M9.5 13v3.5M14.5 13v3.5"/>',
+  car:'<path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M3 21h12M4 10h10M14 8h2a2 2 0 0 1 2 2v6a1.5 1.5 0 0 0 3 0V8l-3-3"/>',
+  ent:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
+  kids:'<path d="M12 3c2.8 0 5 2.6 5 5.8 0 3.4-2.4 6.2-5 6.2s-5-2.8-5-6.2C7 5.6 9.2 3 12 3z"/><path d="M12 15l-1 2h2zM12 17c0 2-2 2-2 4"/>',
+  fee:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  life:'<path d="M3 11l9-8 9 8M5 9v12h14V9M10 21v-6h4v6"/>'
+};
+function catIcon(c){ return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CAT_ICON[c]||""}</svg>`; }
 
 /* ===== 付款方式（依官網） ===== */
 const PAY_STD=["直接刷CUBE卡","Apple Pay","Samsung Pay","Google Pay","Garmin Pay"];
@@ -486,6 +526,16 @@ document.addEventListener("click",e=>{
   }
   if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
 });
+document.addEventListener("click",e=>{
+  const s=e.target.closest("[data-stk]");
+  if(s){ const on=!s.classList.contains("open");
+    document.querySelectorAll(".stk.open").forEach(x=>{ x.classList.remove("open"); if(!x.classList.contains("last")) x.setAttribute("aria-expanded","false"); });
+    if(on){ s.classList.add("open"); s.setAttribute("aria-expanded","true"); }
+    return; }
+  const f=e.target.closest(".flip");
+  if(f){ const w=f.closest(".wcard"), on=w.classList.toggle("flipped"); f.setAttribute("aria-expanded",on);
+    if(on) setTimeout(()=>w.scrollIntoView({block:"start",behavior:"smooth"}),60); }
+});
 document.addEventListener("input",e=>{
   if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
 });
@@ -562,15 +612,28 @@ function fallbackHTML(empty){
 }
 function introHTML(){
   const q=["蝦皮","7-11","全聯","Netflix","新光三越","麥當勞","日本","高鐵","Uber Eats","壽司郎","加油","ChatGPT"];
-  return `<p class="hint">輸入店家、品牌或類別，找出今天該刷哪張「權益卡」。也可以點上方類別直接瀏覽。</p>
+  return `${heroHTML()}
+   <p class="hint">輸入店家、品牌或類別，找出今天該刷哪張「權益卡」。也可以點上方類別直接瀏覽。</p>
    ${expiryHTML()}
-   ${todayLine([],[])}
    ${state.favs.length?`<div class="sec">我的收藏</div><div class="quick fav-list">${state.favs.map(x=>`<span class="favchip"><button data-q="${esc(x)}">♥ ${esc(x)}</button><button data-act="unfav" data-q="${esc(x)}" aria-label="移除收藏">✕</button></span>`).join("")}</div>`:""}
    <div class="sec">常用搜尋</div>
    <div class="quick">${q.map(x=>`<button data-q="${esc(x)}">${esc(x)}</button>`).join("")}</div>
-   <div class="sec">目前錢包裡的權益</div>
-   <div class="wallet">${PLANS.filter(p=>status(p.start,p.end).active).map(p=>cardFace(p)).join("")}</div>
+   ${stackHTML()}
    ${fallbackHTML(false)}`;
+}
+function heroHTML(){
+  const p=state.todayPlan && planById(state.todayPlan);
+  if(!p) return `<section class="hero"><div class="hero-h"><b>今天的主卡</b></div>
+    <button class="hero-empty" data-act="set-today"><b>尚未設定今天切換的方案</b><span>點這裡選擇</span></button></section>`;
+  return `<section class="hero"><div class="hero-h"><b>今天的主卡</b><span>點卡片更換</span></div>
+    <button class="hero-card" data-act="set-today" aria-label="今天的主卡：${esc(p.name)}，點擊更換">${cardFace(p)}</button></section>`;
+}
+function stackHTML(){
+  const list=PLANS.filter(p=>status(p.start,p.end).active && p.id!==state.todayPlan);
+  if(!list.length) return "";
+  return `<div class="sec">${state.todayPlan?"錢包裡的其他權益":"目前錢包裡的權益"}</div>
+   <div class="stack">${list.map((p,i)=>`<button class="stk${i===list.length-1?" last":""}" data-stk aria-expanded="${i===list.length-1}" aria-label="${esc(p.name)}">${cardFace(p,{peek:p.rate===L?fmt(LEVEL_RATES[state.lv])+"%":p.sum})}</button>`).join("")}</div>
+   <p class="hint">點卡片展開</p>`;
 }
 function bindQuick(){
   document.querySelectorAll(".quick button[data-q]:not([data-act])").forEach(b=>b.onclick=()=>{ $("#q").value=b.dataset.q; state.q=b.dataset.q; syncClear(); render(); });
@@ -610,11 +673,12 @@ function renderPlans(){
     if(state.cat!=="all" && !groups) return "";
     if(pHits){ hitPlans++; hitItems+=pHits; }
     const open = tq.length ? pHits>0 : false;
-    return `<details class="wcard" style="${skin(p)}" ${open?"open":""}>
-      <summary>${cardFace(p,{hits:pHits})}</summary>
+    return `<div class="wcard${open?" flipped":""}" style="${skin(p)}">
+      <button class="flip" aria-expanded="${open}" aria-label="${esc(p.name)}：翻面查看回饋摘要與通路">
+        <span class="flip-in"><span class="face front">${cardFace(p,{hits:pHits})}</span><span class="face back">${cardBack(p)}</span></span></button>
       <div class="wbody">
         <details class="tips top"><summary>方案說明（官網）</summary><ul>${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></details>
-        ${groups}</div></details>`;
+        ${groups}</div></div>`;
   }).join("");
   const sumBox = tq.length ? `<div class="hitsum">「${esc(state.q)}」出現在 ${hitPlans} 個方案、共 ${hitItems} 筆通路，已自動展開並標示。${hitPlans?"":"目前沒有方案包含這個通路。"}</div>` : "";
   const gTable=`<div class="lvwrap"><table class="lvtable"><thead><tr><th>消費項目</th><th>消費金額</th><th>消費類別</th><th>回饋率</th><th>回饋點數</th></tr></thead><tbody>
@@ -622,7 +686,7 @@ function renderPlans(){
     <tr><td>新光三越</td><td>NT$3,000</td><td>指定美食/購物消費</td><td>3%</td><td>90 (3000*3%=90)</td></tr></tbody></table></div>`;
   const gNotes=`<details class="gnotes"><summary>注意事項<span>官網「CUBE卡權益方案」頁面共通注意事項</span></summary>
     <ol>${GLOBAL_NOTES.map((n,i)=>`<li>${esc(n).replace(/\n/g,"<br>")}${i===6?gTable:""}</li>`).join("")}</ol></details>`;
-  $("#v-plans").innerHTML=sumBox+lvTable+`<p class="hint">點卡片查看通路與使用提醒</p>`+(html?`<div class="cardgrid">${html}</div>`:`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes;
+  $("#v-plans").innerHTML=sumBox+lvTable+`<p class="hint">點卡片翻面，查看回饋摘要、通路與使用提醒</p>`+(html?`<div class="cardgrid">${html}</div>`:`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes;
 }
 
 /* ===== 加碼活動 ===== */
@@ -642,7 +706,7 @@ function renderActs(){
 /* ===== 控制項 ===== */
 function renderCats(){
   const all=[["all","全部"],...Object.entries(CATS)];
-  $("#cats").innerHTML=all.map(([k,v])=>`<button data-cat="${k}" aria-pressed="${state.cat===k}">${v}</button>`).join("");
+  $("#cats").innerHTML=all.map(([k,v])=>`<button data-cat="${k}" aria-pressed="${state.cat===k}">${catIcon(k)}${v}</button>`).join("");
   document.querySelectorAll("#cats button").forEach(b=>b.onclick=()=>{state.cat=b.dataset.cat; renderCats(); render();});
 }
 function syncClear(){ $("#clear").hidden=!state.q; }
