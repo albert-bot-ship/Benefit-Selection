@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css?v=20261112c">
+<link rel="stylesheet" href="./style.css?v=20261112d">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
 </head>
@@ -502,10 +502,7 @@ function ptsText(rate){ const n=ntd(); return n?approx()+ptsOf(n,rate).toLocaleS
 function formulaText(rate){
   const a=amtVal(); if(!a) return "輸入上方金額，可試算小樹點(信用卡)";
   const n=ntd(); if(!n) return "匯率取得中，暫無法換算";
-  const pts=ptsOf(n,rate);
-  let t="可得 <b>"+approx()+pts.toLocaleString("zh-TW")+" 點</b>";
-  if(fxOn()){ const f=n*FEE/100; t+="・手續費約 NT$"+n1(f)+"・淨回饋約 <b>"+n1(pts-f)+"</b>"; }
-  return t;
+  return `<span class="pts-big">${fxOn()?"<i>約</i>":""}${ptsOf(n,rate).toLocaleString("zh-TW")}<small>點</small></span>`;
 }
 function updateAmts(){
   document.querySelectorAll("[data-rate]").forEach(el=>{
