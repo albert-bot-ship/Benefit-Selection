@@ -785,3 +785,12 @@ button.ex-row:hover{background:color-mix(in srgb,var(--warn) 10%,transparent)}
 /* 最佳選擇（先前樣式）內的方案列 */
 .best .bx-block{padding:10px 0 4px;border-top:1px dashed var(--line)}
 .best .bx-block:first-of-type{margin-top:4px}
+.formula b{color:var(--text);font-size:1.05rem}
+/* 最佳選擇：試算結果只顯示最終點數，放大 */
+.pts-big{display:inline-flex;align-items:baseline;gap:4px;padding:4px 14px;border-radius:var(--radius-sm);
+  background:color-mix(in srgb,#2ecc71 14%,transparent);border:1px solid color-mix(in srgb,#2ecc71 45%,transparent);
+  font-family:var(--num);font-style:var(--num-style);font-weight:700;font-size:2rem;line-height:1.15;color:#2ecc71;font-variant-numeric:tabular-nums}
+.pts-big small{font-family:var(--font);font-style:normal;font-size:.95rem;font-weight:700}
+.pts-big i{font-family:var(--font);font-style:normal;font-size:.9rem;font-weight:500}
+:root[data-theme="light"] .pts-big{color:#12a150;background:#e8f7ee;border-color:#9fdcb7}
+:root[data-theme="luxury"] .pts-big{color:var(--gold);background:rgba(226,200,147,.1);border-color:var(--gold-line)}
