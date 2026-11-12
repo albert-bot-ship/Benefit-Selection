@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css?v=20261112">
+<link rel="stylesheet" href="./style.css?v=20261112b">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
 </head>
@@ -586,16 +586,18 @@ function bestHTML(best,top,tq){
     return `<div class="bx-block" style="${skin(p)}">
       <div class="bx-row"><span class="mini" style="${skin(p)}"></span><div class="bx-main">
         <div class="bx-plan">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今日主卡</span>`:""}${st.k==="warn"?`<span class="tag warn">${st.txt}，${ymd(p.end)} 結束</span>`:""}</div>
-        <div class="bx-items">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div>
-        <span class="bx-rate">${fmt(top.rate)}<small>%</small></span></div>
+        <div class="bx-items">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div></div>
       <p class="formula" data-formula data-rate="${top.rate}"></p>
       ${pay?`<div class="pay-h">結帳可用付款方式</div><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div>`:""}
       ${[...new Set(rs.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active).map(id=>{const c=COUPONS[id];return `<div class="cp-note"><b>另有 CUBE App 領券</b>${esc(c.t)}：${esc(c.d)}${c.period?`<small>活動期間：${esc(c.period)}</small>`:`<small>活動期間依官網活動詳情</small>`}</div>`;}).join("")}
       ${p.req==="pxpay"?`<div class="tag need need-block">須選定「全支付」方案並以全支付綁定CUBE信用卡刷卡消費</div>`:""}
       ${whyHTML(rs[0])}</div>`;
   }).join("");
-  return `<section class="panel vitrine bestbox" aria-label="最佳選擇">
-    <div class="bx-label">${CROWN}最佳選擇<span class="aside">小樹點(信用卡)${byPlan.size>1?`・${byPlan.size} 個方案同為最高`:""}</span></div>
+  const fav=state.favs.includes(state.q);
+  return `<section class="best" aria-label="最佳選擇">
+    <div class="best-top"><span class="badge-best">★ 最佳選擇</span>
+      <button class="fav${fav?" on":""}" data-act="fav" aria-pressed="${fav}" aria-label="${fav?"取消收藏此搜尋":"收藏此搜尋"}">${fav?"♥":"♡"}</button></div>
+    <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}</span></div>
     ${blocks}</section>`;
 }
 function favBtn(q){ const on=state.favs.includes(q);
@@ -704,7 +706,7 @@ function renderSearch(){
   let html="";
   const top=rows.find(r=>r.usable);
   if(tq.length) html+=todayLine(rows,tq);
-  html+=`<div class="sec">${tq.length?"「"+esc(state.q)+"」":""}${state.cat!=="all"?(tq.length?"・":"")+esc(CATS[state.cat]):""}<span class="aside">${rows.length} 筆</span>${tq.length?favBtn(state.q):""}</div>`;
+  html+=`<div class="sec">${tq.length?"「"+esc(state.q)+"」":""}${state.cat!=="all"?(tq.length?"・":"")+esc(CATS[state.cat]):""}<span class="aside">${rows.length} 筆</span></div>`;
   if(fxOn()) html+=`<p class="hint">外幣交易：回饋是否適用，依各方案指定通路說明（例如「海外實體消費」限實體商店）。</p>`;
   if(tq.length && top) html+=bestHTML(rows.filter(r=>r.usable && r.rate===top.rate),top,tq);
   if(rows.length){
@@ -750,7 +752,7 @@ function fallbackHTML(empty){
     </ul></div>`;
 }
 function renderHome(){
-  $("#v-home").innerHTML=`${heroHTML()}${expiryHTML()}${stackHTML()}${fallbackHTML(false)}`;
+  $("#v-home").innerHTML=`${heroHTML()}${expiryHTML()}${fallbackHTML(false)}`;
   initHomeRail();
 }
 function heroHTML(){
