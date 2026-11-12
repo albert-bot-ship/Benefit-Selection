@@ -782,3 +782,6 @@ button.ex-row:hover{background:color-mix(in srgb,var(--warn) 10%,transparent)}
 @media (min-width:600px){.sheet-in,.picker-in{transform:translateY(24px) scale(.98)}}
 @media (prefers-reduced-motion:reduce){.sheet,.sheet.open,.sheet-in,.picker,.picker-in{transition:none}}
 .cb-amt input:focus-visible,.calc-q input:focus-visible{outline:none}
+/* 最佳選擇（先前樣式）內的方案列 */
+.best .bx-block{padding:10px 0 4px;border-top:1px dashed var(--line)}
+.best .bx-block:first-of-type{margin-top:4px}
