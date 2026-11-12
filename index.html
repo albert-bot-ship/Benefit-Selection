@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./style.css?v=20261112">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
 </head>
@@ -63,7 +63,7 @@
   <button role="tab" aria-selected="false" data-view="favs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5c-2.2 4.6-9.2 9-9.2 9z"/></svg>收藏</button>
 </div></nav>
 
-<div class="sheet" id="settings" aria-hidden="true"><div class="sheet-in" role="dialog" aria-label="設定">
+<div class="sheet" id="settings" aria-hidden="true" hidden><div class="sheet-in" role="dialog" aria-label="設定">
   <div class="sheet-grab"></div>
   <h2>設定</h2>
   <div class="sheet-row"><span class="lbl">我的等級</span>
@@ -995,8 +995,10 @@ function render(){
 document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>goView(b.dataset.view));
 /* 設定面板：由下往上滑入、背景淡入 */
 function openSettings(){ $("#todayBtn").textContent = state.todayPlan ? "「"+planById(state.todayPlan).name+"」更改" : "設定";
-  const s=$("#settings"); s.classList.add("open"); s.setAttribute("aria-hidden","false"); }
-function closeSettings(){ const s=$("#settings"); s.classList.remove("open"); s.setAttribute("aria-hidden","true"); }
+  const s=$("#settings"); clearTimeout(closeSettings._t); s.hidden=false; s.setAttribute("aria-hidden","false");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>s.classList.add("open"))); }
+function closeSettings(){ const s=$("#settings"); s.classList.remove("open"); s.setAttribute("aria-hidden","true");
+  clearTimeout(closeSettings._t); closeSettings._t=setTimeout(()=>{ s.hidden=true; },REDUCE?0:380); }
 $("#openSettings").onclick=openSettings;
 $("#closeSettings").onclick=closeSettings;
 $("#settings").onclick=e=>{ if(e.target.id==="settings") closeSettings(); };
