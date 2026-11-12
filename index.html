@@ -78,17 +78,20 @@
     <label class="toggle"><input type="checkbox" id="bday" checked>顯示慶生月方案</label>
     <label class="toggle"><input type="checkbox" id="kids">符合童樂匯資格</label></div>
   <div class="sheet-row"><span class="lbl">外觀</span>
-    <div class="seg" id="themeSeg">
-      <button data-mode="auto" aria-pressed="true">自動</button>
-      <button data-mode="light" aria-pressed="false">淺色</button>
-      <button data-mode="dark" aria-pressed="false">深色</button>
-      <button data-mode="luxury" aria-pressed="false">典藏</button>
+    <div class="theme-grid" id="themeSeg">
+      <button class="opt" data-mode="auto" aria-pressed="true"><span class="pv auto"></span><span><b>自動</b><small>依日出日落切換</small></span></button>
+      <button class="opt" data-mode="light" aria-pressed="false"><span class="pv light"></span><span><b>淺色</b><small>明亮清爽</small></span></button>
+      <button class="opt" data-mode="dark" aria-pressed="false"><span class="pv dark"></span><span><b>深色</b><small>夜間藍紫光暈</small></span></button>
+      <button class="opt" data-mode="luxury" aria-pressed="false"><span class="pv luxury"></span><span><b>典藏</b><small>香檳金與絲絨黑</small></span></button>
     </div>
     <span class="sun-info" id="sunInfo"></span></div>
+  <div class="sheet-row"><span class="lbl">卡面光澤</span>
+    <button class="opt" id="tiltBtn" aria-pressed="false"><span><b>啟用手機傾斜光澤</b><small>傾斜手機時卡面反光跟著移動；iPhone 需允許「動作與方向」</small></span></button></div>
   <div class="sheet-row"><span class="lbl">今天切換的方案</span><button class="linkbtn" data-act="set-today" id="todayBtn">設定</button></div>
   <button class="sheet-done" id="closeSettings">完成</button>
 </div></div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 /* ===== 資料 ===== */
 const CATS = {
@@ -345,10 +348,11 @@ function cardFace(p,o={}){
   const st=status(p.start,p.end);
   const rate = o.rate!=null ? o.rate : (p.rate===L ? fmt(LEVEL_RATES[state.lv])+"%" : p.sum);
   const pills=[];
+  if(o.main) pills.push(`<span class="pill main">今日主卡</span>`);
   if(o.hits) pills.push(`<span class="pill hit">符合 ${o.hits} 筆</span>`);
   if(st.k==="warn"||st.k==="end"||st.k==="soon") pills.push(`<span class="pill">${st.txt}</span>`);
   if(o.showReq!==false && reqLabel(p)) pills.push(`<span class="pill">${reqLabel(p)}</span>`);
-  return `<div class="cface${st.active?"":" expired"}" style="${skin(p)}">
+  return `<div class="cface${st.active?"":" expired"}" style="${skin(p)}"><span class="tex"></span><span class="holo"></span><span class="glare"></span>
     <div class="cf-top"><span class="cf-name">${esc(p.name)}</span><span class="cf-brand">CUBE</span>${o.peek?`<span class="cf-peek">${esc(o.peek)}</span>`:""}</div>
     <div class="cf-mid"><span class="chip"></span>${NFC}</div>
     ${o.lines? `<div class="cf-lines">${o.lines}</div>` : ""}
@@ -368,7 +372,7 @@ function cardBack(p){
   const st=status(p.start,p.end), by=new Map();
   p.groups.forEach(g=>{ const r=rateOf(g.r); if(!by.has(g.cat)) by.set(g.cat,[r,r]); const m=by.get(g.cat); m[0]=Math.min(m[0],r); m[1]=Math.max(m[1],r); });
   const rows=[...by].map(([c,[a,b]])=>`<li>${catIcon(c)}<span>${CATS[c]}</span><b>${a===b?fmt(a)+"%":fmt(a)+"–"+fmt(b)+"%"}</b></li>`).join("");
-  return `<div class="cface cback${st.active?"":" expired"}" style="${skin(p)}">
+  return `<div class="cface cback${st.active?"":" expired"}" style="${skin(p)}"><span class="tex"></span><span class="holo"></span><span class="glare"></span>
     <span class="cb-stripe"></span>
     <div class="cb-head"><span class="cb-name">${esc(p.name)}</span><span class="cb-period">${ymd(p.start)}–${ymd(p.end)}</span></div>
     <ul class="cb-list">${rows}</ul>
@@ -423,10 +427,43 @@ const cur=load("cube-today",null);
 state.todayPlan = (cur && cur.d===todayKey()) ? cur.id : "";
 state.favs = load("cube-favs",[]);
 state.bday = load("cube-show-bday",true);
+state.pmode = load("cube-pmode","grid");
+state.tilt = load("cube-tilt",false);
+state.hview = "";
+const REDUCE = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),1800); }
+/* ===== 全像光澤：手指滑過／手機傾斜 ===== */
+function setGlint(el,x,y){ el.style.setProperty("--mx",x.toFixed(1)+"%"); el.style.setProperty("--my",y.toFixed(1)+"%"); }
+document.addEventListener("pointermove",ev=>{
+  if(REDUCE||!ev.target.closest) return;
+  const c=ev.target.closest(".cface"); if(!c) return;
+  const r=c.getBoundingClientRect(); setGlint(c,(ev.clientX-r.left)/r.width*100,(ev.clientY-r.top)/r.height*100);
+},{passive:true});
+document.addEventListener("pointerout",ev=>{
+  if(!ev.target.closest) return; const c=ev.target.closest(".cface");
+  if(c && !(ev.relatedTarget && c.contains(ev.relatedTarget))){ c.style.removeProperty("--mx"); c.style.removeProperty("--my"); }
+});
+let tiltOn=false, tiltRAF=0, tiltXY=null;
+function onOrient(e){
+  if(e.gamma==null) return;
+  const x=Math.max(-25,Math.min(25,e.gamma)), y=Math.max(10,Math.min(80,e.beta||45));
+  tiltXY=[50+x*2,(y-10)/70*100];
+  if(!tiltRAF) tiltRAF=requestAnimationFrame(()=>{ tiltRAF=0; setGlint(document.documentElement,tiltXY[0],tiltXY[1]); });
+}
+function enableTilt(gesture){
+  const D=window.DeviceOrientationEvent;
+  if(REDUCE||!D) return Promise.resolve(false);
+  let p;
+  if(typeof D.requestPermission==="function"){ if(!gesture) return Promise.resolve(false); try{ p=D.requestPermission(); }catch(e){ return Promise.resolve(false); } }
+  else p=Promise.resolve("granted");
+  return p.then(r=>{ if(r!=="granted") return false; if(!tiltOn){ window.addEventListener("deviceorientation",onOrient); tiltOn=true; } return true; },()=>false);
+}
+function disableTilt(){ window.removeEventListener("deviceorientation",onOrient); tiltOn=false;
+  document.documentElement.style.removeProperty("--mx"); document.documentElement.style.removeProperty("--my"); }
 function expiryHTML(){
   const list=PLANS.filter(p=>status(p.start,p.end).k==="warn");
   if(!list.length) return "";
-  return `<div class="expiry"><b>⏰ 即將結束的方案</b>${list.map(p=>`<div class="ex-row"><span class="mini" style="${skin(p)}"></span><span>${esc(p.name)}</span><span class="ex-d">${ymd(p.end)} 結束・${status(p.start,p.end).txt}</span></div>`).join("")}</div>`;
+  return `<div class="expiry"><b>⏰ 即將結束的方案</b>${list.map(p=>`<button class="ex-row" data-act="viewplan" data-pid="${p.id}"><span class="mini" style="${skin(p)}"></span><span>${esc(p.name)}</span><span class="ex-d">${ymd(p.end)} 結束・${status(p.start,p.end).txt}</span></button>`).join("")}</div>`;
 }
 state.amt = "";
 function planById(id){ return PLANS.find(p=>p.id===id); }
@@ -513,7 +550,7 @@ function todayPickerHTML(){
 function openPicker(){
   let el=document.getElementById("pickerHost"); if(!el){ el=document.createElement("div"); el.id="pickerHost"; document.body.appendChild(el); }
   el.innerHTML=todayPickerHTML();
-  el.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ state.todayPlan=b.dataset.pick; save("cube-today",{d:todayKey(),id:state.todayPlan}); el.innerHTML=""; render(); });
+  el.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ state.todayPlan=b.dataset.pick; save("cube-today",{d:todayKey(),id:state.todayPlan}); el.innerHTML=""; state.hview=state.todayPlan; render(); toast(state.todayPlan?"已設為今日主卡："+planById(state.todayPlan).name:"已清除今日主卡"); });
   el.querySelector('[data-act="close"]').onclick=()=>{ el.innerHTML=""; };
   el.querySelector(".picker").onclick=e=>{ if(e.target.classList.contains("picker")) el.innerHTML=""; };
 }
@@ -522,9 +559,12 @@ document.addEventListener("click",e=>{
   if(t.dataset.act==="set-today"){ closeSettings(); openPicker(); }
   if(t.dataset.act==="fav"){
     const i=state.favs.indexOf(state.q); if(i>=0) state.favs.splice(i,1); else if(state.q) state.favs.unshift(state.q);
-    save("cube-favs",state.favs); render();
+    save("cube-favs",state.favs); render(); toast(i>=0?"已取消收藏「"+state.q+"」":"已收藏「"+state.q+"」");
   }
-  if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); }
+  if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); toast("已取消收藏「"+t.dataset.q+"」"); }
+  if(t.dataset.act==="setmain"){ state.todayPlan=t.dataset.pid; state.hview=t.dataset.pid; save("cube-today",{d:todayKey(),id:state.todayPlan}); render(); toast("已設為今日主卡："+planById(state.todayPlan).name); }
+  if(t.dataset.act==="viewplan"){ openPlanCard(t.dataset.pid); }
+  if(t.dataset.act==="pmode"){ state.pmode=t.dataset.v; save("cube-pmode",state.pmode); render(); }
 });
 document.addEventListener("click",e=>{
   const s=e.target.closest("[data-stk]");
@@ -533,8 +573,21 @@ document.addEventListener("click",e=>{
     if(on){ s.classList.add("open"); s.setAttribute("aria-expanded","true"); }
     return; }
   const f=e.target.closest(".flip");
-  if(f){ const w=f.closest(".wcard"), on=w.classList.toggle("flipped"); f.setAttribute("aria-expanded",on);
-    if(on) setTimeout(()=>w.scrollIntoView({block:"start",behavior:"smooth"}),60); }
+  if(!f) return;
+  const w=f.closest(".wcard");
+  if(w.closest(".prail")){
+    const rail=w.closest(".rail"), slides=[...rail.querySelectorAll(".slide")], i=slides.indexOf(w.parentElement);
+    if(i!==railIndex(rail)){ railGo(rail,i,true); return; }
+    f.setAttribute("aria-expanded",w.classList.toggle("flipped")); return;
+  }
+  if(w.closest(".pstack") && !w.classList.contains("open")){
+    document.querySelectorAll(".pstack .wcard.open").forEach(x=>{ x.classList.remove("open","flipped"); x.querySelector(".flip").setAttribute("aria-expanded","false"); });
+    w.classList.add("open");
+  }else{
+    const on=w.classList.toggle("flipped"); f.setAttribute("aria-expanded",on);
+    if(!on) return;
+  }
+  setTimeout(()=>w.scrollIntoView({block:"start",behavior:REDUCE?"auto":"smooth"}),60);
 });
 document.addEventListener("input",e=>{
   if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
@@ -547,7 +600,7 @@ function renderSearch(){
   const tq=terms(state.q);
   let list=ENTRIES.filter(e=> (state.cat==="all" || e.cat===state.cat) && (state.bday || e.plan.id!=="bday"));
   if(tq.length) list=list.filter(e=>tq.some(t=>e.hay.includes(t)));
-  else if(state.cat==="all"){ box.innerHTML=introHTML(); bindQuick(); return; }
+  else if(state.cat==="all"){ box.innerHTML=introHTML(); bindQuick(); initHomeRail(); return; }
 
   const rows=list.map(e=>{
     const st=status(e.plan.start,e.plan.end), el=eligible(e.plan);
@@ -625,8 +678,38 @@ function heroHTML(){
   const p=state.todayPlan && planById(state.todayPlan);
   if(!p) return `<section class="hero"><div class="hero-h"><b>今天的主卡</b></div>
     <button class="hero-empty" data-act="set-today"><b>尚未設定今天切換的方案</b><span>點這裡選擇</span></button></section>`;
-  return `<section class="hero"><div class="hero-h"><b>今天的主卡</b><span>點卡片更換</span></div>
-    <button class="hero-card" data-act="set-today" aria-label="今天的主卡：${esc(p.name)}，點擊更換">${cardFace(p)}</button></section>`;
+  const act=PLANS.filter(x=>status(x.start,x.end).active);
+  return `<section class="hero"><div class="hero-h"><b>今天的主卡</b><span>左右滑動瀏覽，點卡片更換</span></div>
+    <div class="rail" id="homeRail">${act.map(x=>`<div class="slide"><button class="hero-card" data-act="set-today" aria-label="${esc(x.name)}${x.id===state.todayPlan?"，今日主卡":""}，點擊更換今日主卡">${cardFace(x,{main:x.id===state.todayPlan})}</button></div>`).join("")}</div>
+    ${dotsHTML("homeDots",act.length,0)}
+    <div id="homeSet"></div>
+    <p class="hint main-meta">方案每正卡人每日限變更一次（官網注意事項第2條）</p>
+    <div id="homeList"></div></section>`;
+}
+/* ===== 左右滑動輪播（共用） ===== */
+function railIndex(rail){ const mid=rail.scrollLeft+rail.clientWidth/2; let best=0,d=1e9;
+  rail.querySelectorAll(".slide").forEach((s,i)=>{ const x=Math.abs(s.offsetLeft+s.offsetWidth/2-mid); if(x<d){d=x;best=i;} }); return best; }
+function railGo(rail,i,smooth){ const s=rail.querySelectorAll(".slide")[i]; if(!s) return;
+  const left=s.offsetLeft-(rail.clientWidth-s.offsetWidth)/2;
+  if(smooth&&!REDUCE) rail.scrollTo({left,behavior:"smooth"}); else rail.scrollLeft=left; }
+function railBind(rail,onChange,start){ let t=null,last=start;
+  rail.addEventListener("scroll",()=>{ clearTimeout(t); t=setTimeout(()=>{ const i=railIndex(rail); if(i!==last){ last=i; onChange(i); } },90); },{passive:true}); }
+function dotsHTML(id,n,cur){ return `<div class="dots" id="${id}" aria-hidden="true">${Array.from({length:n},(_,i)=>`<i${i===cur?' class="on"':""}></i>`).join("")}</div>`; }
+function dotsSet(id,cur){ document.querySelectorAll("#"+id+" i").forEach((d,i)=>d.classList.toggle("on",i===cur)); }
+function initHomeRail(){
+  const rail=$("#homeRail"); if(!rail) return;
+  const act=PLANS.filter(x=>status(x.start,x.end).active);
+  let i=act.findIndex(x=>x.id===(state.hview||state.todayPlan)); if(i<0) i=Math.max(0,act.findIndex(x=>x.id===state.todayPlan));
+  railGo(rail,i,false); homeSync(act,i);
+  railBind(rail,j=>homeSync(act,j),i);
+}
+function homeSync(act,i){
+  const p=act[i]; if(!p) return; state.hview=p.id; dotsSet("homeDots",i);
+  $("#homeSet").innerHTML = p.id===state.todayPlan ? "" : `<button class="btn-set" data-act="setmain" data-pid="${p.id}">設為今日主卡：${esc(p.name)}</button>`;
+  const rows=p.groups.map(g=>{ const names=g.items.map(it=>typeof it==="string"?it:it.n);
+    return `<div class="hl-row"><div class="hl-main"><div class="hl-t">${esc(g.t)}</div><div class="hl-i">${esc(names.slice(0,8).join("、"))}${names.length>8?` 等 ${names.length} 家`:""}</div></div><span class="rate-pill">${fmt(rateOf(g.r))}<small>%</small></span></div>`; }).join("");
+  $("#homeList").innerHTML=`<div class="sec">${esc(p.name)} 適用通路</div><div class="panel hl-panel" style="${skin(p)}">${rows}
+    <button class="linkbtn hl-more" data-act="viewplan" data-pid="${p.id}">查看完整內容與使用提醒</button></div>`;
 }
 function stackHTML(){
   const list=PLANS.filter(p=>status(p.start,p.end).active && p.id!==state.todayPlan);
@@ -653,7 +736,8 @@ function renderPlans(){
       ${i===state.lv?`<div class="lv-cur">目前選擇</div>`:""}</div>`).join("")}</div>
     <p class="hint">資料來源：官網「CUBE信用卡」介紹頁權益分級。方案切換與回饋計算規則，請見頁面最下方「注意事項」（官網原文）。</p>`;
   const tq=terms(state.q); let hitPlans=0, hitItems=0;
-  const html=PLANS.map(p=>{
+  const items=[];
+  PLANS.forEach(p=>{
     let pHits=0;
     const groups=p.groups.filter(g=>state.cat==="all"||g.cat===state.cat).map(g=>{
       const gHit = tq.length && tq.some(t=>norm(g.t).includes(t));
@@ -670,23 +754,65 @@ function renderPlans(){
       <div class="chips">${chips}</div>
       ${notes.length?`<details class="tips"><summary>使用提醒</summary>${notes.map(n=>`<p>${esc(n).replace(/\n/g,"<br>")}</p>`).join("")}</details>`:""}</div>`;
     }).join("");
-    if(state.cat!=="all" && !groups) return "";
+    if(state.cat!=="all" && !groups) return;
     if(pHits){ hitPlans++; hitItems+=pHits; }
-    const open = tq.length ? pHits>0 : false;
-    return `<div class="wcard${open?" flipped":""}" style="${skin(p)}">
-      <button class="flip" aria-expanded="${open}" aria-label="${esc(p.name)}：翻面查看回饋摘要與通路">
-        <span class="flip-in"><span class="face front">${cardFace(p,{hits:pHits})}</span><span class="face back">${cardBack(p)}</span></span></button>
-      <div class="wbody">
-        <details class="tips top"><summary>方案說明（官網）</summary><ul>${p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></details>
-        ${groups}</div></div>`;
-  }).join("");
+    items.push({p,pHits,groups,open: tq.length ? pHits>0 : false});
+  });
+  PLAN_ITEMS=items;
+  const flipBtn=it=>`<button class="flip" aria-expanded="${it.open}" aria-label="${esc(it.p.name)}：翻面查看回饋摘要與通路">
+        <span class="flip-in"><span class="face front">${cardFace(it.p,{hits:it.pHits,peek:peekOf(it.p)})}</span><span class="face back">${cardBack(it.p)}</span></span></button>`;
+  const mode=state.pmode;
+  let html="";
+  if(items.length && mode==="rail"){
+    let cur=items.findIndex(i=>i.open); if(cur<0) cur=0;
+    html=`<div class="rail prail" id="planRail">${items.map((it,i)=>`<div class="slide"><div class="wcard${i===cur&&it.open?" flipped":""}" data-pid="${it.p.id}" style="${skin(it.p)}">${flipBtn(it)}</div></div>`).join("")}</div>
+      ${dotsHTML("planDots",items.length,cur)}<div id="railDetail">${railDetailHTML(items[cur])}</div>`;
+  }else if(items.length && mode==="stack"){
+    const first=items.findIndex(i=>i.open);
+    html=`<div class="pstack">${items.map((it,i)=>`<div class="wcard${i===first?" open flipped":""}" data-pid="${it.p.id}" style="${skin(it.p)}">${flipBtn({...it,open:i===first})}<div class="wbody">${planBody(it)}</div></div>`).join("")}</div>`;
+  }else if(items.length){
+    html=`<div class="cardgrid">${items.map(it=>`<div class="wcard${it.open?" flipped":""}" data-pid="${it.p.id}" style="${skin(it.p)}">${flipBtn(it)}<div class="wbody">${planBody(it)}</div></div>`).join("")}</div>`;
+  }
+  const HINT={grid:"點卡片翻面，查看回饋摘要、通路與使用提醒",stack:"點卡片展開，再點翻面",rail:"左右滑動換卡，點卡片翻面"};
+  const bar=`<div class="w-bar"><span class="hint m0">${HINT[mode]}</span><div class="seg" role="group" aria-label="排列方式">${[["grid","卡片牆"],["stack","堆疊"],["rail","輪播"]].map(([v,t])=>`<button data-act="pmode" data-v="${v}" aria-pressed="${mode===v}">${t}</button>`).join("")}</div></div>`;
   const sumBox = tq.length ? `<div class="hitsum">「${esc(state.q)}」出現在 ${hitPlans} 個方案、共 ${hitItems} 筆通路，已自動展開並標示。${hitPlans?"":"目前沒有方案包含這個通路。"}</div>` : "";
   const gTable=`<div class="lvwrap"><table class="lvtable"><thead><tr><th>消費項目</th><th>消費金額</th><th>消費類別</th><th>回饋率</th><th>回饋點數</th></tr></thead><tbody>
     <tr><td>雄獅旅行社</td><td>NT$1,800</td><td>一般消費</td><td>0.3%</td><td>5 (1800*0.3%=5.4)</td></tr>
     <tr><td>新光三越</td><td>NT$3,000</td><td>指定美食/購物消費</td><td>3%</td><td>90 (3000*3%=90)</td></tr></tbody></table></div>`;
   const gNotes=`<details class="gnotes"><summary>注意事項<span>官網「CUBE卡權益方案」頁面共通注意事項</span></summary>
     <ol>${GLOBAL_NOTES.map((n,i)=>`<li>${esc(n).replace(/\n/g,"<br>")}${i===6?gTable:""}</li>`).join("")}</ol></details>`;
-  $("#v-plans").innerHTML=sumBox+lvTable+`<p class="hint">點卡片翻面，查看回饋摘要、通路與使用提醒</p>`+(html?`<div class="cardgrid">${html}</div>`:`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes;
+  $("#v-plans").innerHTML=sumBox+lvTable+bar+(html||`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes;
+  const rail=$("#planRail");
+  if(rail){ const cur=Math.max(0,items.findIndex(i=>i.open)); railGo(rail,cur,false); railBind(rail,planRailSync,cur); }
+}
+let PLAN_ITEMS=[];
+function peekOf(p){ return p.rate===L?fmt(LEVEL_RATES[state.lv])+"%":p.sum; }
+function planBody(it){ return `<details class="tips top"><summary>方案說明（官網）</summary><ul>${it.p.notes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></details>${it.groups}`; }
+function railDetailHTML(it){ return `<div class="wcard flipped rail-detail" style="${skin(it.p)}"><div class="wbody">${planBody(it)}</div></div>`; }
+function planRailSync(i){
+  const it=PLAN_ITEMS[i]; if(!it) return;
+  document.querySelectorAll("#planRail .wcard.flipped").forEach(w=>{ w.classList.remove("flipped"); w.querySelector(".flip").setAttribute("aria-expanded","false"); });
+  dotsSet("planDots",i); $("#railDetail").innerHTML=railDetailHTML(it);
+}
+/* 開啟指定方案（到期提醒、首頁清單使用） */
+function goView(v){
+  state.view=v;
+  document.querySelectorAll(".tabbar button").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===v));
+  render(); window.scrollTo(0,0);
+}
+function openPlanCard(id){
+  goView("plans");
+  let w=document.querySelector(`#v-plans .wcard[data-pid="${id}"]`);
+  if(!w && state.cat!=="all"){ state.cat="all"; renderCats(); render(); w=document.querySelector(`#v-plans .wcard[data-pid="${id}"]`); }
+  if(!w) return;
+  if(state.pmode==="rail"){
+    const rail=$("#planRail"), slides=[...rail.querySelectorAll(".slide")], i=slides.indexOf(w.parentElement);
+    railGo(rail,i,false); planRailSync(i);
+  }else{
+    if(state.pmode==="stack") document.querySelectorAll(".pstack .wcard.open").forEach(x=>{ x.classList.remove("open","flipped"); x.querySelector(".flip").setAttribute("aria-expanded","false"); });
+    w.classList.add("open","flipped"); w.querySelector(".flip").setAttribute("aria-expanded","true");
+  }
+  setTimeout(()=>w.scrollIntoView({block:"start",behavior:REDUCE?"auto":"smooth"}),80);
 }
 
 /* ===== 加碼活動 ===== */
@@ -738,7 +864,7 @@ document.querySelectorAll("#lv button").forEach(b=>b.onclick=()=>{
   state.lv=+b.dataset.lv;
   $("#setBadge").textContent="L"+(state.lv+1);
   document.querySelectorAll("#lv button").forEach(x=>x.setAttribute("aria-pressed", x===b));
-  render();
+  render(); toast("已改為 L"+(state.lv+1)+" 計算");
 });
 $("#bday").checked=state.bday;
 $("#bday").onchange=e=>{state.bday=e.target.checked; save("cube-show-bday",state.bday); render();};
@@ -791,13 +917,29 @@ function applyTheme(){
 document.querySelectorAll("#themeSeg button").forEach(b=>b.onclick=()=>{
   state.themeMode=b.dataset.mode; save("cube-theme-mode",state.themeMode);
   if(state.themeMode==="auto") requestLoc(false);
-  applyTheme();
+  applyTheme(); toast("外觀：「"+b.querySelector("b").textContent+"」");
 });
 if(state.themeMode==="auto") requestLoc(false);
 applyTheme();
 setInterval(applyTheme,60000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) applyTheme(); });
 
+/* 卡面光澤設定 */
+function syncTiltBtn(){ const b=$("#tiltBtn"); b.setAttribute("aria-pressed",state.tilt);
+  b.querySelector("b").textContent=state.tilt?"已啟用手機傾斜光澤":"啟用手機傾斜光澤";
+  if(REDUCE) b.querySelector("small").textContent="系統已開啟「減少動態效果」，光澤固定不動"; }
+$("#tiltBtn").onclick=()=>{
+  if(state.tilt){ state.tilt=false; save("cube-tilt",false); disableTilt(); syncTiltBtn(); toast("已關閉手機傾斜光澤"); return; }
+  enableTilt(true).then(ok=>{ state.tilt=ok; save("cube-tilt",ok); syncTiltBtn(); toast(ok?"已啟用手機傾斜光澤":"未取得「動作與方向」權限"); });
+};
+syncTiltBtn();
+if(state.tilt){
+  enableTilt(false).then(ok=>{
+    if(!ok && typeof (window.DeviceOrientationEvent||{}).requestPermission==="function"){
+      document.addEventListener("click",function once(){ document.removeEventListener("click",once,true); enableTilt(true); },true);
+    }
+  });
+}
 renderCats(); render();
 </script>
 </body>
