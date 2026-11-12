@@ -24,32 +24,28 @@
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <span class="logo" aria-hidden="true"></span>
-    <div><h1>CUBE 卡權益查詢</h1>
-    <p>輸入店家名稱，找出今天該切哪個方案。資料整理日：2026/10/27</p></div>
-  </header>
-
-  <div class="sticky">
-    <div class="searchline">
-      <div class="searchbox" id="searchRow">
+  <div class="sticky" id="topbar">
+    <div class="head-row"><span class="logo" aria-hidden="true"></span>
+      <h1 class="app-title">CUBE 權益<small>國泰世華 CUBE卡</small></h1>
+      <button class="setbtn" id="openSettings" aria-label="設定等級與資格"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span id="setBadge">L2</span></button></div>
+    <div class="searchbox" id="searchRow">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="q" type="search" enterkeyhint="search" placeholder="例如：蝦皮、7-11、全聯、Netflix、日本" autocomplete="off" aria-label="搜尋店家或通路">
         <button id="clear" aria-label="清除搜尋" hidden>✕</button>
       </div>
-      <button class="setbtn" id="openSettings" aria-label="設定等級與資格"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span id="setBadge">L2</span></button>
-    </div>
     <div class="cats" id="cats" aria-label="類別篩選"></div>
   </div>
 
   <main>
-    <section id="v-search"></section>
-    <section id="v-plans" hidden></section>
-    <section id="v-acts" hidden></section>
+    <section id="v-home"></section>
+    <section id="v-search" hidden></section>
+    <section id="v-calc" hidden></section>
+    <section id="v-wallet" hidden></section>
+    <section id="v-favs" hidden></section>
   </main>
 
   <footer>
-    <div>資料來源</div>
+    <div>資料來源（資料整理日：2026/10/27）</div>
     <ul>
       <li><a href="https://www.cathay-cube.com.tw/cathaybk/personal/product/credit-card/cards/cube-list" target="_blank" rel="noopener">國泰世華 CUBE卡權益方案（官網）</a>：各方案通路、使用提醒、注意事項</li>
       <li><a href="https://www.cathaybk.com.tw/cathaybk/promo/event/credit-card/product/japanrewards/index.html" target="_blank" rel="noopener">國泰世華《秋日遊》活動網頁（官網）</a></li>
@@ -60,12 +56,14 @@
 </div>
 
 <nav class="tabbar" aria-label="分頁"><div class="tabbar-in" role="tablist">
-  <button role="tab" aria-selected="true" data-view="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>搜尋通路</button>
-  <button role="tab" aria-selected="false" data-view="plans"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg>方案總覽</button>
-  <button role="tab" aria-selected="false" data-view="acts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 7v10" stroke-dasharray="2 2"/></svg>加碼活動</button>
+  <button role="tab" aria-selected="true" data-view="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8M5 9.5V21h14V9.5M10 21v-6h4v6"/></svg>首頁</button>
+  <button role="tab" aria-selected="false" data-view="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>搜尋</button>
+  <button role="tab" aria-selected="false" data-view="calc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 6.5h7v3h-7zM9 13h.01M12 13h.01M15 13h.01M9 16.5h.01M12 16.5h.01M15 16.5h.01"/></svg>試算</button>
+  <button role="tab" aria-selected="false" data-view="wallet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/></svg>錢包</button>
+  <button role="tab" aria-selected="false" data-view="favs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-9.2-9A5 5 0 0 1 12 6a5 5 0 0 1 9.2 5c-2.2 4.6-9.2 9-9.2 9z"/></svg>收藏</button>
 </div></nav>
 
-<div class="sheet" id="settings" hidden><div class="sheet-in" role="dialog" aria-label="設定">
+<div class="sheet" id="settings" aria-hidden="true"><div class="sheet-in" role="dialog" aria-label="設定">
   <div class="sheet-grab"></div>
   <h2>設定</h2>
   <div class="sheet-row"><span class="lbl">我的等級</span>
@@ -260,7 +258,7 @@ const SYN = [
 
 /* ===== 工具 ===== */
 const $ = s => document.querySelector(s);
-const state = { view:"search", q:"", lv:1, bday:false, kids:false, cat:"all" };
+const state = { view:"home", q:"", lv:1, bday:false, kids:false, cat:"all" };
 const DAY = 864e5;
 function today(){ const d=new Date(); d.setHours(0,0,0,0); return d; }
 function pd(s){ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); }
@@ -344,21 +342,29 @@ function skin(p){ const g=SKIN[p.id]||["#666","#222"]; return `--g1:${g[0]};--g2
 function mdp(s){ const d=pd(s); return String(d.getMonth()+1).padStart(2,"0")+"/"+String(d.getDate()).padStart(2,"0"); }
 const NFC=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8.5 8.5a5 5 0 0 1 0 7"/><path d="M12 6a8.5 8.5 0 0 1 0 12"/><path d="M15.5 3.5a12 12 0 0 1 0 17"/></svg>`;
 function reqLabel(p){ return p.req==="kids"?"需童樂匯資格": p.req==="pxpay"?"須以全支付付款": p.req==="fixed"?"切換規則依官網注意事項":""; }
+const CHIP='<svg viewBox="0 0 40 30" fill="none" stroke="rgba(95,62,15,.5)" stroke-width=".8" aria-hidden="true"><rect x="13" y="8" width="14" height="14" rx="2.5"/><path d="M0 10h13M0 20h13M27 10h13M27 20h13M13 15H0M27 15h13M20 0v8M20 22v8"/></svg>';
+/* 回饋區間（依目前等級） */
+function rangeOf(p){ let a=Infinity,b=0; p.groups.forEach(g=>{ const r=rateOf(g.r); a=Math.min(a,r); b=Math.max(b,r); });
+  return a===b ? fmt(a)+"%" : fmt(a)+"%~"+fmt(b)+"%"; }
+/* 回饋最高的 3 個類別 */
+function topGroups(p){ const seen=new Set(), out=[];
+  p.groups.slice().sort((x,y)=>rateOf(y.r)-rateOf(x.r)).forEach(g=>{ if(!seen.has(g.t)){ seen.add(g.t); out.push(g); } });
+  return out.slice(0,3); }
 function cardFace(p,o={}){
   const st=status(p.start,p.end);
-  const rate = o.rate!=null ? o.rate : (p.rate===L ? fmt(LEVEL_RATES[state.lv])+"%" : p.sum);
+  const rate = o.rate!=null ? o.rate : rangeOf(p);
   const pills=[];
   if(o.main) pills.push(`<span class="pill main">今日主卡</span>`);
   if(o.hits) pills.push(`<span class="pill hit">符合 ${o.hits} 筆</span>`);
   if(st.k==="warn"||st.k==="end"||st.k==="soon") pills.push(`<span class="pill">${st.txt}</span>`);
   if(o.showReq!==false && reqLabel(p)) pills.push(`<span class="pill">${reqLabel(p)}</span>`);
+  const list=topGroups(p).map(g=>`<li><span class="lr">${fmt(rateOf(g.r))}%</span><span class="lt">${esc(g.t)}</span></li>`).join("");
   return `<div class="cface${st.active?"":" expired"}" style="${skin(p)}"><span class="tex"></span><span class="holo"></span><span class="glare"></span>
-    <div class="cf-top"><span class="cf-name">${esc(p.name)}</span><span class="cf-brand">CUBE</span>${o.peek?`<span class="cf-peek">${esc(o.peek)}</span>`:""}</div>
-    <div class="cf-mid"><span class="chip"></span>${NFC}</div>
-    ${o.lines? `<div class="cf-lines">${o.lines}</div>` : ""}
-    <div class="cf-bot"><span class="cf-valid"><small>VALID</small>${mdp(p.start)} – ${mdp(p.end)}</span>
-      <span class="cf-rate${String(rate).length>6?" long":""}">${esc(rate)}</span></div>
-    ${pills.length?`<div class="cf-pills">${pills.join("")}</div>`:""}
+    <div class="k-top"><span class="k-name">${esc(p.name)}</span><span class="k-rate${String(rate).length>6?" long":""}">${esc(rate)}</span></div>
+    ${pills.length?`<div class="k-pills">${pills.join("")}</div>`:""}
+    <div class="k-mid"><div class="k-chip"><span class="emv">${CHIP}</span>${NFC}</div><div class="k-brand"><b>CUBE</b>國泰世華</div></div>
+    <ul class="k-list">${list}</ul>
+    <div class="k-valid"><small>VALID</small>${mdp(p.start)} – ${mdp(p.end)}</div>
     ${progHTML(p)}
   </div>`;
 }
@@ -368,16 +374,25 @@ function progOf(p){ const s=pd(p.start), e=pd(p.end), t=today();
   return Math.round(done/total*100); }
 function progHTML(p){ return `<span class="cf-prog ${status(p.start,p.end).k}" style="--p:${progOf(p)}%" aria-hidden="true"></span>`; }
 /* 卡片背面：依類別彙整回饋率 */
+function planPay(p){
+  if(p.id==="pxpay") return "以全支付綁定CUBE信用卡刷卡";
+  if(p.id==="fixed") return "依官網固定回饋方案注意事項";
+  return "CUBE卡刷卡、Apple Pay／Samsung Pay／Google Pay／Garmin Pay";
+}
 function cardBack(p){
   const st=status(p.start,p.end), by=new Map();
   p.groups.forEach(g=>{ const r=rateOf(g.r); if(!by.has(g.cat)) by.set(g.cat,[r,r]); const m=by.get(g.cat); m[0]=Math.min(m[0],r); m[1]=Math.max(m[1],r); });
   const rows=[...by].map(([c,[a,b]])=>`<li>${catIcon(c)}<span>${CATS[c]}</span><b>${a===b?fmt(a)+"%":fmt(a)+"–"+fmt(b)+"%"}</b></li>`).join("");
   return `<div class="cface cback${st.active?"":" expired"}" style="${skin(p)}"><span class="tex"></span><span class="holo"></span><span class="glare"></span>
-    <span class="cb-stripe"></span>
-    <div class="cb-head"><span class="cb-name">${esc(p.name)}</span><span class="cb-period">${ymd(p.start)}–${ymd(p.end)}</span></div>
-    <ul class="cb-list">${rows}</ul>
-    <div class="cb-foot">期間已過 ${progOf(p)}%・${st.txt}${reqLabel(p)?"・"+reqLabel(p):""}</div>
-    ${progHTML(p)}</div>`;
+    <span class="kb-stripe"></span>
+    <div class="kb-body">
+      <dl class="kb-info"><dt>期間</dt><dd>${ymd(p.start)} – ${ymd(p.end)}<span class="b-st ${st.k}">${esc(st.txt)}</span></dd>
+        <dt>支付</dt><dd>${esc(planPay(p))}</dd>
+        ${reqLabel(p)?`<dt>資格</dt><dd>${esc(reqLabel(p))}</dd>`:""}</dl>
+      <ul class="kb-cats">${rows}</ul>
+    </div>
+    <div class="kb-foot"><span>期間已過 ${progOf(p)}%</span><span>${p.rate===L?"以 L"+(state.lv+1)+" 計算":"注意事項見下方"}</span></div>
+  </div>`;
 }
 /* 類別圖示 */
 const CAT_ICON={
@@ -468,20 +483,68 @@ function expiryHTML(){
 state.amt = "";
 function planById(id){ return PLANS.find(p=>p.id===id); }
 
-/* ===== 試算（官網注意事項第7條：依小數點第一位四捨五入至整數位） ===== */
-function calcHTML(rate){
-  const a=parseFloat(String(state.amt).replace(/,/g,""));
-  if(!(a>0)) return `<span class="calc-out muted">輸入金額試算小樹點(信用卡)</span>`;
-  const raw=a*rate/100, pts=Math.round(raw);
-  return `<span class="calc-out"><b>${pts.toLocaleString()}</b> 點<small>${a.toLocaleString()} × ${fmt(rate)}% = ${(Math.round(raw*1000)/1000).toLocaleString()}，四捨五入</small></span>`;
+/* ===== 試算：金額、幣別、匯率（官網注意事項第7條：依小數點第一位四捨五入至整數位） ===== */
+const CURS=[["TWD","新臺幣","NT$"],["JPY","日圓","¥"],["KRW","韓元","₩"],["USD","美元","US$"],["EUR","歐元","€"],
+  ["CNY","人民幣","RMB "],["HKD","港幣","HK$"],["THB","泰銖","฿"],["SGD","新加坡幣","S$"],["GBP","英鎊","£"]];
+const FX_API="https://open.er-api.com/v6/latest/TWD", FX_SITE="https://www.exchangerate-api.com";
+const FEE=1.5; /* 官網：本行0.5%國外交易服務費＋國際組織手續費，合計約1.5% */
+state.cur=load("cube-cur","TWD"); state.cq=""; state.ccat="all";
+let FX=load("cube-fx",null)||{};
+function fxOn(){ return state.cur!=="TWD"; }
+function curOf(c){ return CURS.find(x=>x[0]===c)||CURS[0]; }
+function amtVal(){ const a=parseFloat(String(state.amt).replace(/[,，\s]/g,"")); return a>0?a:0; }
+function fxRate(){ if(!fxOn()) return 1; return (FX.rates&&FX.rates[state.cur]) ? 1/FX.rates[state.cur] : null; }
+function ntd(){ const a=amtVal(), r=fxRate(); return (a&&r)?a*r:0; }
+function approx(){ return fxOn()?"約 ":""; }
+const n0=x=>Math.round(x).toLocaleString("zh-TW"), n1=x=>(Math.round(x*10)/10).toLocaleString("zh-TW",{maximumFractionDigits:1}), nA=x=>x.toLocaleString("zh-TW",{maximumFractionDigits:2});
+function ptsOf(n,rate){ return Math.round(n*rate/100); }
+function ptsText(rate){ const n=ntd(); return n?approx()+ptsOf(n,rate).toLocaleString("zh-TW")+" 點":""; }
+function formulaText(rate){
+  const a=amtVal(); if(!a) return "輸入上方金額，可試算小樹點(信用卡)";
+  const n=ntd(); if(!n) return "匯率取得中，暫無法換算";
+  const raw=n*rate/100, pts=ptsOf(n,rate);
+  let t=(fxOn()?curOf(state.cur)[2]+nA(a)+" ≈ NT$"+n0(n):"NT$"+nA(a))+" × "+fmt(rate)+"% = "+nA(Math.round(raw*1000)/1000)+" → "+approx()+pts.toLocaleString("zh-TW")+" 點（四捨五入）";
+  if(fxOn()){ const f=n*FEE/100; t+="；國外交易手續費約 "+FEE+"% ≈ NT$"+n1(f)+"；淨回饋約 "+n1(pts-f); }
+  return t;
 }
-
-/* 輸入一次金額，所有方案同步試算（官網注意事項第7條：四捨五入至整數位） */
-function updatePts(){
-  const a=parseFloat(String(state.amt).replace(/,/g,""));
-  document.querySelectorAll(".pts[data-rate]").forEach(el=>{
-    el.textContent = a>0 ? Math.round(a*parseFloat(el.dataset.rate)/100).toLocaleString()+" 點" : "";
+function updateAmts(){
+  document.querySelectorAll("[data-rate]").forEach(el=>{
+    const r=parseFloat(el.dataset.rate);
+    el.textContent = el.hasAttribute("data-formula") ? formulaText(r) : ptsText(r);
   });
+}
+function updatePts(){ updateAmts(); }
+function loadFx(force){
+  if(!fxOn()||FX.loading) return;
+  if(!force && FX.rates && Date.now()-FX.t<6*3600e3) return;
+  if(!window.fetch){ FX.err=true; renderFxLine(); return; }
+  FX.loading=true; FX.err=false; renderFxLine();
+  fetch(FX_API).then(r=>r.json()).then(d=>{
+    if(!d||d.result!=="success"||!d.rates) throw new Error("fx");
+    FX={t:Date.now(),upd:(d.time_last_update_unix||0)*1000,rates:d.rates}; save("cube-fx",FX); refreshCalc();
+  }).catch(()=>{ FX.loading=false; FX.err=true; refreshCalc(); });
+}
+function fxLineHTML(){
+  if(!fxOn()) return "";
+  const c=curOf(state.cur), r=fxRate();
+  const feeNote=`<br>國外交易手續費以約 ${FEE}% 估算（官網：本行 0.5% 國外交易服務費＋國際組織手續費，合計約 ${FEE}%）`;
+  if(r){ const d=new Date(FX.upd||FX.t);
+    return `1 ${c[0]} ≈ NT$${r<0.1?r.toFixed(5):r.toFixed(4)}　匯率日期 ${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}<br>匯率來源：<a href="${FX_SITE}" target="_blank" rel="noopener">ExchangeRate-API</a>（每日更新，僅供估算；實際依信用卡國際組織交易結匯日匯率）${feeNote}`+
+      (FX.err?`<br>目前無法更新，沿用上次取得的匯率 <button class="linkbtn" data-act="fxretry">重試</button>`:""); }
+  if(FX.loading) return "取得匯率中…";
+  return `無法取得匯率，請確認網路連線 <button class="linkbtn" data-act="fxretry">重試</button>`;
+}
+function renderFxLine(){ document.querySelectorAll(".fx-line").forEach(el=>{ el.innerHTML=fxLineHTML(); el.hidden=!fxOn(); }); }
+function calcBarHTML(){
+  return `<div class="calc-bar"><label class="cb-amt"><span>試算金額</span><input class="amt-in" type="text" inputmode="decimal" autocomplete="off" placeholder="例如 1800" value="${esc(state.amt)}" aria-label="試算金額"></label>
+    <select class="cur-in" aria-label="幣別">${CURS.map(c=>`<option value="${c[0]}"${state.cur===c[0]?" selected":""}>${c[1]} ${c[0]}</option>`).join("")}</select></div>
+    <p class="fx-line"${fxOn()?"":" hidden"}>${fxLineHTML()}</p>`;
+}
+function refreshCalc(){
+  renderFxLine();
+  if(state.view==="search") renderSearch();
+  else if(state.view==="calc") renderCalcBody();
+  else updateAmts();
 }
 /* ===== 這個回饋怎麼來的 ===== */
 function ymd(s){ const d=pd(s); return d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate(); }
@@ -514,28 +577,29 @@ function todayLine(rows,tq){
 }
 
 /* ===== 最佳選擇卡 ===== */
+const CROWN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg>';
 function bestHTML(best,top,tq){
   const byPlan=new Map();
   best.forEach(r=>{ if(!byPlan.has(r.plan)) byPlan.set(r.plan,[]); byPlan.get(r.plan).push(r); });
-  const fav=state.favs.includes(state.q);
   const blocks=[...byPlan].map(([p,rs])=>{
-    const pay=payFor(rs[0]);
-    return `<div class="bp" style="${skin(p)}">
-      <div class="bp-h"><span class="mini" style="${skin(p)}"></span><div><div class="bp-n">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今天已切</span>`:""}${(st=>st.k==="warn"?`<span class="tag warn">${st.txt}，${ymd(p.end)} 結束</span>`:"")(status(p.start,p.end))}</div>
-      <div class="bp-c">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div></div>
+    const pay=payFor(rs[0]), st=status(p.start,p.end);
+    return `<div class="bx-block" style="${skin(p)}">
+      <div class="bx-row"><span class="mini" style="${skin(p)}"></span><div class="bx-main">
+        <div class="bx-plan">${esc(p.name)}${state.todayPlan===p.id?`<span class="tag ok">今日主卡</span>`:""}${st.k==="warn"?`<span class="tag warn">${st.txt}，${ymd(p.end)} 結束</span>`:""}</div>
+        <div class="bx-items">${rs.map(r=>markText(r.name,tq).html).join("、")}</div></div>
+        <span class="bx-rate">${fmt(top.rate)}<small>%</small></span></div>
+      <p class="formula" data-formula data-rate="${top.rate}"></p>
       ${pay?`<div class="pay-h">結帳可用付款方式</div><div class="pay">${pay.chips.map(c=>`<span>${esc(c)}</span>`).join("")}</div><div class="pay-src">依據：${esc(pay.src)}</div>`:""}
       ${[...new Set(rs.map(r=>r.cp).filter(Boolean))].filter(id=>cpStatus(COUPONS[id]).active).map(id=>{const c=COUPONS[id];return `<div class="cp-note"><b>另有 CUBE App 領券</b>${esc(c.t)}：${esc(c.d)}${c.period?`<small>活動期間：${esc(c.period)}</small>`:`<small>活動期間依官網活動詳情</small>`}</div>`;}).join("")}
       ${p.req==="pxpay"?`<div class="tag need need-block">須選定「全支付」方案並以全支付綁定CUBE信用卡刷卡消費</div>`:""}
       ${whyHTML(rs[0])}</div>`;
   }).join("");
-  return `<section class="best" aria-label="最佳選擇">
-    <div class="best-top"><span class="badge-best">★ 最佳選擇</span>
-      <button class="fav${fav?" on":""}" data-act="fav" aria-pressed="${fav}" aria-label="收藏這個搜尋">${fav?"♥":"♡"}</button></div>
-    <div class="best-rate"><b>${fmt(top.rate)}%</b><span>小樹點(信用卡)${byPlan.size>1?`<small>${byPlan.size} 個方案同為最高</small>`:""}</span></div>
-    <div class="calc"><label>試算金額 NT$<input id="amt" inputmode="decimal" placeholder="例如 1800" value="${esc(state.amt)}"></label><span id="calcOut">${calcHTML(top.rate)}</span></div>
-    ${blocks}
-  </section>`;
+  return `<section class="panel vitrine bestbox" aria-label="最佳選擇">
+    <div class="bx-label">${CROWN}最佳選擇<span class="aside">小樹點(信用卡)${byPlan.size>1?`・${byPlan.size} 個方案同為最高`:""}</span></div>
+    ${blocks}</section>`;
 }
+function favBtn(q){ const on=state.favs.includes(q);
+  return `<button class="qfav${on?" on":""}" data-act="fav" aria-pressed="${on}" aria-label="${on?"取消收藏此搜尋":"收藏此搜尋"}">${on?"♥":"♡"}</button>`; }
 
 /* ===== 今天方案選單 ===== */
 function todayPickerHTML(){
@@ -550,9 +614,12 @@ function todayPickerHTML(){
 function openPicker(){
   let el=document.getElementById("pickerHost"); if(!el){ el=document.createElement("div"); el.id="pickerHost"; document.body.appendChild(el); }
   el.innerHTML=todayPickerHTML();
-  el.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ state.todayPlan=b.dataset.pick; save("cube-today",{d:todayKey(),id:state.todayPlan}); el.innerHTML=""; state.hview=state.todayPlan; render(); toast(state.todayPlan?"已設為今日主卡："+planById(state.todayPlan).name:"已清除今日主卡"); });
-  el.querySelector('[data-act="close"]').onclick=()=>{ el.innerHTML=""; };
-  el.querySelector(".picker").onclick=e=>{ if(e.target.classList.contains("picker")) el.innerHTML=""; };
+  const pk=el.querySelector(".picker");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>pk.classList.add("open")));
+  const closeP=()=>{ pk.classList.remove("open"); setTimeout(()=>{ if(el.contains(pk)) el.innerHTML=""; },REDUCE?0:380); };
+  el.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ state.todayPlan=b.dataset.pick; save("cube-today",{d:todayKey(),id:state.todayPlan}); closeP(); state.hview=state.todayPlan; render(); toast(state.todayPlan?"已設為今日主卡："+planById(state.todayPlan).name:"已清除今日主卡"); });
+  el.querySelector('[data-act="close"]').onclick=e=>{ e.stopPropagation(); closeP(); };
+  pk.onclick=e=>{ if(e.target===pk) closeP(); };
 }
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-act]"); if(!t) return;
@@ -561,10 +628,11 @@ document.addEventListener("click",e=>{
     const i=state.favs.indexOf(state.q); if(i>=0) state.favs.splice(i,1); else if(state.q) state.favs.unshift(state.q);
     save("cube-favs",state.favs); render(); toast(i>=0?"已取消收藏「"+state.q+"」":"已收藏「"+state.q+"」");
   }
-  if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.q); save("cube-favs",state.favs); render(); toast("已取消收藏「"+t.dataset.q+"」"); }
+  if(t.dataset.act==="unfav"){ state.favs=state.favs.filter(x=>x!==t.dataset.fq); save("cube-favs",state.favs); render(); toast("已取消收藏「"+t.dataset.fq+"」"); }
   if(t.dataset.act==="setmain"){ state.todayPlan=t.dataset.pid; state.hview=t.dataset.pid; save("cube-today",{d:todayKey(),id:state.todayPlan}); render(); toast("已設為今日主卡："+planById(state.todayPlan).name); }
   if(t.dataset.act==="viewplan"){ openPlanCard(t.dataset.pid); }
   if(t.dataset.act==="pmode"){ state.pmode=t.dataset.v; save("cube-pmode",state.pmode); render(); }
+  if(t.dataset.act==="fxretry"){ loadFx(true); }
 });
 document.addEventListener("click",e=>{
   const s=e.target.closest("[data-stk]");
@@ -590,68 +658,86 @@ document.addEventListener("click",e=>{
   setTimeout(()=>w.scrollIntoView({block:"start",behavior:REDUCE?"auto":"smooth"}),60);
 });
 document.addEventListener("input",e=>{
-  if(e.target.id==="amt"){ state.amt=e.target.value; updatePts(); const o=document.getElementById("calcOut"); const r=parseFloat(o?.dataset.rate||document.querySelector(".best-rate b")?.textContent); if(o) o.innerHTML=calcHTML(r); }
+  if(e.target.classList.contains("amt-in")){
+    state.amt=e.target.value;
+    document.querySelectorAll(".amt-in").forEach(x=>{ if(x!==e.target) x.value=state.amt; });
+    if(state.view==="calc") renderCalcBody(); else updateAmts();
+  }
+  if(e.target.id==="cq"){ state.cq=e.target.value; clearTimeout(cqT); cqT=setTimeout(renderCalcBody,120); }
+});
+let cqT;
+document.addEventListener("change",e=>{
+  if(e.target.classList.contains("cur-in")){
+    state.cur=e.target.value; save("cube-cur",state.cur);
+    document.querySelectorAll(".cur-in").forEach(x=>x.value=state.cur);
+    loadFx(false); refreshCalc();
+  }
+  if(e.target.id==="ccat"){ state.ccat=e.target.value; renderCalcBody(); }
+});
+/* 常用搜尋、收藏的搜尋：點擊即搜尋 */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-q]:not([data-act])"); if(!b) return;
+  $("#q").value=b.dataset.q; state.q=b.dataset.q; syncClear(); goView("search");
 });
 
 
 /* ===== 搜尋畫面 ===== */
-function renderSearch(){
-  const box=$("#v-search");
-  const tq=terms(state.q);
-  let list=ENTRIES.filter(e=> (state.cat==="all" || e.cat===state.cat) && (state.bday || e.plan.id!=="bday"));
+function findRows(tq,cat){
+  let list=ENTRIES.filter(e=> (cat==="all" || e.cat===cat) && (state.bday || e.plan.id!=="bday"));
   if(tq.length) list=list.filter(e=>tq.some(t=>e.hay.includes(t)));
-  else if(state.cat==="all"){ box.innerHTML=introHTML(); bindQuick(); initHomeRail(); return; }
-
-  const rows=list.map(e=>{
+  return list.map(e=>{
     const st=status(e.plan.start,e.plan.end), el=eligible(e.plan);
     return {...e, st, el, rate:rateOf(e.group.r), usable: st.active && el.ok};
   }).sort((a,b)=> (b.usable-a.usable) || (b.rate-a.rate) || a.name.localeCompare(b.name,"zh-Hant"));
-
+}
+const QUICK=["蝦皮","7-11","全聯","Netflix","新光三越","麥當勞","日本","高鐵","Uber Eats","壽司郎","加油","ChatGPT"];
+function renderSearch(){
+  if(!$("#sBody")) $("#v-search").innerHTML=`<div class="panel calc-panel" id="sCalc">${calcBarHTML()}</div><div id="sBody"></div>`;
+  const box=$("#sBody"), tq=terms(state.q);
+  if(!tq.length && state.cat==="all"){
+    box.innerHTML=`<div class="sec">搜尋</div><div class="panel"><p class="hint mt0">輸入店家、品牌或類別，或點上方類別，找出回饋最高的方案。</p>
+      <div class="quick">${QUICK.map(x=>`<button data-q="${esc(x)}">${esc(x)}</button>`).join("")}</div></div>
+      ${state.favs.length?`<div class="sec">收藏的搜尋</div><div class="quick fav-list">${state.favs.map(x=>`<span class="favchip"><button data-q="${esc(x)}">♥ ${esc(x)}</button><button data-act="unfav" data-fq="${esc(x)}" aria-label="移除收藏 ${esc(x)}">✕</button></span>`).join("")}</div>`:""}`;
+    return;
+  }
+  const rows=findRows(tq,state.cat);
   let html="";
   const top=rows.find(r=>r.usable);
-  let bestPlans=new Set();
-  if(tq.length){
-    html+=todayLine(rows,tq);
-    if(top){
-      const best=rows.filter(r=>r.usable && r.rate===top.rate);
-      best.forEach(r=>bestPlans.add(r.plan));
-      html+=bestHTML(best,top,tq);
-    }
-  }
+  if(tq.length) html+=todayLine(rows,tq);
+  html+=`<div class="sec">${tq.length?"「"+esc(state.q)+"」":""}${state.cat!=="all"?(tq.length?"・":"")+esc(CATS[state.cat]):""}<span class="aside">${rows.length} 筆</span>${tq.length?favBtn(state.q):""}</div>`;
+  if(fxOn()) html+=`<p class="hint">外幣交易：回饋是否適用，依各方案指定通路說明（例如「海外實體消費」限實體商店）。</p>`;
+  if(tq.length && top) html+=bestHTML(rows.filter(r=>r.usable && r.rate===top.rate),top,tq);
   if(rows.length){
     const groups=new Map();
     rows.forEach(r=>{ if(!groups.has(r.plan)) groups.set(r.plan,[]); groups.get(r.plan).push(r); });
-    const others=[...groups];
-    if(others.length){
-      html+=`<div class="sec">${tq.length?"所有符合的方案":"此類別的通路"}　${others.length} 個方案・${rows.length} 筆</div>`;
-      html+=others.map(([p,rs])=>groupHTML(p,rs,tq)).join("");
-    }
+    html+=`<div class="sec">${tq.length?"全部結果":"此類別的通路"}<span class="aside">${groups.size} 個方案</span></div>`;
+    html+=[...groups].map(([p,rs])=>groupHTML(p,rs,tq)).join("");
   }
   if(tq.length) html+=fallbackHTML(!rows.length);
   if(!tq.length && !rows.length) html+=`<p class="hint">這個類別目前沒有通路。</p>`;
   box.innerHTML=html;
-  updatePts();
+  renderFxLine(); updateAmts();
 }
 function groupHTML(p,rs,tq){
-  const r0=rs[0], max=Math.max(...rs.map(r=>r.rate));
-  const tags=[];
+  const r0=rs[0], tags=[];
   if(r0.st.k==="warn") tags.push(`<span class="tag warn">${r0.st.txt}</span>`);
   else if(r0.st.k==="end"||r0.st.k==="soon") tags.push(`<span class="tag end">${r0.st.txt}</span>`);
   else tags.push(`<span class="tag">${r0.st.txt}</span>`);
   if(!r0.el.ok) tags.push(`<span class="tag need">${r0.el.why}</span>`);
   if(p.req==="pxpay") tags.push(`<span class="tag need">須以全支付付款</span>`);
   if(p.req==="fixed") tags.push(`<span class="tag need">切換規則依官網注意事項</span>`);
+  if(p.rate===L) tags.push(`<span class="tag">L${state.lv+1}</span>`);
   const items=rs.map(r=>{
     const how=matchInfo(r.name, r.alias, r.group.t, tq||[]);
     const nameHTML=(how==="text"||how==="syn") ? markText(r.name,tq).html : (how==="alias" ? `<mark>${esc(r.name)}</mark>` : esc(r.name));
     const gt = how==="group" ? markText(r.group.t,tq).html : esc(r.group.t);
-    return `<li><div><div class="nm">${nameHTML}</div><div class="gt">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div><div class="rrw"><b class="rr">${fmt(r.rate)}%</b><small class="pts" data-rate="${r.rate}"></small></div></li>`;
+    return `<div class="rp-row${r.usable?"":" na"}"><div class="rp-main"><div class="rp-name">${nameHTML}</div>
+      <div class="rp-sub">${gt}${how&&how!=="text"?`<span class="tag how">${HOW_TXT[how]}</span>`:""}${r.cp?cpTag(r.cp):""}</div></div>
+      <div class="rp-rate"><span class="rate-pill">${fmt(r.rate)}<small>%</small></span>${r.usable?`<small class="pts" data-rate="${r.rate}"></small>`:""}</div></div>`;
   }).join("");
-  return `<section class="rgroup${r0.usable?"":" off"}" style="${skin(p)}">
-    <div class="rg-head"><span class="mini"></span><span class="rg-name">${esc(p.name)}</span>
-      <span class="rg-rate">${fmt(max)}%${p.rate===L?`<small>L${state.lv+1}</small>`:""}</span>
-      <span class="rg-meta">${tags.join("")}</span></div>
-    <ul class="rg-list">${items}</ul></section>`;
+  return `<section class="panel rp${r0.usable?"":" off"}" style="${skin(p)}">
+    <div class="rp-head"><span class="mini" style="${skin(p)}"></span><b>${esc(p.name)}</b><span class="rp-tags">${tags.join("")}</span></div>
+    ${items}</section>`;
 }
 const INST_TXT="自2024/2/1起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。";
 function fallbackHTML(empty){
@@ -663,16 +749,9 @@ function fallbackHTML(empty){
     <li>${esc(GLOBAL_NOTES[13])}<small>官網注意事項第14條</small></li>
     </ul></div>`;
 }
-function introHTML(){
-  const q=["蝦皮","7-11","全聯","Netflix","新光三越","麥當勞","日本","高鐵","Uber Eats","壽司郎","加油","ChatGPT"];
-  return `${heroHTML()}
-   <p class="hint">輸入店家、品牌或類別，找出今天該刷哪張「權益卡」。也可以點上方類別直接瀏覽。</p>
-   ${expiryHTML()}
-   ${state.favs.length?`<div class="sec">我的收藏</div><div class="quick fav-list">${state.favs.map(x=>`<span class="favchip"><button data-q="${esc(x)}">♥ ${esc(x)}</button><button data-act="unfav" data-q="${esc(x)}" aria-label="移除收藏">✕</button></span>`).join("")}</div>`:""}
-   <div class="sec">常用搜尋</div>
-   <div class="quick">${q.map(x=>`<button data-q="${esc(x)}">${esc(x)}</button>`).join("")}</div>
-   ${stackHTML()}
-   ${fallbackHTML(false)}`;
+function renderHome(){
+  $("#v-home").innerHTML=`${heroHTML()}${expiryHTML()}${stackHTML()}${fallbackHTML(false)}`;
+  initHomeRail();
 }
 function heroHTML(){
   const p=state.todayPlan && planById(state.todayPlan);
@@ -708,18 +787,15 @@ function homeSync(act,i){
   $("#homeSet").innerHTML = p.id===state.todayPlan ? "" : `<button class="btn-set" data-act="setmain" data-pid="${p.id}">設為今日主卡：${esc(p.name)}</button>`;
   const rows=p.groups.map(g=>{ const names=g.items.map(it=>typeof it==="string"?it:it.n);
     return `<div class="hl-row"><div class="hl-main"><div class="hl-t">${esc(g.t)}</div><div class="hl-i">${esc(names.slice(0,8).join("、"))}${names.length>8?` 等 ${names.length} 家`:""}</div></div><span class="rate-pill">${fmt(rateOf(g.r))}<small>%</small></span></div>`; }).join("");
-  $("#homeList").innerHTML=`<div class="sec">${esc(p.name)} 適用通路</div><div class="panel hl-panel" style="${skin(p)}">${rows}
+  $("#homeList").innerHTML=`<div class="sec">${esc(p.name)} 適用通路</div><div class="panel vitrine hl-panel" style="${skin(p)}">${rows}
     <button class="linkbtn hl-more" data-act="viewplan" data-pid="${p.id}">查看完整內容與使用提醒</button></div>`;
 }
 function stackHTML(){
   const list=PLANS.filter(p=>status(p.start,p.end).active && p.id!==state.todayPlan);
   if(!list.length) return "";
   return `<div class="sec">${state.todayPlan?"錢包裡的其他權益":"目前錢包裡的權益"}</div>
-   <div class="stack">${list.map((p,i)=>`<button class="stk${i===list.length-1?" last":""}" data-stk aria-expanded="${i===list.length-1}" aria-label="${esc(p.name)}">${cardFace(p,{peek:p.rate===L?fmt(LEVEL_RATES[state.lv])+"%":p.sum})}</button>`).join("")}</div>
+   <div class="stack">${list.map((p,i)=>`<button class="stk${i===list.length-1?" last":""}" data-stk aria-expanded="${i===list.length-1}" aria-label="${esc(p.name)}">${cardFace(p)}</button>`).join("")}</div>
    <p class="hint">點卡片展開</p>`;
-}
-function bindQuick(){
-  document.querySelectorAll(".quick button[data-q]:not([data-act])").forEach(b=>b.onclick=()=>{ $("#q").value=b.dataset.q; state.q=b.dataset.q; syncClear(); render(); });
 }
 
 /* ===== 方案總覽 ===== */
@@ -760,7 +836,7 @@ function renderPlans(){
   });
   PLAN_ITEMS=items;
   const flipBtn=it=>`<button class="flip" aria-expanded="${it.open}" aria-label="${esc(it.p.name)}：翻面查看回饋摘要與通路">
-        <span class="flip-in"><span class="face front">${cardFace(it.p,{hits:it.pHits,peek:peekOf(it.p)})}</span><span class="face back">${cardBack(it.p)}</span></span></button>`;
+        <span class="flip-in"><span class="face front">${cardFace(it.p,{hits:it.pHits})}</span><span class="face back">${cardBack(it.p)}</span></span></button>`;
   const mode=state.pmode;
   let html="";
   if(items.length && mode==="rail"){
@@ -781,7 +857,7 @@ function renderPlans(){
     <tr><td>新光三越</td><td>NT$3,000</td><td>指定美食/購物消費</td><td>3%</td><td>90 (3000*3%=90)</td></tr></tbody></table></div>`;
   const gNotes=`<details class="gnotes"><summary>注意事項<span>官網「CUBE卡權益方案」頁面共通注意事項</span></summary>
     <ol>${GLOBAL_NOTES.map((n,i)=>`<li>${esc(n).replace(/\n/g,"<br>")}${i===6?gTable:""}</li>`).join("")}</ol></details>`;
-  $("#v-plans").innerHTML=sumBox+lvTable+bar+(html||`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes;
+  $("#v-wallet").innerHTML=sumBox+lvTable+bar+(html||`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes+actsHTML();
   const rail=$("#planRail");
   if(rail){ const cur=Math.max(0,items.findIndex(i=>i.open)); railGo(rail,cur,false); railBind(rail,planRailSync,cur); }
 }
@@ -795,15 +871,15 @@ function planRailSync(i){
   dotsSet("planDots",i); $("#railDetail").innerHTML=railDetailHTML(it);
 }
 /* 開啟指定方案（到期提醒、首頁清單使用） */
-function goView(v){
+function goView(v,keepScroll){
   state.view=v;
   document.querySelectorAll(".tabbar button").forEach(x=>x.setAttribute("aria-selected", x.dataset.view===v));
-  render(); window.scrollTo(0,0);
+  render(); if(!keepScroll) window.scrollTo(0,0);
 }
 function openPlanCard(id){
-  goView("plans");
-  let w=document.querySelector(`#v-plans .wcard[data-pid="${id}"]`);
-  if(!w && state.cat!=="all"){ state.cat="all"; renderCats(); render(); w=document.querySelector(`#v-plans .wcard[data-pid="${id}"]`); }
+  goView("wallet");
+  let w=document.querySelector(`#v-wallet .wcard[data-pid="${id}"]`);
+  if(!w && state.cat!=="all"){ state.cat="all"; renderCats(); render(); w=document.querySelector(`#v-wallet .wcard[data-pid="${id}"]`); }
   if(!w) return;
   if(state.pmode==="rail"){
     const rail=$("#planRail"), slides=[...rail.querySelectorAll(".slide")], i=slides.indexOf(w.parentElement);
@@ -816,12 +892,12 @@ function openPlanCard(id){
 }
 
 /* ===== 加碼活動 ===== */
-function renderActs(){
+function actsHTML(){
   const card=a=>{ const st=status(a.start,a.end); return `<div class="ticket${st.active?"":" off"}">
     <div class="tk-l">${esc(a.rate)}</div>
     <div class="tk-r"><h3>${esc(a.t)}</h3><p>${esc(a.d)}</p><p>${esc(a.extra)}</p>
       <div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網列於「樂饗購」方案頁面「CUBE餐飲活動」</span></div></div></div>`; };
-  $("#v-acts").innerHTML=`<div class="sec">CUBE餐飲活動</div>${ACTS.map(card).join("")}
+  return `<div class="acts-title">加碼活動</div><div class="sec">CUBE餐飲活動</div>${ACTS.map(card).join("")}
     <div class="sec">CUBE App 領券（旅日優惠口袋）</div>
     ${Object.values(COUPONS).map(c=>{const st=cpStatus(c);return `<div class="ticket${st.active?"":" off"}"><div class="tk-l tk-cp">${esc(c.rate)}</div><div class="tk-r"><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p>${c.sub?`<p>${esc(c.sub)}</p>`:""}<p>${c.period?"活動期間："+esc(c.period):"活動期間依官網活動詳情"}</p><div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網「旅日優惠口袋」</span></div></div></div>`;}).join("")}
     <p class="hint"><a href="${COUPON_URL}" target="_blank" rel="noopener">前往旅日優惠口袋</a></p>
@@ -829,36 +905,105 @@ function renderActs(){
     <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint m0">${esc(GLOBAL_NOTES[4])}</p></div>`;
 }
 
+/* ===== 試算頁 ===== */
+function renderCalc(){
+  if(!$("#cBody")){
+    $("#v-calc").innerHTML=`<div class="sec">回饋試算<span class="aside">比較各方案</span></div>
+      <div class="panel calc-panel">${calcBarHTML()}
+      <div class="calc-q"><input id="cq" type="search" placeholder="商家名稱（可留空）" autocomplete="off" value="${esc(state.cq)}" aria-label="商家名稱">
+      <select id="ccat" aria-label="類別"><option value="all">不限類別</option>${Object.entries(CATS).map(([k,v])=>`<option value="${k}"${state.ccat===k?" selected":""}>${v}</option>`).join("")}</select></div></div>
+      <div id="cBody"></div>`;
+  }
+  renderCalcBody();
+}
+function entryRow(pid,gt){ const e=ENTRIES.find(x=>x.plan.id===pid && x.group.t===gt); return e?{...e,rate:rateOf(e.group.r)}:null; }
+function renderCalcBody(){
+  const box=$("#cBody"); if(!box) return;
+  const tq=terms(state.cq), on=fxOn(), n=ntd(), a=amtVal(), list=[];
+  const matched=(tq.length||state.ccat!=="all") ? findRows(tq,state.ccat).filter(r=>r.usable) : [];
+  PLANS.forEach(p=>{
+    if(!status(p.start,p.end).active || !eligible(p).ok || (p.id==="bday"&&!state.bday)) return;
+    const c=matched.filter(r=>r.plan===p).map(r=>({r,rate:r.rate}));
+    if(on){
+      if(p.id==="travel"){ const r=entryRow("travel","指定海外消費"); if(r) c.push({r,rate:r.rate,tag:"外幣交易：限海外實體消費"}); }
+      if(p.id==="fixed"){ const r=entryRow("fixed","指定海外消費"); if(r) c.push({r,rate:r.rate,tag:"外幣交易：限海外實體消費"}); }
+      if(p.id==="autumn" && state.cur==="JPY"){ const r=entryRow("autumn","日本必逛＋遊日必備之指定消費"); if(r) c.push({r,rate:r.rate,tag:"限日本實體消費"}); }
+    }
+    c.sort((x,y)=>y.rate-x.rate);
+    const b=c[0] || (p.id==="fixed" ? {base:true,rate:1.2,sub:"一般消費(不含保費) 1.2%；官網注意事項第15條排除者不列入"} : {base:true,rate:0.3,sub:"非指定通路，以一般消費 0.3% 計算"});
+    const pts=n?ptsOf(n,b.rate):0, fee=on?n*FEE/100:0;
+    list.push({p,b,pts,fee,net:pts-fee});
+  });
+  list.sort((x,y)=>(y.pts-x.pts)||(y.b.rate-x.b.rate)||PLANS.indexOf(x.p)-PLANS.indexOf(y.p));
+  let h="";
+  if(!a) h+=`<p class="hint">輸入金額後，會列出每個方案可拿到的小樹點(信用卡)${on?"、國外交易手續費與淨回饋":""}。</p>`;
+  else if(!n) h+=`<p class="hint">匯率取得中，暫無法換算新臺幣。</p>`;
+  else h+=`<p class="hint">${on?curOf(state.cur)[2]+nA(a)+" ≈ NT$"+n0(n):"NT$"+nA(a)}${tq.length||state.ccat!=="all"?"":"；未指定商家或類別，以一般消費"+(on?"及海外實體消費":"")+"計算"}</p>`;
+  list.forEach((x,i)=>{
+    const p=x.p, b=x.b, tags=[];
+    if(i===0&&n) tags.push(`<span class="tag ok">最佳</span>`);
+    if(state.todayPlan===p.id) tags.push(`<span class="tag">今日主卡</span>`);
+    if(b.tag) tags.push(`<span class="tag warn">${esc(b.tag)}</span>`);
+    if(reqLabel(p)) tags.push(`<span class="tag need">${esc(reqLabel(p))}</span>`);
+    const sub=b.base?esc(b.sub):esc(b.r.name)+"・"+esc(b.r.group.t);
+    h+=`<div class="panel c-row${i===0&&n?" vitrine":""}" style="${skin(p)}"><div class="c-head"><span class="mini" style="${skin(p)}"></span><div class="c-main"><b>${esc(p.name)}</b><div class="rp-sub">${sub}</div>${tags.length?`<div class="c-tags">${tags.join("")}</div>`:""}</div><span class="rate-pill">${fmt(b.rate)}<small>%</small></span></div>`;
+    if(n){
+      h+=`<dl class="c-fig"><dt>回饋</dt><dd>${approx()}${x.pts.toLocaleString("zh-TW")} 點</dd>`;
+      if(on) h+=`<dt>手續費約 ${FEE}%</dt><dd>NT$${n1(x.fee)}</dd><dt>淨回饋</dt><dd class="${x.net<0?"neg":""}"><b>約 ${n1(x.net)}</b></dd>`;
+      h+=`</dl>`;
+    }
+    h+=`</div>`;
+  });
+  h+=`<p class="hint calc-src">小樹點(信用卡)依官網注意事項第7條，每筆依小數點第一位四捨五入至整數位，1點等值NT$1；實際以國泰世華入帳為準。${on?`國外交易手續費以約 ${FEE}% 估算（官網：本行 0.5% 國外交易服務費＋國際組織手續費）。匯率：<a href="${FX_SITE}" target="_blank" rel="noopener">ExchangeRate-API</a>，僅供估算。`:""}</p>`;
+  box.innerHTML=h;
+}
+
+/* ===== 收藏頁 ===== */
+function renderFavs(){
+  let h=`<div class="sec">收藏<span class="aside">${state.favs.length} 個搜尋</span></div>`;
+  if(!state.favs.length){
+    $("#v-favs").innerHTML=h+`<div class="panel empty"><b>還沒有收藏</b>在搜尋結果點 ♡，把常查的店家收進來，這裡會列出每個搜尋最划算的方案。</div>`; return;
+  }
+  state.favs.forEach(q=>{
+    const rows=findRows(terms(q),"all").filter(r=>r.usable);
+    const byPlan=new Map(); rows.forEach(r=>{ if(!byPlan.has(r.plan)) byPlan.set(r.plan,r); });
+    const top=rows[0];
+    h+=`<div class="panel${top?" vitrine":""} fv"><div class="fv-head"><div class="fv-main"><button class="fv-name" data-q="${esc(q)}">${esc(q)}</button>
+      <div class="rp-sub">${top?"最佳："+[...byPlan.values()].filter(r=>r.rate===top.rate).map(r=>esc(r.plan.name)).join("、"):"目前沒有進行中的方案"}</div></div>
+      ${top?`<span class="rate-pill">${fmt(top.rate)}<small>%</small></span>`:""}
+      <button class="fv-del" data-act="unfav" data-fq="${esc(q)}" aria-label="取消收藏 ${esc(q)}">✕</button></div>
+      ${[...byPlan.values()].slice(0,6).map(r=>`<div class="fv-row"><span class="mini" style="${skin(r.plan)}"></span><div class="fv-m"><div>${esc(r.plan.name)}${state.todayPlan===r.plan.id?` <span class="tag ok">今日主卡</span>`:""}</div><div class="rp-sub">${esc(r.name)}・${esc(r.group.t)}</div></div><b class="fv-r">${fmt(r.rate)}%</b></div>`).join("")}</div>`;
+  });
+  $("#v-favs").innerHTML=h;
+}
+
 /* ===== 控制項 ===== */
 function renderCats(){
   const all=[["all","全部"],...Object.entries(CATS)];
   $("#cats").innerHTML=all.map(([k,v])=>`<button data-cat="${k}" aria-pressed="${state.cat===k}">${catIcon(k)}${v}</button>`).join("");
-  document.querySelectorAll("#cats button").forEach(b=>b.onclick=()=>{state.cat=b.dataset.cat; renderCats(); render();});
+  document.querySelectorAll("#cats button").forEach(b=>b.onclick=()=>{ state.cat=b.dataset.cat; renderCats(); if(state.view==="home") goView("search"); else render(); });
 }
 function syncClear(){ $("#clear").hidden=!state.q; }
+const VIEWS=["home","search","calc","wallet","favs"];
 function render(){
-  $("#v-search").hidden=state.view!=="search";
-  $("#v-plans").hidden=state.view!=="plans";
-  $("#v-acts").hidden=state.view!=="acts";
-  $("#searchRow").hidden=state.view==="acts";
-  $("#cats").hidden=state.view==="acts";
-  if(state.view==="search") renderSearch();
-  if(state.view==="plans") renderPlans();
-  if(state.view==="acts") renderActs();
+  const v=state.view;
+  VIEWS.forEach(k=>$("#v-"+k).hidden=k!==v);
+  const showSearch=(v==="home"||v==="search"||v==="wallet");
+  $("#searchRow").hidden=!showSearch; $("#cats").hidden=!showSearch;
+  ({home:renderHome,search:renderSearch,calc:renderCalc,wallet:renderPlans,favs:renderFavs})[v]();
 }
-document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{
-  state.view=b.dataset.view;
-  document.querySelectorAll(".tabbar button").forEach(x=>x.setAttribute("aria-selected", x===b));
-  render(); window.scrollTo(0,0);
-});
-function openSettings(){ $("#todayBtn").textContent = state.todayPlan ? "「"+planById(state.todayPlan).name+"」更改" : "設定"; $("#settings").hidden=false; }
-function closeSettings(){ $("#settings").hidden=true; }
+document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>goView(b.dataset.view));
+/* 設定面板：由下往上滑入、背景淡入 */
+function openSettings(){ $("#todayBtn").textContent = state.todayPlan ? "「"+planById(state.todayPlan).name+"」更改" : "設定";
+  const s=$("#settings"); s.classList.add("open"); s.setAttribute("aria-hidden","false"); }
+function closeSettings(){ const s=$("#settings"); s.classList.remove("open"); s.setAttribute("aria-hidden","true"); }
 $("#openSettings").onclick=openSettings;
 $("#closeSettings").onclick=closeSettings;
 $("#settings").onclick=e=>{ if(e.target.id==="settings") closeSettings(); };
-let tmr; $("#q").addEventListener("input",e=>{ clearTimeout(tmr); tmr=setTimeout(()=>{state.q=e.target.value.trim(); syncClear(); render();},120); });
+function applyQuery(v){ state.q=v.trim(); syncClear(); if(state.view==="home"||state.view==="favs") goView("search",true); else render(); }
+let tmr; $("#q").addEventListener("input",e=>{ clearTimeout(tmr); tmr=setTimeout(()=>applyQuery(e.target.value),120); });
 /* 按下鍵盤「搜尋」後收起鍵盤 */
-$("#q").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); clearTimeout(tmr); state.q=e.target.value.trim(); syncClear(); render(); e.target.blur(); } });
+$("#q").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); clearTimeout(tmr); applyQuery(e.target.value); e.target.blur(); } });
 $("#clear").onclick=()=>{ $("#q").value=""; state.q=""; syncClear(); render(); $("#q").focus(); };
 document.querySelectorAll("#lv button").forEach(b=>b.onclick=()=>{
   state.lv=+b.dataset.lv;
@@ -940,6 +1085,7 @@ if(state.tilt){
     }
   });
 }
+if(fxOn()) loadFx(false);
 renderCats(); render();
 </script>
 </body>
