@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css?v=20261112d">
+<link rel="stylesheet" href="./style.css?v=20261113a">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
 </head>
@@ -83,8 +83,6 @@
       <button class="opt" data-mode="luxury" aria-pressed="false"><span class="pv luxury"></span><span><b>典藏</b><small>香檳金與絲絨黑</small></span></button>
     </div>
     <span class="sun-info" id="sunInfo"></span></div>
-  <div class="sheet-row"><span class="lbl">卡面光澤</span>
-    <button class="opt" id="tiltBtn" aria-pressed="false"><span><b>啟用手機傾斜光澤</b><small>傾斜手機時卡面反光跟著移動；iPhone 需允許「動作與方向」</small></span></button></div>
   <div class="sheet-row"><span class="lbl">今天切換的方案</span><button class="linkbtn" data-act="set-today" id="todayBtn">設定</button></div>
   <button class="sheet-done" id="closeSettings">完成</button>
 </div></div>
@@ -443,11 +441,10 @@ state.todayPlan = (cur && cur.d===todayKey()) ? cur.id : "";
 state.favs = load("cube-favs",[]);
 state.bday = load("cube-show-bday",true);
 state.pmode = load("cube-pmode","grid");
-state.tilt = load("cube-tilt",false);
 state.hview = "";
 const REDUCE = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
 function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),1800); }
-/* ===== 全像光澤：手指滑過／手機傾斜 ===== */
+/* ===== 全像光澤：手指滑過 ===== */
 function setGlint(el,x,y){ el.style.setProperty("--mx",x.toFixed(1)+"%"); el.style.setProperty("--my",y.toFixed(1)+"%"); }
 document.addEventListener("pointermove",ev=>{
   if(REDUCE||!ev.target.closest) return;
@@ -458,23 +455,7 @@ document.addEventListener("pointerout",ev=>{
   if(!ev.target.closest) return; const c=ev.target.closest(".cface");
   if(c && !(ev.relatedTarget && c.contains(ev.relatedTarget))){ c.style.removeProperty("--mx"); c.style.removeProperty("--my"); }
 });
-let tiltOn=false, tiltRAF=0, tiltXY=null;
-function onOrient(e){
-  if(e.gamma==null) return;
-  const x=Math.max(-25,Math.min(25,e.gamma)), y=Math.max(10,Math.min(80,e.beta||45));
-  tiltXY=[50+x*2,(y-10)/70*100];
-  if(!tiltRAF) tiltRAF=requestAnimationFrame(()=>{ tiltRAF=0; setGlint(document.documentElement,tiltXY[0],tiltXY[1]); });
-}
-function enableTilt(gesture){
-  const D=window.DeviceOrientationEvent;
-  if(REDUCE||!D) return Promise.resolve(false);
-  let p;
-  if(typeof D.requestPermission==="function"){ if(!gesture) return Promise.resolve(false); try{ p=D.requestPermission(); }catch(e){ return Promise.resolve(false); } }
-  else p=Promise.resolve("granted");
-  return p.then(r=>{ if(r!=="granted") return false; if(!tiltOn){ window.addEventListener("deviceorientation",onOrient); tiltOn=true; } return true; },()=>false);
-}
-function disableTilt(){ window.removeEventListener("deviceorientation",onOrient); tiltOn=false;
-  document.documentElement.style.removeProperty("--mx"); document.documentElement.style.removeProperty("--my"); }
+
 function expiryHTML(){
   const list=PLANS.filter(p=>status(p.start,p.end).k==="warn");
   if(!list.length) return "";
@@ -786,7 +767,12 @@ function homeSync(act,i){
   $("#homeSet").innerHTML = p.id===state.todayPlan ? "" : `<button class="btn-set" data-act="setmain" data-pid="${p.id}">設為今日主卡：${esc(p.name)}</button>`;
   const rows=p.groups.map(g=>{ const names=g.items.map(it=>typeof it==="string"?it:it.n);
     return `<div class="hl-row"><div class="hl-main"><div class="hl-t">${esc(g.t)}</div><div class="hl-i">${esc(names.slice(0,8).join("、"))}${names.length>8?` 等 ${names.length} 家`:""}</div></div><span class="rate-pill">${fmt(rateOf(g.r))}<small>%</small></span></div>`; }).join("");
-  $("#homeList").innerHTML=`<div class="sec">${esc(p.name)} 適用通路</div><div class="panel vitrine hl-panel" style="${skin(p)}">${rows}
+  const main=p.id===state.todayPlan, st=status(p.start,p.end);
+  $("#homeList").innerHTML=`<div class="panel vitrine hl-panel" style="${skin(p)}">
+    <div class="hl-head"><span class="hl-kicker">${main?"★ 今日主卡":"瀏覽中・非今日主卡"}</span>
+      <div class="hl-name">${esc(p.name)}<span>適用通路</span></div>
+      <div class="hl-meta">${ymd(p.start)} – ${ymd(p.end)}・${esc(st.txt)}${p.rate===L?"・以 L"+(state.lv+1)+" 計算":""}</div></div>
+    ${rows}
     <button class="linkbtn hl-more" data-act="viewplan" data-pid="${p.id}">查看完整內容與使用提醒</button></div>`;
 }
 function stackHTML(){
@@ -1070,22 +1056,6 @@ applyTheme();
 setInterval(applyTheme,60000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden) applyTheme(); });
 
-/* 卡面光澤設定 */
-function syncTiltBtn(){ const b=$("#tiltBtn"); b.setAttribute("aria-pressed",state.tilt);
-  b.querySelector("b").textContent=state.tilt?"已啟用手機傾斜光澤":"啟用手機傾斜光澤";
-  if(REDUCE) b.querySelector("small").textContent="系統已開啟「減少動態效果」，光澤固定不動"; }
-$("#tiltBtn").onclick=()=>{
-  if(state.tilt){ state.tilt=false; save("cube-tilt",false); disableTilt(); syncTiltBtn(); toast("已關閉手機傾斜光澤"); return; }
-  enableTilt(true).then(ok=>{ state.tilt=ok; save("cube-tilt",ok); syncTiltBtn(); toast(ok?"已啟用手機傾斜光澤":"未取得「動作與方向」權限"); });
-};
-syncTiltBtn();
-if(state.tilt){
-  enableTilt(false).then(ok=>{
-    if(!ok && typeof (window.DeviceOrientationEvent||{}).requestPermission==="function"){
-      document.addEventListener("click",function once(){ document.removeEventListener("click",once,true); enableTilt(true); },true);
-    }
-  });
-}
 if(fxOn()) loadFx(false);
 renderCats(); render();
 </script>
