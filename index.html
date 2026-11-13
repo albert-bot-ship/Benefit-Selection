@@ -102,7 +102,7 @@ const PLANS = [
 { id:"autumn", name:"秋日遊", color:"#ff8a3d", start:"2026-10-01", end:"2026-11-30", sum:"3%~8%",
   notes:["自2024年2月1日起於特約商店分期付款消費（含提前結清），僅適用原一般消費0.3%回饋。"],
   groups:[
-  {t:"日本必逛＋遊日必備之指定消費", cat:"overseas", r:3.5, items:["日本實體消費",{n:"愛電王實體門市",a:"edion",cp:"edion"},{n:"大丸百貨福岡天神店",a:"daimaru 大丸",cp:"daimaru"},{n:"MITSUI OUTLET PARK實體商場",a:"三井",cp:"mitsui"},{n:"台場DiverCity Tokyo Plaza",a:"三井",cp:"mitsui"},{n:"BicCamera集團實體門市",a:"bic camera 必酷"},{n:"Apple錢包指定交通卡(Suica 、PASMO、ICOCA)",a:"西瓜卡 suica pasmo icoca"},{n:"GO Taxi App(預約叫車平台)",a:"計程車 taxi"}]},
+  {t:"日本必逛＋遊日必備之指定消費", cat:"overseas", r:3.5, items:["日本實體消費",{n:"愛電王實體門市",a:"edion",cp:"edion"},{n:"大丸百貨福岡天神店",a:"daimaru 大丸",cp:"daimaru"},{n:"MITSUI OUTLET PARK實體商場",a:"三井",cp:"mitsui"},{n:"台場DiverCity Tokyo Plaza",a:"三井",cp:"mitsui"},{n:"BicCamera集團實體門市",a:"bic camera 必酷"},{n:"Apple錢包指定交通卡(Suica 、PASMO、ICOCA)",a:"西瓜卡 suica pasmo icoca",cp:"suica"},{n:"GO Taxi App(預約叫車平台)",a:"計程車 taxi"}]},
   {t:"日本四大機場指定免稅店", cat:"overseas", r:4, items:["成田機場指定免稅店 (Fa-So-La DUTY FREE、JAPAN DUTY FREE、JAL DUTYFREE)","關西機場指定免稅店 (KIX DUTY FREE、TRK ARRIVAL Duty Free Shop、關西旅日記)","新千歲機場指定免稅店(New Chitose Airport Duty Free Shop)","福岡機場免稅店 (FUKUOKA AIRPORT DUTYFREE SHOP)"]},
   {t:"日本IP專賣店 / 人氣愛店 / 餐廳預約平台", cat:"overseas", r:5, note:["1.上述商店限定地點為日本之實體門市，不包含百貨及商場門市、店中櫃、非常態之期間限定快閃店、禮品卡購買或儲值、第三方支付平台及及線上購物消費及線上預訂商品現場取貨等經本行公告排除之項目。", "2.餐廳預約平台回饋僅適用訂位餐廳並於平台實際付款之交易(如平台系統使用費、訂位相關線上預付扣等)；餐費是否需預付及實際支付方式依各餐廳及平台規定。回饋不包含僅完成依訂位未付款、現場支付餐費、取消訂位退餐廳、自行收款及所有餐廳預訂平台完成交易之及其他非指定金額。", "3.優惠通路請依刷卡簽單或 CUBE App 消費資訊中所示商家資訊為準，非以餐廳名稱含依據。"], items:[{n:"寶可夢中心 5家指定門市",a:"pokemon"},{n:"SANRIO 三麗鷗 14家指定門市",a:"sanrio 凱蒂貓"},"KIDDY LAND 6家指定門市",{n:"UNIQLO實體門市",a:"uniqlo 優衣庫"},"Alpen GROUP實體門市","ABC-MART實體門市","Loft實體門市","3COINS 15家指定門市",{n:"Tabelog",a:"食べログ"},"TableCheck","OMAKASE"]},
   {t:"海外旅遊規劃 ( 機票、訂房、行程)", cat:"travel", r:5, items:["Klook 指定日本商品",{n:"Hotels.com 專屬網頁訂房"},{n:"Expedia 專屬網頁訂房"}]},
@@ -222,8 +222,28 @@ function noteText(k){ const i=noteIdx(k); return i<0?"":GLOBAL_NOTES.at(i); }
 /* CUBE App 領券（官網「旅日優惠口袋」原文） */
 const COUPON_URL="https://www.cathay-cube.com.tw/cathaybk/personal/event/overview/credit-card/travel/202501/JP_DiscountPocket";
 const COUPONS={
-  edion:{t:"日本愛電王",rate:"10.2%",d:"[秋日遊限定] CUBE App領券消費享最高10.2%小樹點(信用卡)回饋",period:"2026/10/1~ 2026/12/31",start:"2026-10-01",end:"2026-12-31"},
+  edion:{t:"日本愛電王",
+    get rate(){ return today()<=pd("2026-11-30") ? "10.2%" : "10%"; },
+    get d(){ return today()<=pd("2026-11-30")
+      ? "[秋日遊限定] CUBE App領券消費享最高10.2%小樹點(信用卡)回饋"
+      : "最高10%小樹點(信用卡)回饋 = 切換【趣旅行】權益方案享最高3.3%小樹點(信用卡)回饋 + 領取「日本愛電王加碼6.7%」 優惠券加碼6.7%小樹點(信用卡)回饋。"; },
+    period:"2026/10/1~ 2026/12/31",start:"2026-10-01",end:"2026-12-31",
+    src:"CUBE App 活動說明",
+    notes:["本活動限CUBE信用卡持卡人於活動期間登入本行CUBE App完成領取指定優惠券，並於領取日後(含當日)刷CUBE信用卡於指定通路消費方符合回饋計算，消費日需於2026/12/31(含)前且入賬日需於2027/1/15(含)前。 優惠券活動正附卡消費合併計算，每正卡戶回饋上限400點。",
+      "最高10%小樹點(信用卡)回饋 = 切換【趣旅行】權益方案享最高3.3%小樹點(信用卡)回饋 + 領取「日本愛電王加碼6.7%」 優惠券加碼6.7%小樹點(信用卡)回饋。（*本活動敘明之權益方案回饋率係以 Level 3 權益等級計算。）",
+      "*【10–11月期間限定】最高10.2%小樹點(信用卡)回饋 = 2026/11/30 前切換【秋日遊】權益方案享最高3.5%小樹點(信用卡)回饋 + 領取「日本愛電王實體門市加碼6.7%」 優惠券加碼6.7%小樹點(信用卡)回饋。",
+      "本活動適用消費幣別需為日圓或消費國別為日本，且特約商店與收單機構登錄之特約商店名稱為「EDION」方符合本活動回饋資格，本活動適用商戶不包含店中櫃及線上交易。優惠通路請依刷卡簽單或CUBE App消費資訊中所示商家資訊為準，非以發票上列示之商家名稱為依據。",
+      "特約商店分期付款消費不適用CUBE信用卡權益方案之「指定消費」回饋（含提前結清），僅適用一般消費0.3%回饋；優惠券點數於每期入帳後回饋至正卡人信用卡帳戶，消費日依帳單列示日期為準。",
+      "由於本活動特約商店所在地為國外，交易須收取國外交易手續費，相關費用依信用卡約定條款第十六條國外交易結匯辦理，請參閱本行信用卡定型化契約約定。",
+      "本活動適用行動支付（如：Apple Pay、Samsung Pay、Google Pay），不適用第三方支付及綁定其他型態支付工具之交易（如：Line Pay、街口支付、全支付等）。"]},
   daimaru:{t:"日本大丸百貨福岡天神店",rate:"8%",d:"CUBE App領券消費享最高8%小樹點(信用卡)回饋",period:"",start:null,end:null},
+  suica:{t:"Apple錢包日本指定交通卡",rate:"5%",d:"活動期間透過「Apple 錢包」加入日本指定交通卡(Suica、PASMO、ICOCA) 並以CUBE信用卡綁定儲值，最高享5%小樹點(信用卡)回饋！",
+    sub:"*本活動5%小樹點(信用卡)回饋 = 切換「秋日遊」權益享3.5%回饋 ＋ 本活動領券加碼 1.5%回饋",
+    period:"2026/10/01~2026/11/30",start:"2026-10-01",end:"2026-11-30",
+    src:"CUBE App 活動說明",
+    notes:["「領優惠券加碼1.5%回饋」：持卡人需於CUBE App領取「Apple錢包日本指定交通卡加碼1.5%」優惠券，並限以「Apple 錢包」加入交通卡(Suica、PASMO、ICOCA)並綁定CUBE信用卡儲值，最高享1.5%小樹點(信用卡)加碼回饋，1.5%加碼回饋計算將於領取日後(含當日)至活動截止日(2026/11/30)之新增消費方符合回饋計算，消費入帳日需於2026/12/15(含)前，正附卡消費合併計算，每一正卡戶回饋上限200點。",
+      "CUBE信用卡「秋日遊」權益方案適用期間：2026/10/01~2026/11/30，本活動切換「秋日遊」權益方案享刷卡金額3.5%小樹點(信用卡)回饋（含一般消費0.3%）；若切換CUBE信用卡「趣旅行」權益方案，最高享3.3%小樹點(信用卡)回饋（含一般消費0.3%），若切換CUBE信用卡其他權益方案，則享0.3%小樹點(信用卡)回饋。",
+      "本活動限以「Apple 錢包」加入指定交通卡（Suica、PASMO、ICOCA）並刷CUBE信用卡綁定儲值，不適用其他第三方支付及綁定其他型態支付工具之交易（如：Line Pay、街口支付、全支付等）。"]},
   mitsui:{t:"日本三井指定商場",rate:"5%",d:"CUBE App領券消費享最高5%小樹點(信用卡)回饋",sub:"本活動適用商場包含全日本MITSUI OUTLET PARK + 台場DiverCity Tokyo Plaza",period:"2026/8/1~ 2026/12/31",start:"2026-08-01",end:"2026-12-31"}
 };
 function cpStatus(c){ return c.start? status(c.start,c.end) : {k:"on",txt:"期間依官網活動詳情",active:true}; }
@@ -892,7 +912,7 @@ function actsHTML(){
       <div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網列於「樂饗購」方案頁面「CUBE餐飲活動」</span></div></div></div>`; };
   return `<div class="acts-title">加碼活動</div><div class="sec">CUBE餐飲活動</div>${ACTS.map(card).join("")}
     <div class="sec">CUBE App 領券（旅日優惠口袋）</div>
-    ${Object.values(COUPONS).map(c=>{const st=cpStatus(c);return `<div class="ticket${st.active?"":" off"}"><div class="tk-l tk-cp">${esc(c.rate)}</div><div class="tk-r"><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p>${c.sub?`<p>${esc(c.sub)}</p>`:""}<p>${c.period?"活動期間："+esc(c.period):"活動期間依官網活動詳情"}</p><div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網「旅日優惠口袋」</span></div></div></div>`;}).join("")}
+    ${Object.values(COUPONS).map(c=>{const st=cpStatus(c);return `<div class="ticket${st.active?"":" off"}"><div class="tk-l tk-cp">${esc(c.rate)}</div><div class="tk-r"><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p>${c.sub?`<p>${esc(c.sub)}</p>`:""}<p>${c.period?"活動期間："+esc(c.period):"活動期間依官網活動詳情"}</p><div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">${esc(c.src||"官網「旅日優惠口袋」")}</span></div>${c.notes?`<details><summary>注意事項</summary>${c.notes.map(n=>`<p>${esc(n)}</p>`).join("")}</details>`:""}</div></div>`;}).join("")}
     <p class="hint"><a href="${COUPON_URL}" target="_blank" rel="noopener">前往旅日優惠口袋</a></p>
     <p class="hint"><a href="https://www.cathay-cube.com.tw/content/cub-aem-cs/zh-tw/cathaybk/personal/event/overview/credit-card/dining/202604/cube_dining" target="_blank" rel="noopener">前往活動網頁查看詳情</a></p>
     <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint m0">${esc(noteText("coupon"))}</p></div>`;
