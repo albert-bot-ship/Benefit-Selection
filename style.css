@@ -809,3 +809,8 @@ button.ex-row:hover{background:color-mix(in srgb,var(--warn) 10%,transparent)}
 :root[data-theme="luxury"] .hl-head{margin:0 -18px 6px;padding:16px 18px 14px;border-bottom:1px solid var(--gold-line)}
 :root[data-theme="luxury"] .hl-kicker{background:linear-gradient(135deg,#B8995F,#F0DBA9);color:#120D12;text-shadow:none;border-radius:0;
   clip-path:polygon(0 0,100% 0,calc(100% - 6px) 50%,100% 100%,0 100%);padding-right:16px}
+/* 搜尋欄「重置」按鈕 */
+.searchbox input{padding-right:78px}
+.searchbox #clear{width:auto;height:34px;min-width:56px;padding:0 12px;right:6px;border-radius:var(--radius-chip);
+  background:var(--surface-2);border:1px solid var(--line);color:var(--text);font-size:.85rem;font-weight:700}
+:root[data-theme="luxury"] #clear{color:var(--gold);border-color:var(--gold-line)}
