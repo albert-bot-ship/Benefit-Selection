@@ -794,3 +794,18 @@ button.ex-row:hover{background:color-mix(in srgb,var(--warn) 10%,transparent)}
 .pts-big i{font-family:var(--font);font-style:normal;font-size:.9rem;font-weight:500}
 :root[data-theme="light"] .pts-big{color:#12a150;background:#e8f7ee;border-color:#9fdcb7}
 :root[data-theme="luxury"] .pts-big{color:var(--gold);background:rgba(226,200,147,.1);border-color:var(--gold-line)}
+/* ===== 首頁：今日主卡適用通路（醒目） ===== */
+.hl-panel{padding:0 16px 14px;overflow:hidden;margin-top:14px}
+.hl-panel::before{display:none}
+.hl-head{margin:0 -16px 6px;padding:14px 16px 12px;color:#fff;background:linear-gradient(135deg,var(--g1),var(--g2));text-shadow:0 1px 2px rgba(0,0,0,.25)}
+.hl-kicker{display:inline-block;font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:var(--radius-chip);background:rgba(0,0,0,.25);letter-spacing:.04em}
+.hl-name{font-family:var(--font-head);letter-spacing:var(--head-track);font-size:1.45rem;font-weight:800;line-height:1.25;margin-top:6px}
+.hl-name span{font-size:.9rem;font-weight:500;margin-left:8px;opacity:.9}
+.hl-meta{font-size:.8rem;opacity:.9;margin-top:2px}
+.hl-panel .hl-row{padding:12px 0}
+.hl-panel .hl-t{font-size:1.02rem}
+.hl-panel .rate-pill{font-size:1.25rem;min-width:66px;padding:4px 12px}
+:root[data-theme="luxury"] .hl-panel{padding:0 18px 16px}
+:root[data-theme="luxury"] .hl-head{margin:0 -18px 6px;padding:16px 18px 14px;border-bottom:1px solid var(--gold-line)}
+:root[data-theme="luxury"] .hl-kicker{background:linear-gradient(135deg,#B8995F,#F0DBA9);color:#120D12;text-shadow:none;border-radius:0;
+  clip-path:polygon(0 0,100% 0,calc(100% - 6px) 50%,100% 100%,0 100%);padding-right:16px}
