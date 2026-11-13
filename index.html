@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,500;0,6..96,700;1,6..96,500;1,6..96,700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./style.css?v=20261113a">
+<link rel="stylesheet" href="./style.css?v=20261113b">
 <script>try{var m=JSON.parse(localStorage.getItem("cube-theme-mode")||'"auto"'),l=JSON.parse(localStorage.getItem("cube-theme-last")||'"dark"');document.documentElement.setAttribute("data-theme",m==="auto"?l:m);}catch(e){document.documentElement.setAttribute("data-theme","dark");}</script>
 
 </head>
@@ -31,7 +31,7 @@
     <div class="searchbox" id="searchRow">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="q" type="search" enterkeyhint="search" placeholder="例如：蝦皮、7-11、全聯、Netflix、日本" autocomplete="off" aria-label="搜尋店家或通路">
-        <button id="clear" aria-label="清除搜尋" hidden>✕</button>
+        <button id="clear" type="button" aria-label="重置搜尋、類別與試算金額" hidden>重置</button>
       </div>
     <div class="cats" id="cats" aria-label="類別篩選"></div>
   </div>
@@ -211,6 +211,13 @@ const PLANS = [
 ];
 
 const GLOBAL_NOTES = ["CUBE卡權益如未敘明則適用期間為：2026/1/1~2026/12/31，詳依 CUBE卡權益方案頁面說明為準。", "方案每正卡人每日限變更一次 (固定回饋另依該權益方案注意事項說明)，附卡適用方案依正卡持卡人設定為準。", "方案設定自當日零時起之消費即依當次變更後之方案計算回饋，方案設定依本行系統紀錄之日期為準。(舉例：小華2026/1/10 17:00變更方案為「樂饗購」，且 2026/1/10 10:30 有一筆Uber消費、18:00 有一筆遠東SOGO百貨消費，則 2026/1/10 之所有消費 (包含 Uber 與遠東SOGO百貨) 皆依「樂饗購」方案計算回饋。)", "保費僅回饋0.3%小樹點(信用卡)且壽險保費不含國泰人壽之躉繳保費、投資型及利率變動型年金保費。", "CUBE App領取優惠券活動：參加本活動需於活動期間登入本行CUBE App之「CUBE優惠券專區」完成領取優惠券，且回饋計算將於活動領取日後(含當日)之新增消費方符合回饋計算。", "CUBE卡各項回饋若未敘明，則以小樹點(信用卡)回饋，其餘商家回饋點數，則依各商家或活動說明為準。", "小樹點(信用卡)點數價值為1點等值NT$1，CUBE卡於每筆消費請款入帳後，依該筆消費之授權日判斷適用權益方案、符合之優惠券，以各別回饋率計算小樹點(信用卡)並依小數點第一位四捨五入至整數位，並於次二日(遇假日順延)回饋至正卡人信用卡帳戶，實際回饋時間依本行作業時間為準。(舉例：小華2026/1/10 適用方案為「樂饗購」並權益分級為Level 2，且當日10:30有一筆雄獅旅行社消費NT$1,800，18:00有一筆新光三越消費NT$3,000。雄獅旅行社不屬「樂饗購」方案指定消費，因此屬一般消費，回饋率0.3%；新光三越於「樂饗購」方案中屬指定美食/購物消費，回饋率3%，小華分別獲得兩筆消費回饋5點、90點，詳細計算見下方表格；小明2026/1/15適用方案為「趣旅行」並權益分級為Level 2，且當日15:30有一筆Agoda授權NT$5,000，後續Agoda提供銀行之消費日為2026/1/20，而小明2026/1/20適用方案為「樂饗購」，則此筆交易本行收到授權日為2026/1/15，故以「趣旅行」計算回饋率，Agoda於「趣旅行」方案中屬指定旅遊/交通消費，回饋率3%，小明可獲得該筆消費回饋150點)\n*授權日為持卡人實際刷卡之日期，消費日為商家提供銀行之交易日期，惟部分商家授權日可能與實際刷卡消費日不同，如因此無法獲得加碼回饋，請洽本行客服處理。", "正附卡消費合併計算，小樹點(信用卡)回饋歸戶至正卡持卡人信用卡帳戶。", "消費折抵金以消費金額乘以回饋比率，四捨五入計算至整數位，於每筆消費請款入帳後計算，並於次三日 (遇假日順延) 回饋至正卡人信用卡帳戶，本行系統自動將該筆回饋金額折抵於原刷卡交易，實際回饋時間依本行作業時間為準。", "合作商戶點之點數以消費金額乘以回饋比率，四捨五入計算至整數位，將於活動結束後統一回饋至合作商戶會員帳戶，入點資訊請於活動結束後至合作商戶會員帳戶查詢，實際回饋時間依商戶作業時間為準。", "如有退貨將比對該筆退貨交易原始消費之適用權益方案，依該方案計算回饋後予以扣除，若商家退款交易資料不足以辨認原始消費之適用權益方案，則依一般消費計算扣除回饋。", "自2024/2/1起於特約商店分期付款消費不適用各權益方案之「指定消費」加碼回饋（含提前結清），如分期付款消費項目屬一般消費，則仍適用原一般消費0.3%回饋。2024/1/31(含)前特約商店分期付款消費分期仍適用權益方案「指定消費」回饋，於每期入帳後回饋至正卡人信用卡帳戶，消費日依帳單列示日期為準。", "自2026/1/1起，CUBE信用卡每月指定消費之累計消費金額以「消費日當日信用額度」加計新臺幣50萬元為限。持卡人因信用額度異動，致當月份有不同之消費日當日信用額度時，其調整後金額上限，不溯及適用至當月已核發小樹點(信用卡)之消費，超出此限額之消費如屬一般消費，仍適用一般消費0.3%回饋。正、附卡信用額度與溢繳金額合併計算。持卡人當月回饋之小樹點（信用卡）總額，以本行最終檢核之結果為準，持卡人同意本行得逕行扣回逾發之小樹點（信用卡）。若點數扣回作業執行時持卡人已將點數使用完畢，將改以1點小樹點(信用卡)等值NT$1之價值入信用卡帳單，持卡人仍應繳納。", "各權益方案之「指定消費」或「優惠券」消費，限直接使用CUBE卡刷卡或使用該卡加入Apple Pay /Samsung Pay/Google Pay/Garmin Pay消費，皆不含透過綠界支付平台、藍新支付平台、91APP或其它第三方支付平台之交易，亦不含透過綁定其他型態支付工具之消費(如：LINE Pay、街口支付、全盈+PAY、全支付、Pi錢包、橘子支付、歐付寶、icash pay、OPEN錢包、My FamiPay、悠遊付、ezPay、GOMAJI Pay、friday wallet、PayPal、支付寶等)。「指定消費」包含玩數位之指定線上消費、樂饗購之指定美食/購物消費、趣旅行之指定旅遊消費、集精選之指定品牌/生活消費包含OPEN錢包於超商消費、My FamiPay超商消費、 PX Pay店內消費，排除菸品、代收代售、禮券購買消費。", "各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。CUBE卡之「一般消費」係排除以下消費或費用：信用卡相關利息及費用(包含但不限於利息、年費、掛失費、預借現金手續費、違約金、國外交易手續費、調閱簽帳單手續費、補發帳單手續費等非消費款項)、預借現金、帳單分期、單筆消費分期(刷卡樂分期)、通信貸款、餘額代償金額及經本行公告除外之專案、稅款、學費、公用事業費用(包含但不限於網路通訊／影音服務等相關費用及附加費)、路邊停車費、公務機關各項費用、透過繳費平台（如公務機關信用卡繳費平台，含公務機關／國營事業／公立醫療院所等、電子化繳費稅處理平台、醫指付、本行CUBE網銀或CUBE App線上繳費服務)繳納之費用、代繳國泰人壽「躉繳」、「投資型」及「利率變動型年金」保單、代扣基金、悠遊卡加值、一卡通加值、icash加值、便利超商消費、透過聯合信用卡處理中心小額支付平台之特約商店之消費（如便利超商、連鎖速食店、停車費等）、全聯福利中心消費、大全聯消費（含實體門市與線上通路）、eTag儲值/eTag智慧停車費代扣繳、遠東SOGO百貨貴賓廳之消費金額、國壽不動產租金代收、未經主管機關核准之境外投資交易平台（包含但不限於eToro）、匯兌平台（包含但不限於Wise）、數位（虛擬）貨幣及旅行支票（包含但不限於MCC code為4829、6012、6211、6051）之交易、博奕類（包含但不限於MCC code為7995）之交易、其他經本行公告排除之項目。", "各權益方案之「指定消費」之消費回饋項目及注意事項依CUBE卡權益方案頁面說明為準；「優惠券」之適用通路及注意事項依優惠券頁面說明為準。", "持卡人於計算回饋時須持有效卡，且上一期無逾期未繳款之紀錄；若持卡人終止信用卡或遭停止使用信用卡權利、延滯繳款或其他違反信用卡約定條款等情事時，將喪失活動回饋資格。", "消費回饋之認定依本行系統為主，本行將依商店提供之交易說明比對，若因商店請款資料變更以致交易說明資訊和本行可判別之資訊不同，或上述回饋通路旗下商品之清算資料類別與本行認列之清算資料不同，導致未列入回饋計算(不包含各商家之排除項目)，請來電告知，本行將於確認後以個案方式提供回饋，且不另行通知，惟回饋恕不溯及既往。除本項說明項目之外，不符回饋通路者，不予個案回饋。", "持卡人於網路商店購物時，應注意是否為國外交易。凡「交易(含辦理退款)之貨幣非為新臺幣」，或「以新臺幣交易，惟特約商店登記國別碼非臺灣」，或「以新臺幣交易，惟特約商店所屬收單機構所在地非臺灣」皆為國外交易，將依信用卡國際組織之交易結匯日匯率換算為新臺幣，並須收取國外交易手續費，請參閱本行信用卡約定條款第十六條之約定。註：網頁以「tw」為網域名稱者，或於我國有設立分公司者，並非當然屬於我國境內特約商店，持卡人仍須注意是否為跨境交易；如無法辨識，建議於交易前先向商家確認後，再進行交易。", "若有任何因為電腦、網路、電話、技術或不可歸責於本行之事由，而使持卡人之交易紀錄有遺失、錯誤、無法辨識或毀損情況，本行不負任何法律責任，持卡人亦不得因此異議。", "若刷卡消費為虛偽不實套利之交易，經本行查證後將逕行扣回已回饋之小樹點(信用卡)，若點數扣除作業時持卡人已將點數使用完畢，將改以1點小樹點(信用卡)等值新台幣壹元之價值入信用卡帳單。", "本活動之相關活動辦法、未盡事項或變更，悉依本行/各合作店家規定及解釋為準。本行保留活動修改、變更及終止之權利，並於本行網站公告。", "本頁所稱CUBE卡為CUBE信用卡，不含CUBE簽帳金融卡。"];
+
+/* 官網注意事項：以內容開頭比對，不依賴順序（官網增刪條文時條次自動更新） */
+const NOTE_KEY={change:"方案每正卡人每日限變更一次", effective:"方案設定自當日零時起", points:"小樹點(信用卡)點數價值為1點",
+  channel:"各權益方案之「指定消費」或「優惠券」消費", base:"各權益方案之「指定消費」回饋皆已包含", coupon:"CUBE App領取優惠券活動"};
+function noteIdx(k){ return GLOBAL_NOTES.findIndex(n=>n.startsWith(NOTE_KEY[k])); }
+function noteNo(k){ const i=noteIdx(k); return i<0?"?":i+1; }
+function noteText(k){ const i=noteIdx(k); return i<0?"":GLOBAL_NOTES.at(i); }
 
 /* CUBE App 領券（官網「旅日優惠口袋」原文） */
 const COUPON_URL="https://www.cathay-cube.com.tw/cathaybk/personal/event/overview/credit-card/travel/202501/JP_DiscountPocket";
@@ -417,7 +424,7 @@ function catIcon(c){ return `<svg viewBox="0 0 24 24" fill="none" stroke="curren
 
 /* ===== 付款方式（依官網） ===== */
 const PAY_STD=["直接刷CUBE卡","Apple Pay","Samsung Pay","Google Pay","Garmin Pay"];
-const SRC_14="官網注意事項第14條";
+const SRC_14="官網注意事項第"+noteNo("channel")+"條";
 function payFor(r){
   const p=r.plan, g=r.group.t, n=r.name;
   if(p.id==="fixed") return null;
@@ -534,7 +541,7 @@ function whyHTML(r){
     ["通路", r.name]
   ];
   if(r.group.r===L) rows.push(["等級", "目前選擇 L"+(state.lv+1)]);
-  const base = p.id==="fixed" ? "" : `<p class="q">「各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。」<small>官網注意事項第15條</small></p>`;
+  const base = p.id==="fixed" ? "" : `<p class="q">「各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。」<small>官網注意事項第${noteNo("base")}條</small></p>`;
   return `<details class="why"><summary>這個 ${fmt(r.rate)}% 怎麼來的？</summary>
     <dl>${rows.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join("")}</dl>${base}
     ${notes.length?`<div class="q-h">官網使用提醒</div>${notes.map(n=>`<p class="q">${esc(n).replace(/\n/g,"<br>")}</p>`).join("")}`:""}
@@ -549,8 +556,8 @@ function todayLine(rows,tq){
   let txt;
   if(!tq.length) return `<div class="today-line"><span class="mini" style="${skin(p)}"></span><span>今天已切「${esc(p.name)}」</span><button class="linkbtn" data-act="set-today">更改</button></div>`;
   if(hit.length){ const m=Math.max(...hit.map(r=>r.rate)); txt=`<b>${fmt(m)}%</b>（${esc(hit.find(r=>r.rate===m).name)}）<small class="pts" data-rate="${m}"></small>`; }
-  else if(p.id==="fixed") txt=`非指定海外消費時，以一般消費(不含保費) <b>1.2%</b> 計算<small class="pts" data-rate="1.2"></small>；官網注意事項第15條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
-  else txt=`非「${esc(p.name)}」指定通路，以一般消費 <b>0.3%</b> 計算<small class="pts" data-rate="0.3"></small>；官網注意事項第15條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
+  else if(p.id==="fixed") txt=`非指定海外消費時，以一般消費(不含保費) <b>1.2%</b> 計算<small class="pts" data-rate="1.2"></small>；官網注意事項第${noteNo("base")}條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
+  else txt=`非「${esc(p.name)}」指定通路，以一般消費 <b>0.3%</b> 計算<small class="pts" data-rate="0.3"></small>；官網注意事項第${noteNo("base")}條列為排除者（如便利超商、全聯福利中心、大全聯等）不列入一般消費`;
   return `<div class="today-line"><span class="mini" style="${skin(p)}"></span><span>今天已切「${esc(p.name)}」：${txt}</span><button class="linkbtn" data-act="set-today">更改</button></div>`;
 }
 
@@ -582,11 +589,12 @@ function favBtn(q){ const on=state.favs.includes(q);
   return `<button class="qfav${on?" on":""}" data-act="fav" aria-pressed="${on}" aria-label="${on?"取消收藏此搜尋":"收藏此搜尋"}">${on?"♥":"♡"}</button>`; }
 
 /* ===== 今天方案選單 ===== */
+function selectablePlans(){ return PLANS.filter(p=>status(p.start,p.end).active && eligible(p).ok && (state.bday||p.id!=="bday")); }
 function todayPickerHTML(){
-  const act=PLANS.filter(p=>status(p.start,p.end).active);
+  const act=selectablePlans();
   return `<div class="picker" role="dialog" aria-label="今天切換的方案"><div class="picker-in">
     <b>今天切換的是哪個方案？</b>
-    <p class="hint picker-note">「方案每正卡人每日限變更一次」「方案設定自當日零時起之消費即依當次變更後之方案計算回饋」（官網注意事項第2、3條）。此設定只記到今天。</p>
+    <p class="hint picker-note">「方案每正卡人每日限變更一次」「方案設定自當日零時起之消費即依當次變更後之方案計算回饋」（官網注意事項第${noteNo("change")}、${noteNo("effective")}條）。此設定只記到今天。</p>
     <div class="picker-grid">${act.map(p=>`<button data-pick="${p.id}" class="${state.todayPlan===p.id?"on":""}"><span class="mini" style="${skin(p)}"></span>${esc(p.name)}</button>`).join("")}</div>
     <div class="row picker-foot"><button class="linkbtn" data-pick="">清除設定</button><button class="linkbtn" data-act="close">關閉</button></div>
   </div></div>`;
@@ -639,7 +647,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("input",e=>{
   if(e.target.classList.contains("amt-in")){
-    state.amt=e.target.value;
+    state.amt=e.target.value; syncClear();
     document.querySelectorAll(".amt-in").forEach(x=>{ if(x!==e.target) x.value=state.amt; });
     if(state.view==="calc") renderCalcBody(); else updateAmts();
   }
@@ -723,10 +731,10 @@ const INST_TXT="自2024/2/1起於特約商店分期付款消費（含提前結�
 function fallbackHTML(empty){
   return `<div class="panel">${empty?"<b>找不到這個通路</b><p class=\"hint mt0\">可能不在任何方案的指定清單內，或名稱寫法不同（可試試品牌英文名或縮寫）。</p>":"<b>其他提醒</b>"}
     <ul class="q-list"><li>${esc(INST_TXT)}<small>官網各權益方案說明</small></li>
-    <li>各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。<small>官網注意事項第15條</small></li>
+    <li>各權益方案之「指定消費」回饋皆已包含一般消費回饋0.3%。<small>官網注意事項第${noteNo("base")}條</small></li>
     <li>固定回饋：一般消費(不含保費) 1.2%、指定海外消費 2.5%<small>官網固定回饋方案</small></li>
-    <li>${esc(GLOBAL_NOTES[14])}<small>官網注意事項第15條</small></li>
-    <li>${esc(GLOBAL_NOTES[13])}<small>官網注意事項第14條</small></li>
+    <li>${esc(noteText("base"))}<small>官網注意事項第${noteNo("base")}條</small></li>
+    <li>${esc(noteText("channel"))}<small>官網注意事項第${noteNo("channel")}條</small></li>
     </ul></div>`;
 }
 function renderHome(){
@@ -737,12 +745,12 @@ function heroHTML(){
   const p=state.todayPlan && planById(state.todayPlan);
   if(!p) return `<section class="hero"><div class="hero-h"><b>今天的主卡</b></div>
     <button class="hero-empty" data-act="set-today"><b>尚未設定今天切換的方案</b><span>點這裡選擇</span></button></section>`;
-  const act=PLANS.filter(x=>status(x.start,x.end).active);
+  const act=selectablePlans();
   return `<section class="hero"><div class="hero-h"><b>今天的主卡</b><span>左右滑動瀏覽，點卡片更換</span></div>
     <div class="rail" id="homeRail">${act.map(x=>`<div class="slide"><button class="hero-card" data-act="set-today" aria-label="${esc(x.name)}${x.id===state.todayPlan?"，今日主卡":""}，點擊更換今日主卡">${cardFace(x,{main:x.id===state.todayPlan})}</button></div>`).join("")}</div>
     ${dotsHTML("homeDots",act.length,0)}
     <div id="homeSet"></div>
-    <p class="hint main-meta">方案每正卡人每日限變更一次（官網注意事項第2條）</p>
+    <p class="hint main-meta">方案每正卡人每日限變更一次（官網注意事項第${noteNo("change")}條）</p>
     <div id="homeList"></div></section>`;
 }
 /* ===== 左右滑動輪播（共用） ===== */
@@ -752,18 +760,18 @@ function railGo(rail,i,smooth){ const s=rail.querySelectorAll(".slide")[i]; if(!
   const left=s.offsetLeft-(rail.clientWidth-s.offsetWidth)/2;
   if(smooth&&!REDUCE) rail.scrollTo({left,behavior:"smooth"}); else rail.scrollLeft=left; }
 function railBind(rail,onChange,start){ let t=null,last=start;
-  rail.addEventListener("scroll",()=>{ clearTimeout(t); t=setTimeout(()=>{ const i=railIndex(rail); if(i!==last){ last=i; onChange(i); } },90); },{passive:true}); }
+  rail.addEventListener("scroll",()=>{ clearTimeout(t); t=setTimeout(()=>{ if(!rail.isConnected) return; const i=railIndex(rail); if(i!==last){ last=i; onChange(i); } },90); },{passive:true}); }
 function dotsHTML(id,n,cur){ return `<div class="dots" id="${id}" aria-hidden="true">${Array.from({length:n},(_,i)=>`<i${i===cur?' class="on"':""}></i>`).join("")}</div>`; }
 function dotsSet(id,cur){ document.querySelectorAll("#"+id+" i").forEach((d,i)=>d.classList.toggle("on",i===cur)); }
 function initHomeRail(){
   const rail=$("#homeRail"); if(!rail) return;
-  const act=PLANS.filter(x=>status(x.start,x.end).active);
+  const act=selectablePlans();
   let i=act.findIndex(x=>x.id===(state.hview||state.todayPlan)); if(i<0) i=Math.max(0,act.findIndex(x=>x.id===state.todayPlan));
   railGo(rail,i,false); homeSync(act,i);
   railBind(rail,j=>homeSync(act,j),i);
 }
 function homeSync(act,i){
-  const p=act[i]; if(!p) return; state.hview=p.id; dotsSet("homeDots",i);
+  const p=act[i]; if(!p||!$("#homeSet")) return; state.hview=p.id; dotsSet("homeDots",i);
   $("#homeSet").innerHTML = p.id===state.todayPlan ? "" : `<button class="btn-set" data-act="setmain" data-pid="${p.id}">設為今日主卡：${esc(p.name)}</button>`;
   const rows=p.groups.map(g=>{ const names=g.items.map(it=>typeof it==="string"?it:it.n);
     return `<div class="hl-row"><div class="hl-main"><div class="hl-t">${esc(g.t)}</div><div class="hl-i">${esc(names.slice(0,8).join("、"))}${names.length>8?` 等 ${names.length} 家`:""}</div></div><span class="rate-pill">${fmt(rateOf(g.r))}<small>%</small></span></div>`; }).join("");
@@ -841,7 +849,7 @@ function renderPlans(){
     <tr><td>雄獅旅行社</td><td>NT$1,800</td><td>一般消費</td><td>0.3%</td><td>5 (1800*0.3%=5.4)</td></tr>
     <tr><td>新光三越</td><td>NT$3,000</td><td>指定美食/購物消費</td><td>3%</td><td>90 (3000*3%=90)</td></tr></tbody></table></div>`;
   const gNotes=`<details class="gnotes"><summary>注意事項<span>官網「CUBE卡權益方案」頁面共通注意事項</span></summary>
-    <ol>${GLOBAL_NOTES.map((n,i)=>`<li>${esc(n).replace(/\n/g,"<br>")}${i===6?gTable:""}</li>`).join("")}</ol></details>`;
+    <ol>${GLOBAL_NOTES.map((n,i)=>`<li>${esc(n).replace(/\n/g,"<br>")}${i===noteIdx("points")?gTable:""}</li>`).join("")}</ol></details>`;
   $("#v-wallet").innerHTML=sumBox+lvTable+bar+(html||`<p class="hint">這個類別目前沒有通路。</p>`)+gNotes+actsHTML();
   const rail=$("#planRail");
   if(rail){ const cur=Math.max(0,items.findIndex(i=>i.open)); railGo(rail,cur,false); railBind(rail,planRailSync,cur); }
@@ -887,7 +895,7 @@ function actsHTML(){
     ${Object.values(COUPONS).map(c=>{const st=cpStatus(c);return `<div class="ticket${st.active?"":" off"}"><div class="tk-l tk-cp">${esc(c.rate)}</div><div class="tk-r"><h3>${esc(c.t)}</h3><p>${esc(c.d)}</p>${c.sub?`<p>${esc(c.sub)}</p>`:""}<p>${c.period?"活動期間："+esc(c.period):"活動期間依官網活動詳情"}</p><div class="row"><span class="tag ${st.k==="warn"?"warn":(st.k==="on"?"":"end")}">${st.txt}</span><span class="tag">官網「旅日優惠口袋」</span></div></div></div>`;}).join("")}
     <p class="hint"><a href="${COUPON_URL}" target="_blank" rel="noopener">前往旅日優惠口袋</a></p>
     <p class="hint"><a href="https://www.cathay-cube.com.tw/content/cub-aem-cs/zh-tw/cathaybk/personal/event/overview/credit-card/dining/202604/cube_dining" target="_blank" rel="noopener">前往活動網頁查看詳情</a></p>
-    <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint m0">${esc(GLOBAL_NOTES[4])}</p></div>`;
+    <div class="panel"><b>CUBE App 領取優惠券</b><p class="hint m0">${esc(noteText("coupon"))}</p></div>`;
 }
 
 /* ===== 試算頁 ===== */
@@ -915,7 +923,7 @@ function renderCalcBody(){
       if(p.id==="autumn" && state.cur==="JPY"){ const r=entryRow("autumn","日本必逛＋遊日必備之指定消費"); if(r) c.push({r,rate:r.rate,tag:"限日本實體消費"}); }
     }
     c.sort((x,y)=>y.rate-x.rate);
-    const b=c[0] || (p.id==="fixed" ? {base:true,rate:1.2,sub:"一般消費(不含保費) 1.2%；官網注意事項第15條排除者不列入"} : {base:true,rate:0.3,sub:"非指定通路，以一般消費 0.3% 計算"});
+    const b=c[0] || (p.id==="fixed" ? {base:true,rate:1.2,sub:"一般消費(不含保費) 1.2%；官網注意事項第"+noteNo("base")+"條排除者不列入"} : {base:true,rate:0.3,sub:"非指定通路，以一般消費 0.3% 計算"});
     const pts=n?ptsOf(n,b.rate):0, fee=on?n*FEE/100:0;
     list.push({p,b,pts,fee,net:pts-fee});
   });
@@ -939,7 +947,7 @@ function renderCalcBody(){
     }
     h+=`</div>`;
   });
-  h+=`<p class="hint calc-src">小樹點(信用卡)依官網注意事項第7條，每筆依小數點第一位四捨五入至整數位，1點等值NT$1；實際以國泰世華入帳為準。${on?`國外交易手續費以約 ${FEE}% 估算（官網：本行 0.5% 國外交易服務費＋國際組織手續費）。匯率：<a href="${FX_SITE}" target="_blank" rel="noopener">ExchangeRate-API</a>，僅供估算。`:""}</p>`;
+  h+=`<p class="hint calc-src">小樹點(信用卡)依官網注意事項第${noteNo("points")}條，每筆依小數點第一位四捨五入至整數位，1點等值NT$1；實際以國泰世華入帳為準。${on?`國外交易手續費以約 ${FEE}% 估算（官網：本行 0.5% 國外交易服務費＋國際組織手續費）。匯率：<a href="${FX_SITE}" target="_blank" rel="noopener">ExchangeRate-API</a>，僅供估算。`:""}</p>`;
   box.innerHTML=h;
 }
 
@@ -966,9 +974,9 @@ function renderFavs(){
 function renderCats(){
   const all=[["all","全部"],...Object.entries(CATS)];
   $("#cats").innerHTML=all.map(([k,v])=>`<button data-cat="${k}" aria-pressed="${state.cat===k}">${catIcon(k)}${v}</button>`).join("");
-  document.querySelectorAll("#cats button").forEach(b=>b.onclick=()=>{ state.cat=b.dataset.cat; renderCats(); if(state.view==="home") goView("search"); else render(); });
+  document.querySelectorAll("#cats button").forEach(b=>b.onclick=()=>{ state.cat=b.dataset.cat; renderCats(); syncClear(); if(state.view==="home") goView("search"); else render(); });
 }
-function syncClear(){ $("#clear").hidden=!state.q; }
+function syncClear(){ $("#clear").hidden=!(state.q || state.cat!=="all" || String(state.amt||"").trim()); }
 const VIEWS=["home","search","calc","wallet","favs"];
 function render(){
   const v=state.view;
@@ -991,16 +999,24 @@ function applyQuery(v){ state.q=v.trim(); syncClear(); if(state.view==="home"||s
 let tmr; $("#q").addEventListener("input",e=>{ clearTimeout(tmr); tmr=setTimeout(()=>applyQuery(e.target.value),120); });
 /* 按下鍵盤「搜尋」後收起鍵盤 */
 $("#q").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); clearTimeout(tmr); applyQuery(e.target.value); e.target.blur(); } });
-$("#clear").onclick=()=>{ $("#q").value=""; state.q=""; syncClear(); render(); $("#q").focus(); };
+/* 重置：清空搜尋字、類別、試算金額；不自動聚焦，避免跳出鍵盤 */
+$("#clear").onclick=()=>{
+  clearTimeout(tmr); $("#q").value=""; $("#q").blur(); state.q=""; state.cat="all"; state.amt="";
+  document.querySelectorAll(".amt-in").forEach(x=>{ x.value=""; x.blur(); });
+  renderCats(); syncClear(); render(); toast("已重置");
+};
 document.querySelectorAll("#lv button").forEach(b=>b.onclick=()=>{
-  state.lv=+b.dataset.lv;
-  $("#setBadge").textContent="L"+(state.lv+1);
-  document.querySelectorAll("#lv button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  state.lv=+b.dataset.lv; save("cube-lv",state.lv); syncLv();
   render(); toast("已改為 L"+(state.lv+1)+" 計算");
 });
 $("#bday").checked=state.bday;
 $("#bday").onchange=e=>{state.bday=e.target.checked; save("cube-show-bday",state.bday); render();};
-$("#kids").onchange=e=>{state.kids=e.target.checked; render();};
+$("#kids").onchange=e=>{state.kids=e.target.checked; save("cube-kids",state.kids); render();};
+function syncLv(){ $("#setBadge").textContent="L"+(state.lv+1);
+  document.querySelectorAll("#lv button").forEach(x=>x.setAttribute("aria-pressed", +x.dataset.lv===state.lv)); }
+state.lv=load("cube-lv",1); if(![0,1,2].includes(state.lv)) state.lv=1;
+state.kids=!!load("cube-kids",false); $("#kids").checked=state.kids;
+syncLv();
 
 /* ===== 外觀：自動（依 iPhone 定位計算日出日落）／淺色／深色 ===== */
 const TAICHUNG={lat:24.1477,lng:120.6736,src:"台中（未取得定位）"};
@@ -1053,8 +1069,21 @@ document.querySelectorAll("#themeSeg button").forEach(b=>b.onclick=()=>{
 });
 if(state.themeMode==="auto") requestLoc(false);
 applyTheme();
-setInterval(applyTheme,60000);
-document.addEventListener("visibilitychange",()=>{ if(!document.hidden) applyTheme(); });
+state.dayKey=todayKey();
+function checkDay(){
+  if(todayKey()===state.dayKey) return;
+  state.dayKey=todayKey();
+  const c=load("cube-today",null); state.todayPlan=(c&&c.d===state.dayKey)?c.id:""; state.hview="";
+  render();
+}
+setInterval(()=>{ applyTheme(); checkDay(); },60000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ applyTheme(); checkDay(); } });
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape") return;
+  const pc=document.querySelector('#pickerHost .picker [data-act="close"]');
+  if(pc){ pc.click(); return; }
+  if($("#settings").classList.contains("open")) closeSettings();
+});
 
 if(fxOn()) loadFx(false);
 renderCats(); render();
